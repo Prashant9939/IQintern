@@ -51,126 +51,226 @@ export interface DocumentTemplate {
 const DEFAULT_INTERNSHIPS: Internship[] = [
   {
     id: "int-web-dev",
-    title: "Frontend React Developer",
-    description: "Build premium user interfaces using React, Next.js, and CSS Grid/Flexbox. Focus on performance, design aesthetics, and responsive layout structures.",
-    requirements: ["HTML5, CSS3, ES6+ Javascript", "Basic understanding of React state management", "Familiarity with Tailwind CSS or Vanilla CSS variables"],
-    duration: "3 Months",
-    category: "Web Development",
+    title: "Web Development",
+    description: "Build responsive, high-performance web applications using modern web technologies. Focus on frontend layout systems, JavaScript/TypeScript framework architectures, and practical API integration.",
+    requirements: ["HTML5, CSS3, ES6+ JavaScript", "Basic understanding of React/Next.js frameworks", "8 Real-world Projects requirement"],
+    duration: "12 Weeks",
+    category: "Engineering",
   },
   {
-    id: "int-backend",
-    title: "Backend Node.js Engineer",
-    description: "Develop robust API endpoints, integrate databases, and configure servers. Focus on security, RLS policies, and performance scaling.",
-    requirements: ["Node.js, Express, and Typescript", "Familiarity with SQL Databases (PostgreSQL)", "API design and OAuth architecture"],
-    duration: "3 Months",
-    category: "Software Engineering",
+    id: "int-python",
+    title: "Python Programming",
+    description: "Master the fundamentals of Python programming, core automation script design, object-oriented concepts, and API creation. Focus on practical scripting models.",
+    requirements: ["Basic algorithmic thinking", "5 Scripting Projects requirement", "Level: Beginner to Intermediate"],
+    duration: "8 Weeks",
+    category: "Development",
   },
   {
-    id: "int-design",
-    title: "UI/UX Product Designer",
-    description: "Design high-fidelity wireframes, interactive user flows, and modern design systems. Focus on user empathy, typography, and color theory.",
-    requirements: ["Proficiency in Figma or Adobe XD", "Strong eye for typography, alignment, and spacing", "Creating component libraries & interactive mockups"],
-    duration: "2 Months",
+    id: "int-ai",
+    title: "Artificial Intelligence",
+    description: "Design, build, and deploy machine learning and deep learning models. Focus on neural networks, natural language processing, and computer vision architectures.",
+    requirements: ["Strong Python skills & basic statistics", "4 ML/Deep Learning Models requirement", "Level: Advanced"],
+    duration: "16 Weeks",
+    category: "Data & AI",
+  },
+  {
+    id: "int-cybersec",
+    title: "Cyber Security",
+    description: "Understand security protocols, network defenses, vulnerability auditing, and penetration testing methodologies. Focus on ethical hacking controls.",
+    requirements: ["Basic networking concepts (TCP/IP)", "6 Penetration Testing Audits requirement", "Level: Intermediate"],
+    duration: "10 Weeks",
+    category: "Security",
+  },
+  {
+    id: "int-datasci",
+    title: "Data Science",
+    description: "Analyze complex datasets, configure automated ETL data pipelines, create interactive analytics dashboards, and draw statistical inferences.",
+    requirements: ["Python data analysis libraries (pandas)", "5 Data Analysis Pipelines requirement", "Level: Intermediate to Advanced"],
+    duration: "12 Weeks",
+    category: "Data & AI",
+  },
+  {
+    id: "int-digimark",
+    title: "Digital Marketing",
+    description: "Design high-conversion SEO optimization layouts, run test ad campaigns, manage search metrics, and analyze consumer conversions.",
+    requirements: ["Basic digital platforms literacy", "3 SEO & Ad Campaign Audits requirement", "Level: Beginner"],
+    duration: "6 Weeks",
+    category: "Business",
+  },
+  {
+    id: "int-uiux",
+    title: "UI/UX Product Design",
+    description: "Design interactive user flows, build high-fidelity interactive wireframes, and design clean system typography. Focus on human-centered design structures.",
+    requirements: ["Figma design tool fundamentals", "4 High-Fidelity Prototypes requirement", "Level: Beginner to Intermediate"],
+    duration: "8 Weeks",
     category: "Design",
+  },
+  {
+    id: "int-cloud",
+    title: "Cloud Computing",
+    description: "Deploy and manage secure virtual machines, setup scale load balancers, configure database instances, and audit cloud network architecture.",
+    requirements: ["Basic virtual hosting concepts", "5 Cloud Deployment Architectures requirement", "Level: Intermediate"],
+    duration: "12 Weeks",
+    category: "Engineering",
+  },
+  {
+    id: "int-finance",
+    title: "Finance & Accounting",
+    description: "Analyze corporate financial statements, build portfolio valuation models, audit ledger compliance, and write tax compliance files.",
+    requirements: ["Spreadsheets and financial auditing formulas", "3 Portfolio Valuation Reports requirement", "Level: Beginner to Intermediate"],
+    duration: "8 Weeks",
+    category: "Business",
+  },
+  {
+    id: "int-hr",
+    title: "Human Resources (HR)",
+    description: "Design corporate hiring pipelines, organize employee onboarding documents, manage payroll records, and draft compliance policy manuals.",
+    requirements: ["Corporate communication & documentation skills", "4 Corporate Hiring Pipelines requirement", "Level: Beginner"],
+    duration: "6 Weeks",
+    category: "Business",
+  },
+  {
+    id: "int-entrepreneur",
+    title: "Entrepreneurship",
+    description: "Construct modern business model canvas sheets, outline startup validation checkpoints, audit market research reports, and practice venture pitch decks.",
+    requirements: ["Innovative business planning logic", "2 Business Model Canvas Plans requirement", "Level: Intermediate"],
+    duration: "10 Weeks",
+    category: "Management",
   }
 ];
 
 const DEFAULT_QUESTIONS: Record<string, Omit<Question, "id">[]> = {
   "int-web-dev": [
-    {
-      internship_id: "int-web-dev",
-      question_text: "Which hook is used to perform side effects in a React functional component?",
-      options: ["useState", "useEffect", "useContext", "useReducer"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-web-dev",
-      question_text: "What does Next.js App Router use to render components on the server by default?",
-      options: ["Client Components", "Server Components", "Static Site Generation", "Incremental Static Regeneration"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-web-dev",
-      question_text: "Which CSS property is used to set the spacing inside an element?",
-      options: ["margin", "padding", "border", "gap"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-web-dev",
-      question_text: "In React, what is the purpose of the 'key' prop in list items?",
-      options: ["To style the elements differently", "To identify elements uniquely for reconciliation", "To bind click events", "To store metadata"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-web-dev",
-      question_text: "What does CSS glassmorphism typically rely on for its translucent blur effect?",
-      options: ["filter: blur()", "backdrop-filter: blur()", "opacity: 0.5", "background-color: transparent"],
-      correct_option_index: 1,
-    }
+    { internship_id: "int-web-dev", question_text: "Which hook is used to perform side effects in a React functional component?", options: ["useState", "useEffect", "useContext", "useReducer"], correct_option_index: 1 },
+    { internship_id: "int-web-dev", question_text: "What does Next.js App Router use to render components on the server by default?", options: ["Client Components", "Server Components", "Static Site Generation", "Incremental Site Regeneration"], correct_option_index: 1 },
+    { internship_id: "int-web-dev", question_text: "Which CSS property is used to set the spacing inside an element?", options: ["margin", "padding", "border", "gap"], correct_option_index: 1 },
+    { internship_id: "int-web-dev", question_text: "In React, what is the purpose of the 'key' prop in list items?", options: ["To style elements differently", "To identify elements uniquely for reconciliation", "To bind click events", "To store metadata"], correct_option_index: 1 },
+    { internship_id: "int-web-dev", question_text: "What does CSS glassmorphism typically rely on for its translucent blur effect?", options: ["filter: blur()", "backdrop-filter: blur()", "opacity: 0.5", "background-color: transparent"], correct_option_index: 1 },
+    { internship_id: "int-web-dev", question_text: "Which HTML5 semantic element is recommended to wrap the main content of a page?", options: ["div", "section", "main", "article"], correct_option_index: 2 },
+    { internship_id: "int-web-dev", question_text: "What is the primary function of the 'flex-shrink' property in CSS Flexbox?", options: ["Specifies how much a flex item will shrink relative to the rest", "Forces items to wrap to a new line", "Sets the initial width of a flex item", "Prevents items from expanding"], correct_option_index: 0 },
+    { internship_id: "int-web-dev", question_text: "How do you prevent a form from submitting and reloading the page using JavaScript?", options: ["e.stopImmediatePropagation()", "e.stopPropagation()", "e.preventDefault()", "return false;"], correct_option_index: 2 },
+    { internship_id: "int-web-dev", question_text: "What is the difference between the '==' and '===' comparison operators in JavaScript?", options: ["'===' checks both value and type, while '==' only checks value", "'==' checks both value and type, while '===' only checks value", "There is no functional difference", "'===' is only for objects, '==' is for primitives"], correct_option_index: 0 },
+    { internship_id: "int-web-dev", question_text: "Which CSS position value keeps an element relative to the viewport even when scrolling?", options: ["absolute", "relative", "sticky", "fixed"], correct_option_index: 3 }
   ],
-  "int-backend": [
-    {
-      internship_id: "int-backend",
-      question_text: "Which SQL command is used to add new rows of data to a table?",
-      options: ["ADD ROW", "INSERT INTO", "UPDATE", "CREATE RECORD"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-backend",
-      question_text: "What does 'RLS' stand for in PostgreSQL/Supabase database design?",
-      options: ["Real-time Log Syncing", "Row Level Security", "Relation Layout Schema", "Resource Limit Service"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-backend",
-      question_text: "Which HTTP status code represents an Unauthorized request?",
-      options: ["400 Bad Request", "401 Unauthorized", "403 Forbidden", "404 Not Found"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-backend",
-      question_text: "In Node.js, how do you handle asynchronous operations in a cleaner, synchronous-like syntax?",
-      options: ["Callbacks", "Promises", "Async/Await", "Event Emitters"],
-      correct_option_index: 2,
-    },
-    {
-      internship_id: "int-backend",
-      question_text: "Which database indexing method is typically the default for PostgreSQL tables?",
-      options: ["B-Tree", "Hash", "GIN", "GiST"],
-      correct_option_index: 0,
-    }
+  "int-python": [
+    { internship_id: "int-python", question_text: "What is the correct output of print(type([])) in Python?", options: ["<class 'dict'>", "<class 'tuple'>", "<class 'list'>", "<class 'set'>"], correct_option_index: 2 },
+    { internship_id: "int-python", question_text: "Which keyword is used in Python to define a custom reusable function?", options: ["func", "function", "def", "define"], correct_option_index: 2 },
+    { internship_id: "int-python", question_text: "What is the recommended pythonic way to open a file to ensure it gets closed automatically?", options: ["open('file.txt')", "with open('file.txt') as f:", "try open('file.txt')", "file.open('file.txt')"], correct_option_index: 1 },
+    { internship_id: "int-python", question_text: "How do you check if an item 'x' exists in a Python list named 'my_list'?", options: ["if x exists in my_list:", "if my_list.has(x):", "if x in my_list:", "if my_list.contains(x):"], correct_option_index: 2 },
+    { internship_id: "int-python", question_text: "Which list method is used to remove and return the last element in Python?", options: ["remove()", "pop()", "delete()", "discard()"], correct_option_index: 1 },
+    { internship_id: "int-python", question_text: "Which of the following sequence types is immutable in Python?", options: ["list", "dict", "set", "tuple"], correct_option_index: 3 },
+    { internship_id: "int-python", question_text: "How do you declare inheritance between a Child class and a Parent class in Python?", options: ["class Child extends Parent:", "class Child(Parent):", "class Child implements Parent:", "class Child inherits Parent:"], correct_option_index: 1 },
+    { internship_id: "int-python", question_text: "What is PEP 8 in the context of Python development?", options: ["A package installer tool", "The style guide for writing Python code", "A performance optimization protocol", "A built-in database interface"], correct_option_index: 1 },
+    { internship_id: "int-python", question_text: "What does the dict.get('nonexistent', 0) method return if 'nonexistent' is not a key in the dictionary?", options: ["None", "0", "KeyError", "False"], correct_option_index: 1 },
+    { internship_id: "int-python", question_text: "Which built-in function returns the total number of items in a list or sequence in Python?", options: ["size()", "length()", "len()", "count()"], correct_option_index: 2 }
   ],
-  "int-design": [
-    {
-      internship_id: "int-design",
-      question_text: "What is the key difference between serif and sans-serif typefaces?",
-      options: ["Serif has decorative feet at character strokes", "Sans-serif is only used in headers", "Serif is always bold", "Sans-serif is cursive"],
-      correct_option_index: 0,
-    },
-    {
-      internship_id: "int-design",
-      question_text: "Which visual design concept prioritizes elements in order of user importance?",
-      options: ["Visual Hierarchy", "Proximity", "White Space", "Color Harmony"],
-      correct_option_index: 0,
-    },
-    {
-      internship_id: "int-design",
-      question_text: "What is the optimal color contrast ratio recommended by WCAG 2.1 AA for normal text?",
-      options: ["3:1", "4.5:1", "7:1", "10:1"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-design",
-      question_text: "What does 'UI' design stand for?",
-      options: ["User Interaction", "User Interface", "Universal Integration", "Usability Index"],
-      correct_option_index: 1,
-    },
-    {
-      internship_id: "int-design",
-      question_text: "In design, what is 'Negative Space' or 'White Space'?",
-      options: ["Unused pixels in code", "The empty space between design elements", "Background templates that are colored white", "The styling reset CSS"],
-      correct_option_index: 1,
-    }
+  "int-ai": [
+    { internship_id: "int-ai", question_text: "Which activation function is most commonly used for the output layer of a binary classification neural network?", options: ["ReLU", "Sigmoid", "Tanh", "Softmax"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "In machine learning, what does the term 'epoch' represent during model training?", options: ["A single iteration over one batch of training data", "One full pass of the training algorithm through the entire dataset", "The time required to train a model", "The score of the evaluation metrics"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "Which of the following techniques is commonly used to prevent a model from overfitting the training data?", options: ["Increasing learning rate", "Regularization (e.g. Dropout)", "Removing validation data", "Adding more dimensions unchecked"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "What does the learning rate control in a gradient descent optimization algorithm?", options: ["The number of layers in the neural network", "The size of the steps taken towards the minimum of the loss function", "The batch size of the training dataset", "The validation split ratio"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "Which layer type in a Convolutional Neural Network (CNN) is primarily responsible for extracting spatial features from input images?", options: ["Dense Layer", "Convolutional Layer", "Pooling Layer", "Dropout Layer"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "Which Python library is highly standard for tokenization, stemming, and POS-tagging in Natural Language Processing (NLP)?", options: ["TensorFlow", "Scikit-Learn", "NLTK", "SciPy"], correct_option_index: 2 },
+    { internship_id: "int-ai", question_text: "Which search algorithm is typically used in game playing trees to evaluate optimal moves for players?", options: ["Breadth-First Search", "Minimax", "Dijkstra's Algorithm", "Binary Search"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "What is the primary difference between Supervised and Unsupervised Learning?", options: ["Supervised uses labeled data; Unsupervised uses unlabeled data", "Supervised uses regression; Unsupervised uses classification", "Supervised is for deep learning; Unsupervised is for statistical models", "There is no difference in data labeling requirements"], correct_option_index: 0 },
+    { internship_id: "int-ai", question_text: "What is the main objective of the Backpropagation algorithm in neural networks?", options: ["Generate new inputs dynamically", "Calculate gradients of the loss function to update network weights", "Select the optimal learning rate automatically", "Initialize weights to zero"], correct_option_index: 1 },
+    { internship_id: "int-ai", question_text: "Which popular open-source deep learning framework was developed and is maintained by Google?", options: ["PyTorch", "TensorFlow", "Caffe", "Theano"], correct_option_index: 1 }
+  ],
+  "int-cybersec": [
+    { internship_id: "int-cybersec", question_text: "What are the core components of the security model represented by the CIA Triad?", options: ["Control, Integrity, Authorization", "Confidentiality, Integrity, Availability", "Cryptography, Identification, Authentication", "Compliance, Inspection, Auditing"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "Which network protocol is standard for establishing a secure, encrypted shell connection to a remote server?", options: ["Telnet", "FTP", "SSH", "HTTP"], correct_option_index: 2 },
+    { internship_id: "int-cybersec", question_text: "What type of attack involves injecting malicious commands into input fields to manipulate database queries?", options: ["Cross-Site Scripting (XSS)", "SQL Injection (SQLi)", "Man-in-the-Middle (MitM)", "Buffer Overflow"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "What is the default TCP port configuration for secure web browser communication over HTTPS?", options: ["80", "22", "8080", "443"], correct_option_index: 3 },
+    { internship_id: "int-cybersec", question_text: "What is Phishing in the context of network security threat models?", options: ["Injecting viruses through network ports", "Social engineering attacks designed to trick users into revealing sensitive data", "Flooding servers with dummy request packets", "Cracking passwords using database tables"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "What is the key difference between Symmetric and Asymmetric encryption?", options: ["Symmetric uses one private key; Asymmetric uses a public-private key pair", "Symmetric uses public keys; Asymmetric uses private keys only", "Symmetric is slower than Asymmetric", "Symmetric does not use keys"], correct_option_index: 0 },
+    { internship_id: "int-cybersec", question_text: "Which command-line tool is standard for auditing network interfaces and IP addresses in Linux systems?", options: ["ipconfig", "ifconfig", "netstat", "ping"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "What is Ransomware in cybersecurity categorization?", options: ["Malware that duplicates itself across hosts to hog resources", "Malware that encrypts candidate files and demands payment to release keys", "Adware that shows popup advertisements", "Spyware that records keystrokes"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "What is the primary architectural function of a network Firewall?", options: ["To speed up packet delivery speeds", "To filter incoming and outgoing traffic based on pre-established rules", "To translate domain names to host IPs", "To host virtual subnets"], correct_option_index: 1 },
+    { internship_id: "int-cybersec", question_text: "What does 2FA stand for in user access configuration models?", options: ["Two-Factor Authorization", "Two-Factor Authentication", "Double Security File Check", "Twice Encrypted Login"], correct_option_index: 1 }
+  ],
+  "int-datasci": [
+    { internship_id: "int-datasci", question_text: "Which Python library is widely considered the standard for structural data manipulation and analysis?", options: ["Matplotlib", "Pandas", "PyTorch", "NumPy"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "In statistical hypothesis testing, what does the p-value represent?", options: ["The probability that the alternate hypothesis is completely true", "The probability of observing results as extreme as the actual test under the null hypothesis", "The percentage of correct predictions in the model", "The margin of error in sample statistics"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "Which statistical metric describes the middle value dividing a sorted dataset into two equal halves?", options: ["Mean", "Median", "Mode", "Variance"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "What is Imputation in the context of data cleaning and pre-processing?", options: ["Removing duplicate records from tables", "Substituting missing values with estimated statistical values (like mean/median)", "Normalizing numeric fields", "Grouping logs by categorical labels"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "Which SQL clause is used to filter aggregated data records produced by a GROUP BY statement?", options: ["WHERE", "HAVING", "ORDER BY", "FILTER"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "What is the primary objective of scaling or normalizing numeric columns in data pre-processing?", options: ["To convert strings to integers", "To scale values to a common range to prevent size bias in models", "To remove outliers from the database", "To join tables on index keys"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "Which data visualization plot type is best suited to show the frequency distribution of a continuous variable?", options: ["Scatter Plot", "Histogram", "Line Chart", "Pie Chart"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "What is the difference between Mean Absolute Error (MAE) and Mean Squared Error (MSE)?", options: ["MAE squares errors; MSE uses absolute differences", "MSE penalizes larger errors more heavily than MAE by squaring the terms", "There is no difference between them", "MAE is only for classification models"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "What is the main objective of Linear Regression models?", options: ["Classify inputs into discrete labels", "Minimize the sum of squared differences between predictions and actual values", "Cluster datapoints into visual groups", "Reduce dimensions of datasets"], correct_option_index: 1 },
+    { internship_id: "int-datasci", question_text: "Which of the following algorithms is an unsupervised clustering technique?", options: ["Logistic Regression", "Decision Tree", "K-Means", "Support Vector Machines"], correct_option_index: 2 }
+  ],
+  "int-digimark": [
+    { internship_id: "int-digimark", question_text: "What does SEO stand for in search marketing terms?", options: ["Social Engagement Optimization", "Search Engine Optimization", "Search Engine Organization", "Site Evaluation Index"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "What does CTR stand for when evaluating digital advertisement campaigns?", options: ["Cost-Through-Rate", "Click-Through Rate", "Conversion-To-Reach", "Click-Target Ratio"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "Which Google platform tool is standard for analyzing traffic analytics, audience demographics, and conversion flows?", options: ["Google Ads", "Google Search Console", "Google Analytics", "Google Tag Manager"], correct_option_index: 2 },
+    { internship_id: "int-digimark", question_text: "What does PPC stand for in search ad pricing models?", options: ["Pay-Per-Click", "Payment-Per-Campaign", "Point-Per-Click", "Price-Per-Conversion"], correct_option_index: 0 },
+    { internship_id: "int-digimark", question_text: "What is the purpose of Meta Tags in the HTML header of websites?", options: ["To load analytics script frameworks", "To provide metadata descriptions that help search engines index the page", "To style text components", "To redirect users to sub-sites"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "In analytics console indices, what does the Bounce Rate represent?", options: ["The percentage of visitors who purchase items on their first click", "The percentage of visitors who leave the site after viewing only a single page", "The speed at which packets load on mobile viewports", "The rate of repeated ad impressions"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "What is a primary Key Performance Indicator (KPI) for email marketing outreach?", options: ["Page load speed", "Open and Click-Through Rates", "Domain authority score", "CPC margin"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "What does CTA stand for in UI button layout guidelines?", options: ["Click-To-Action", "Call to Action", "Client Target Area", "Clear Text Alignment"], correct_option_index: 1 },
+    { internship_id: "int-digimark", question_text: "Which platform is highly recommended for running B2B targeted visual advertisement campaigns?", options: ["TikTok", "Instagram", "LinkedIn", "Pinterest"], correct_option_index: 2 },
+    { internship_id: "int-digimark", question_text: "What is the primary goal of SEO keyword research?", options: ["To find high-volume search phrases with lower bidding competition", "To write database SQL indexing scripts", "To register domain names", "To encrypt user password keys"], correct_option_index: 0 }
+  ],
+  "int-uiux": [
+    { internship_id: "int-uiux", question_text: "What is the primary focus of User Experience (UX) design?", options: ["To select visual branding color themes", "To optimize the usability, structure, and user satisfaction of digital products", "To write responsive HTML styling rules", "To scale databases to handle traffic"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is a Wireframe in product design lifecycles?", options: ["The final high-fidelity clickable visual prototype", "A low-fidelity structural blueprint mapping screen layouts", "The CSS styling rules sheet", "A database relationship map"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is the purpose of building a User Persona in UX research?", options: ["To mock server connections", "To create a fictional profile representing target user archetypes and behaviors", "To create user authentication database tables", "To design responsive logo designs"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What does the UX design principle of 'Proximity' advocate for?", options: ["Placing unrelated elements near each other", "Grouping related layout items close to each other to show correlation", "Making buttons as large as possible", "Using high contrast colors"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is the recommended range for web typography line-height to ensure optimal text readability?", options: ["1.0 to 1.2 times font size", "1.4 to 1.6 times font size", "2.0 to 2.5 times font size", "Only fixed pixel values"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "Which Figma feature is standard for creating reusable, nested design assets like buttons or text templates?", options: ["Frames", "Components and Variants", "Groups", "Vector Networks"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is the UX research method of 'Card Sorting' primarily used to evaluate?", options: ["Color contrast ratios", "Information architecture and navigation structures", "Database query speeds", "User authentication flows"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is meant by the 'Visual Weight' of a layout element?", options: ["Its actual size file in kilobytes", "Its ability to draw the user's attention based on color, size, or contrast", "The depth of its shadows", "The font thickness in CSS classes"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What does the Mobile-First design strategy recommend?", options: ["Writing mobile apps before web codes", "Designing layouts for the smallest screens first before scaling up to desktop screens", "Optimizing only for Android devices", "Using only mobile frameworks"], correct_option_index: 1 },
+    { internship_id: "int-uiux", question_text: "What is the primary objective of A/B Testing in UX product validation?", options: ["Comparing database performance across instances", "Comparing two versions of a design layout to evaluate which drives higher user conversions", "Testing code compilation in Next.js", "Validating SSL encryption certificates"], correct_option_index: 1 }
+  ],
+  "int-cloud": [
+    { internship_id: "int-cloud", question_text: "What does SaaS stand for in cloud delivery service models?", options: ["System-as-a-Service", "Software as a Service", "Storage-as-a-Service", "Serverless-as-a-Service"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "Which cloud service model automatically adjusts active compute capacity based on live load demands?", options: ["Static Hosting", "Auto Scaling", "Virtual Private Network", "Content Delivery Network"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "Which primary Amazon Web Services (AWS) offering represents customizable, virtual machine compute instances?", options: ["S3", "EC2", "RDS", "Lambda"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "What is the core concept of Virtualization in modern cloud architectures?", options: ["Writing simulations of network adapters", "Running multiple virtual, isolated operating systems on a single physical host machine", "Streaming video layouts to mobile devices", "Encrypting keys on external hard drives"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "What is the safest strategy to ensure database high availability in production environments?", options: ["Taking daily snapshots manually", "Configuring multi-region real-time database replication", "Hiring more database admins", "Restricting access to admin logins only"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "What is the defining concept of Serverless Computing?", options: ["Running apps without database instances", "Executing backend code dynamically in microsecond containers where servers are managed entirely by the cloud host", "Deploying static HTML templates only", "Hosting software locally on PCs"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "Which standard TCP port is configured for secure SSH connection to a virtual Linux instance?", options: ["80", "21", "22", "443"], correct_option_index: 2 },
+    { internship_id: "int-cloud", question_text: "What is the primary function of Identity and Access Management (IAM) in cloud networks?", options: ["To track domain names ip indices", "To manage user roles, permission policies, and secure API resource accesses", "To back up database tables", "To balance virtual network packet routers"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "Which storage type is optimal for unstructured media, files, and static templates (e.g. AWS S3)?", options: ["Block Storage", "Object Storage", "File Storage", "Relational Database Tables"], correct_option_index: 1 },
+    { internship_id: "int-cloud", question_text: "What is the primary function of a Domain Name System (DNS)?", options: ["To scale cloud virtual machine sizes", "To translate human-readable domain names (like google.com) to machine-readable IP addresses", "To encrypt user password keys", "To backup database tables in parallel"], correct_option_index: 1 }
+  ],
+  "int-finance": [
+    { internship_id: "int-finance", question_text: "What is the foundational equation representing balance sheet structures in accounting?", options: ["Assets = Liabilities - Equity", "Assets = Liabilities + Equity", "Equity = Assets + Liabilities", "Liabilities = Assets + Equity"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "Which financial document displays a company's total revenues and expenses over a specific duration?", options: ["Balance Sheet", "Income Statement", "Statement of Cash Flows", "General Ledger Book"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What does Liquidity represent when evaluating corporate financial metrics?", options: ["The total amount of debt a company holds", "How quickly and easily an asset can be converted into cash without value loss", "The tax rate applicable to corporate assets", "The volatility of stock market prices"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What is the accounting term for the systematic decrease in the recorded value of a tangible asset over its lifespan?", options: ["Amortization", "Depreciation", "Valuation Loss", "Write-Off"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What does the Return on Assets (ROA) metric measure?", options: ["The percentage of assets funded by liability debts", "How efficiently a corporation generates profits relative to its total assets", "The rate of cash flow generation", "The growth rate of investment capital"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What is the primary accounting purpose of maintaining a General Ledger?", options: ["To record employee payroll timesheets", "To keep a complete, chronological record of all financial transactions of a business", "To outline target marketing campaign budgets", "To compile corporate bylaws manuals"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What is the mathematical formula used to calculate a business's Net Working Capital?", options: ["Total Assets minus Total Liabilities", "Current Assets minus Current Liabilities", "Cash Balance minus Accounts Payable", "Revenue minus Operating Expenses"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What does the Double-Entry bookkeeping standard require?", options: ["All entries must be approved by two accounting specialists", "Every transaction must have a corresponding, balanced debit and credit entry", "Logging transactions twice in database systems", "Filing tax compliance reports twice annually"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "What is the primary function of a corporate Balance Sheet?", options: ["To track cash inflows and outflows monthly", "To show the financial position, assets, and liabilities of a business at a specific point in time", "To project future sales targets", "To record detailed payroll transactions"], correct_option_index: 1 },
+    { internship_id: "int-finance", question_text: "In corporate investment analysis, what does NPV stand for?", options: ["Net Profit Value", "Net Present Value", "Normal Portfolio Valuation", "Net Performance Variable"], correct_option_index: 1 }
+  ],
+  "int-hr": [
+    { internship_id: "int-hr", question_text: "What is the meaning of Onboarding in human resource management?", options: ["Firing employees for policy violations", "The process of integrating, welcoming, and training a new employee into the company", "Designing visual layouts for recruiting", "Setting up payroll bank accounts"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "Which HR metric measures the speed and efficiency of the corporate hiring process?", options: ["Attrition Rate", "Time-to-Hire", "Cost-per-Ad", "Training Return Rate"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What does Employee Turnover or Attrition represent in corporate management?", options: ["The rate at which employees are promoted", "The rate at which employees leave the organization and need replacement", "The total sales generated per employee", "The frequency of employee training cycles"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What is the primary focus of a Performance Appraisal system?", options: ["To structure employee health insurance packages", "To evaluate job performance, review achievements, and provide constructive feedback", "To log daily office attendance hours", "To draft new hiring job descriptions"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What are Soft Skills in HR candidate valuation criteria?", options: ["Knowledge of software programming languages", "Interpersonal attributes, communication skills, and emotional intelligence", "Speed of typing on keyboard interfaces", "Accounting and auditing calculations"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What is a Job Description (JD) primarily designed to do?", options: ["To calculate monthly tax withholdings", "To outline the core duties, responsibilities, reporting structure, and qualifications of a role", "To evaluate corporate performance metrics", "To store employee home address fields"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What components are managed under a corporate 'Compensation and Benefits' framework?", options: ["Only base salary calculations", "The combination of direct salary, bonuses, insurance, pensions, and perks", "Office desk and compute hardware setups", "Employee legal compliance audit records"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What is the defining feature of a 360-Degree Feedback appraisal system?", options: ["Using automated camera interfaces for feedback", "Gathering performance feedback from peers, subordinates, managers, and self-evaluation", "Giving feedback only to executives", "Conducting performance audits twice a month"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What is the main objective of maintaining HR Legal Compliance?", options: ["To increase company sales margins", "To ensure company operations adhere to labor standards, safety laws, and anti-bias policies", "To automate database backups", "To manage corporate social media profiles"], correct_option_index: 1 },
+    { internship_id: "int-hr", question_text: "What is Succession Planning in corporate leadership development?", options: ["Scheduling daily business meetings", "Identifying and training high-potential employees to step into key leadership roles in the future", "Calculating retirement insurance packages", "Managing company tax audits in parallel"], correct_option_index: 1 }
+  ],
+  "int-entrepreneur": [
+    { internship_id: "int-entrepreneur", question_text: "In startup validation methodologies, what does MVP stand for?", options: ["Most Valuable Partner", "Minimum Viable Product", "Market Volume Predictor", "Minimum Valuation Pricing"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What business modeling canvas template is standard for mapping out a startup's key activities, value propositions, and customer segments?", options: ["Spreadsheet Gantt Chart", "Business Model Canvas (BMC)", "Corporate Org Chart", "Balance Sheet Statement"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What does the startup term 'Pivot' represent?", options: ["Shutting down operations permanently due to funding lack", "A strategic change in business model, product design, or target market direction based on validation feedback", "Hiring a new chief executive", "Filing tax compliance paperwork"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What does Bootstrapping represent in startup financing classification?", options: ["Getting large venture capital checks early", "Funding and growing a company using personal savings and operational revenues without external investment", "Securing government research grants", "Borrowing bank loan capitals"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What is the primary visual function of a Startup Pitch Deck?", options: ["To record chronological ledger entries", "To present the business vision, product, market size, and model to get investor funding", "To display code guidelines to developers", "To map user design wireframe flows"], correct_option_index: 2 },
+    { internship_id: "int-entrepreneur", question_text: "What does Customer Acquisition Cost (CAC) measure?", options: ["The sales price of the product to customers", "The total marketing and sales resources spent to acquire a single new customer", "The customer service cost per support query", "The pricing of server virtual hosting"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What is the Break-Even Point in startup financial projection audits?", options: ["The point where the startup runs out of investment capital", "The sales volume or revenue level where total business revenues equal total operational costs", "The target valuation of equity shares", "The tax rate applicable to corporate assets"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What is the Value Proposition of a startup business model?", options: ["The calculated value of all corporate assets", "The unique, compelling value, benefits, and problem-solving a business promises to deliver to its consumers", "The stock market valuation price", "The salary packages offered to employees"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What is the term for a private startup company that reaches a market valuation of $1 billion or more?", options: ["Decacorn", "Unicorn", "Blue Chip", "Venture Lead"], correct_option_index: 1 },
+    { internship_id: "int-entrepreneur", question_text: "What is the primary goal of Market Segmentation in customer discovery models?", options: ["To write database SQL indexing scripts", "To divide a broad consumer target market into specific subgroups sharing similar needs or traits", "To scale virtual machine size in cloud environments", "To hire marketing specialists for ad campaigns"], correct_option_index: 1 }
   ]
 };
 
@@ -214,6 +314,18 @@ export async function getInternships(): Promise<Internship[]> {
         console.warn("getInternships query failed, falling back to mock data:", error);
         return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
       }
+
+      // If on client-side and the loaded list is empty or has fewer tracks than defaults,
+      // trigger the differential synchronizer to seed missing defaults.
+      if (typeof window !== "undefined" && (!data || data.length < DEFAULT_INTERNSHIPS.length)) {
+        console.log("Fewer internships found than defaults. Auto-synchronizing...");
+        await seedDatabase();
+        const { data: updatedData } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
+        if (updatedData && updatedData.length > 0) {
+          return updatedData;
+        }
+      }
+
       if (!data || data.length === 0) {
         return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
       }
@@ -223,7 +335,35 @@ export async function getInternships(): Promise<Internship[]> {
       return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
     }
   } else {
-    return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+    if (typeof window !== "undefined") {
+      const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+      if (list.length < DEFAULT_INTERNSHIPS.length) {
+        console.log("Fewer mock internships found in local storage. Auto-synchronizing mock database...");
+        
+        // 1. Overwrite mock_internships
+        localStorage.setItem("mock_internships", JSON.stringify(DEFAULT_INTERNSHIPS));
+
+        // 2. Overwrite mock_questions
+        const allMockQs: Question[] = [];
+        for (const [internId, qList] of Object.entries(DEFAULT_QUESTIONS)) {
+          qList.forEach((q, idx) => {
+            allMockQs.push({
+              ...q,
+              id: `q-${internId}-${idx}`
+            } as Question);
+          });
+        }
+        localStorage.setItem("mock_questions", JSON.stringify(allMockQs));
+
+        // 3. Overwrite mock_document_templates
+        const defaults = await seedDefaultTemplatesFromFiles();
+        localStorage.setItem("mock_document_templates", JSON.stringify(defaults));
+
+        return DEFAULT_INTERNSHIPS;
+      }
+      return list;
+    }
+    return DEFAULT_INTERNSHIPS;
   }
 }
 
@@ -565,6 +705,48 @@ export async function getTestResultById(id: string): Promise<TestResult | null> 
   }
 }
 
+export async function verifyCertificate(refNum: string): Promise<TestResult | null> {
+  const cleanRef = refNum.trim();
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("test_results")
+        .select("*, profiles(full_name), internships(title)")
+        .ilike("reference_number", cleanRef)
+        .maybeSingle();
+      if (error) {
+        console.warn("verifyCertificate query failed, falling back to mock:", error);
+        const list = await getTestResults();
+        return list.find((r) => r.reference_number?.toUpperCase() === cleanRef.toUpperCase()) || null;
+      }
+      if (!data) {
+        const list = await getTestResults();
+        return list.find((r) => r.reference_number?.toUpperCase() === cleanRef.toUpperCase()) || null;
+      }
+      return {
+        id: data.id,
+        student_id: data.student_id,
+        internship_id: data.internship_id,
+        score: data.score,
+        total_questions: data.total_questions,
+        percentage: Number(data.percentage),
+        passed: data.passed,
+        completed_at: data.completed_at,
+        student_name: data.profiles?.full_name,
+        internship_title: data.internships?.title,
+        reference_number: data.reference_number,
+      };
+    } catch (err) {
+      console.warn("verifyCertificate failed, falling back to mock:", err);
+      const list = await getTestResults();
+      return list.find((r) => r.reference_number?.toUpperCase() === cleanRef.toUpperCase()) || null;
+    }
+  } else {
+    const list = await getTestResults();
+    return list.find((r) => r.reference_number?.toUpperCase() === cleanRef.toUpperCase()) || null;
+  }
+}
+
 export async function saveTestResult(res: Omit<TestResult, "id">): Promise<TestResult> {
   const reference_number = res.passed && !res.reference_number ? generateReferenceNumber() : res.reference_number;
   const insertData = {
@@ -666,7 +848,7 @@ export async function getAllProfiles(): Promise<any[]> {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, email, full_name, phone_number, department_stream, role, created_at")
+        .select("*")
         .order("created_at", { ascending: false });
       if (error) {
         console.warn("getAllProfiles query failed, falling back to mock data:", error);
@@ -732,104 +914,184 @@ function updateStudentProfileMock(userId: string, data: any): { success: boolean
   return { success: false };
 }
 
+export async function deleteProfile(id: string): Promise<boolean> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.warn("deleteProfile query failed, falling back to mock:", err);
+      return deleteMockProfileFallback(id);
+    }
+  } else {
+    return deleteMockProfileFallback(id);
+  }
+}
 
+function deleteMockProfileFallback(id: string): boolean {
+  if (typeof window === "undefined") return false;
+  const list = getMockStorage<any[]>("mock_profiles", []);
+  const filtered = list.filter((p) => p.id !== id);
+  setMockStorage("mock_profiles", filtered);
+  
+  // delete related test results
+  const results = getMockStorage<any[]>("mock_test_results", []);
+  const filteredResults = results.filter((r) => r.student_id !== id);
+  setMockStorage("mock_test_results", filteredResults);
+  
+  return true;
+}
 
 // -------------------------------------------------------------
 // DATABASE INITIALIZATION / SEEDING UTILITY
 // -------------------------------------------------------------
 export async function seedDatabase(): Promise<{ success: boolean; message: string }> {
   if (!isSupabaseConfigured() || !supabase) {
+    // Sync local storage mock data
+    if (typeof window !== "undefined") {
+      try {
+        // 1. Reset mock_internships
+        localStorage.setItem("mock_internships", JSON.stringify(DEFAULT_INTERNSHIPS));
+
+        // 2. Reset mock_questions
+        const allMockQs: Question[] = [];
+        for (const [internId, qList] of Object.entries(DEFAULT_QUESTIONS)) {
+          qList.forEach((q, idx) => {
+            allMockQs.push({
+              ...q,
+              id: `q-${internId}-${idx}`
+            } as Question);
+          });
+        }
+        localStorage.setItem("mock_questions", JSON.stringify(allMockQs));
+
+        // 3. Reset mock_document_templates
+        const defaults = await seedDefaultTemplatesFromFiles();
+        localStorage.setItem("mock_document_templates", JSON.stringify(defaults));
+
+        return {
+          success: true,
+          message: "Mock local storage database successfully reset and synchronized with all 11 tracks, 110 questions, and templates!"
+        };
+      } catch (err: any) {
+        return {
+          success: false,
+          message: `Failed to sync mock local storage: ${err.message || err}`
+        };
+      }
+    }
     return { success: false, message: "Supabase is not configured. Running in Mock local mode." };
   }
 
+  const client = supabase;
+  if (!client) {
+    return { success: false, message: "Supabase is not configured." };
+  }
+
   try {
-    // 1. Check if internships already exist in the live database
-    const { data: existing, error: fetchErr } = await supabase.from("internships").select("id").limit(1);
+    let seededInternshipsCount = 0;
+    let seededQuestionsCount = 0;
+
+    // Fetch all existing internships to check which ones are missing
+    const { data: existingInts, error: fetchErr } = await client.from("internships").select("id, title");
     if (fetchErr) {
       throw new Error(`Failed to check existing tables: ${fetchErr.message}. Ensure schema.sql has been run on Supabase SQL Editor.`);
     }
 
-    if (existing && existing.length > 0) {
-      return { success: true, message: "Database already contains internships. Seeding is not required." };
+    const existingTitles = new Set((existingInts || []).map((i) => i.title.toLowerCase()));
+
+    // 2. Loop through all 11 default internships
+    for (const intern of DEFAULT_INTERNSHIPS) {
+      let trackId = "";
+      const isExisting = existingTitles.has(intern.title.toLowerCase());
+
+      if (!isExisting) {
+        // Insert the missing track
+        const { data: newTrack, error: insertErr } = await client
+          .from("internships")
+          .insert({
+            title: intern.title,
+            description: intern.description,
+            requirements: intern.requirements,
+            duration: intern.duration,
+            category: intern.category
+          })
+          .select()
+          .single();
+
+        if (insertErr) throw insertErr;
+        trackId = newTrack.id;
+        seededInternshipsCount++;
+      } else {
+        // Find existing track's ID
+        const existingTrack = existingInts.find((i) => i.title.toLowerCase() === intern.title.toLowerCase());
+        trackId = existingTrack?.id || "";
+      }
+
+      if (trackId && DEFAULT_QUESTIONS[intern.id]) {
+        // Check if questions already exist for this track
+        const { data: existingQs, error: qFetchErr } = await client
+          .from("questions")
+          .select("id")
+          .eq("internship_id", trackId)
+          .limit(1);
+
+        if (qFetchErr) throw qFetchErr;
+
+        if (!existingQs || existingQs.length === 0) {
+          // Seed questions
+          const questionsToInsert = DEFAULT_QUESTIONS[intern.id].map((q) => ({
+            internship_id: trackId,
+            question_text: q.question_text,
+            options: q.options,
+            correct_option_index: q.correct_option_index,
+          }));
+          const { error: qErr } = await client.from("questions").insert(questionsToInsert);
+          if (qErr) throw qErr;
+          seededQuestionsCount += questionsToInsert.length;
+        }
+      }
     }
 
-    // 2. Database is empty, start seeding
-    // Seeding Web Development Track
-    const { data: webTrack, error: webErr } = await supabase
-      .from("internships")
-      .insert({
-        title: "Frontend React Developer",
-        description: "Build premium user interfaces using React, Next.js, and CSS Grid/Flexbox. Focus on performance, design aesthetics, and responsive layout structures.",
-        requirements: ["HTML5, CSS3, ES6+ Javascript", "Basic understanding of React state management", "Familiarity with Tailwind CSS or Vanilla CSS variables"],
-        duration: "3 Months",
-        category: "Web Development",
+    // 3. Update document templates to the latest version as well!
+    const defaults = await seedDefaultTemplatesFromFiles();
+    await Promise.all(
+      defaults.map(async (t) => {
+        try {
+          // Check if document template already exists by code
+          const { data: existingTpl } = await client
+            .from("document_templates")
+            .select("id")
+            .eq("code", t.code)
+            .maybeSingle();
+
+          if (!existingTpl) {
+            await client.from("document_templates").insert({
+              code: t.code,
+              name: t.name,
+              html_content: t.html_content,
+              is_visible: t.is_visible
+            });
+          } else {
+            // Update the HTML content to ensure certificate template changes are synced
+            await client.from("document_templates").update({
+              html_content: t.html_content
+            }).eq("code", t.code);
+          }
+        } catch (tplErr) {
+          console.error(`Failed to sync template ${t.code}:`, tplErr);
+        }
       })
-      .select()
-      .single();
+    );
 
-    if (webErr) throw webErr;
-
-    // Seed questions for Web Dev Track
-    const webQuestions = DEFAULT_QUESTIONS["int-web-dev"].map((q) => ({
-      internship_id: webTrack.id,
-      question_text: q.question_text,
-      options: q.options,
-      correct_option_index: q.correct_option_index,
-    }));
-    const { error: qWebErr } = await supabase.from("questions").insert(webQuestions);
-    if (qWebErr) throw qWebErr;
-
-    // Seeding Backend Track
-    const { data: backendTrack, error: backErr } = await supabase
-      .from("internships")
-      .insert({
-        title: "Backend Node.js Engineer",
-        description: "Develop robust API endpoints, integrate databases, and configure servers. Focus on security, RLS policies, and performance scaling.",
-        requirements: ["Node.js, Express, and Typescript", "Familiarity with SQL Databases (PostgreSQL)", "API design and OAuth architecture"],
-        duration: "3 Months",
-        category: "Software Engineering",
-      })
-      .select()
-      .single();
-
-    if (backErr) throw backErr;
-
-    // Seed questions for Backend Track
-    const backendQuestions = DEFAULT_QUESTIONS["int-backend"].map((q) => ({
-      internship_id: backendTrack.id,
-      question_text: q.question_text,
-      options: q.options,
-      correct_option_index: q.correct_option_index,
-    }));
-    const { error: qBackErr } = await supabase.from("questions").insert(backendQuestions);
-    if (qBackErr) throw qBackErr;
-
-    // Seeding Design Track
-    const { data: designTrack, error: desErr } = await supabase
-      .from("internships")
-      .insert({
-        title: "UI/UX Product Designer",
-        description: "Design high-fidelity wireframes, interactive user flows, and modern design systems. Focus on user empathy, typography, and color theory.",
-        requirements: ["Proficiency in Figma or Adobe XD", "Strong eye for typography, alignment, and spacing", "Creating component libraries & interactive mockups"],
-        duration: "2 Months",
-        category: "Design",
-      })
-      .select()
-      .single();
-
-    if (desErr) throw desErr;
-
-    // Seed questions for Design Track
-    const designQuestions = DEFAULT_QUESTIONS["int-design"].map((q) => ({
-      internship_id: designTrack.id,
-      question_text: q.question_text,
-      options: q.options,
-      correct_option_index: q.correct_option_index,
-    }));
-    const { error: qDesErr } = await supabase.from("questions").insert(designQuestions);
-    if (qDesErr) throw qDesErr;
-
-    return { success: true, message: "Database seeded successfully with default tracks and questions!" };
+    return {
+      success: true,
+      message: `Database synchronized successfully! Added ${seededInternshipsCount} new tracks, seeded ${seededQuestionsCount} questions, and updated all templates.`
+    };
   } catch (err: any) {
     return { success: false, message: err.message || "An error occurred during database seeding." };
   }

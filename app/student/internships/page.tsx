@@ -256,7 +256,7 @@ export default function AvailableInternships() {
               </div>
               <div className="flex gap-2 items-start">
                 <Award className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                <span>**Evaluation:** Passing threshold is **70%**. You need to score at least 4 out of 5 questions.</span>
+                <span>**Evaluation:** Passing threshold is **70%**. You need to score at least 7 out of 10 questions.</span>
               </div>
               <div className="flex gap-2 items-start">
                 <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />

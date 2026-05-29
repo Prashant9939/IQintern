@@ -166,7 +166,7 @@ export default function ManageQuestions() {
         </div>
         <div className="flex items-center gap-1.5 text-xs text-zinc-500">
           <HelpCircle className="h-4 w-4 text-indigo-500" />
-          <span>Note: Evaluation requires exactly 5 questions per track.</span>
+          <span>Note: Evaluation requires exactly 10 questions per track.</span>
         </div>
       </div>
 

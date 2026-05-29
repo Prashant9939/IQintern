@@ -94,12 +94,12 @@ export default function ResultsPage() {
           </div>
 
           {/* Score Stats card */}
-          <div className="grid grid-cols-3 gap-4 w-full bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 mb-8">
             <div className="text-center">
               <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block">Score</span>
               <span className="text-lg sm:text-xl font-extrabold text-zinc-900 mt-1 block">{result.score} / {result.total_questions}</span>
             </div>
-            <div className="text-center border-x border-zinc-200/60">
+            <div className="text-center border-y sm:border-y-0 sm:border-x border-zinc-200/60 py-3 sm:py-0">
               <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block">Percentage</span>
               <span className="text-lg sm:text-xl font-extrabold text-indigo-600 mt-1 block">{result.percentage}%</span>
             </div>

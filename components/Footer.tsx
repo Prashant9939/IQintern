@@ -161,30 +161,30 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Column 1: Platform (Col span 2) */}
+          {/* Links Column 1: Programs (Col span 2) */}
           <div className="lg:col-span-2 space-y-4">
             <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
-              Platform
+              Programs
             </h4>
             <ul className="space-y-2.5">
               <li>
-                <Link href="/#features" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Features
+                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Frontend Developer
                 </Link>
               </li>
               <li>
                 <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Internship Programs
+                  Backend Engineer
                 </Link>
               </li>
               <li>
-                <Link href="/#certifications" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Certifications
+                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  UI/UX Product Designer
                 </Link>
               </li>
               <li>
-                <Link href="/student/dashboard" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Student Dashboard
+                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Full Stack Tracks
                 </Link>
               </li>
             </ul>
@@ -198,12 +198,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               <li>
                 <Link href="/#faqs" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link href="/#help" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Help Center
+                  FAQs & Help
                 </Link>
               </li>
               <li>
@@ -213,36 +208,41 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/#verify" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Student Verification
+                  Secure Validation
+                </Link>
+              </li>
+              <li>
+                <Link href="/student/dashboard" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Candidate Dashboard
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Links Column 3: Company (Col span 2) */}
+          {/* Links Column 3: Colleges (Col span 2) */}
           <div className="lg:col-span-2 space-y-4">
             <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
-              Company
+              Colleges
             </h4>
             <ul className="space-y-2.5">
               <li>
+                <Link href="/contact" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Partner Partnerships
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth/login" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Faculty Portal
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                  Cohort Metrics
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/#careers" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="/#stories" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Success Stories
-                </Link>
-              </li>
-              <li>
-                <Link href="/#insights" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Insights
+                  Institutional Plans
                 </Link>
               </li>
             </ul>

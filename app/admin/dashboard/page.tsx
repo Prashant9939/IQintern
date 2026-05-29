@@ -140,22 +140,23 @@ export default function AdminDashboard() {
         <p className="text-zinc-500 text-xs sm:text-sm font-light mt-1">Live tracking database statistics and assessment performance rates.</p>
       </div>
 
-      {/* Database Seeding Utility */}
-      {dbEmpty && (
-        <div className="p-5 rounded-2xl border border-amber-200 bg-amber-50 text-zinc-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
-          <div>
-            <h4 className="text-sm font-bold text-zinc-950 mb-1">Supabase Database is Empty</h4>
-            <p className="text-xs text-zinc-550">Your tables exist, but contain 0 records. You can automatically seed default internships and questions to get started.</p>
-          </div>
-          <button
-            onClick={handleSeed}
-            disabled={seeding}
-            className="shrink-0 bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm shadow-indigo-650/10"
-          >
-            {seeding ? "Seeding..." : "Seed Default Data"}
-          </button>
+      {/* Database Seeding/Syncing Utility */}
+      <div className="p-5 rounded-2xl border border-indigo-150 bg-indigo-50/40 text-zinc-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+        <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-indigo-500/[0.03] blur-xl pointer-events-none" />
+        <div>
+          <h4 className="text-sm font-extrabold text-indigo-950 mb-1">Database Sync & Management</h4>
+          <p className="text-xs text-zinc-550 font-light">
+            Synchronize the database to ensure all 11 default internship tracks, their corresponding 110 evaluation questions, and the latest certificate document templates are loaded and up-to-date.
+          </p>
         </div>
-      )}
+        <button
+          onClick={handleSeed}
+          disabled={seeding}
+          className="shrink-0 bg-indigo-600 hover:bg-indigo-700 px-4.5 py-2.5 rounded-xl text-xs font-bold text-white transition-all disabled:opacity-50 cursor-pointer shadow-md shadow-indigo-650/10 active:scale-95"
+        >
+          {seeding ? "Syncing..." : "Sync Database"}
+        </button>
+      </div>
 
       {seedMsg && (
         <div className={`p-4 rounded-xl text-xs border ${
@@ -168,7 +169,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((c, idx) => {
           const Icon = c.icon;
           return (

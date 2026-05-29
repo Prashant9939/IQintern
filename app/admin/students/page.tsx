@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { getAllProfiles, getTestResults, TestResult } from "@/lib/supabase/db";
+import { getAllProfiles, getTestResults, TestResult, deleteProfile } from "@/lib/supabase/db";
 import { getCurrentUser, createAdminUser, UserSession } from "@/lib/supabase/auth";
 import {
   Users,
@@ -20,6 +20,7 @@ import {
   Eye,
   EyeOff,
   Lock,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -31,8 +32,34 @@ export default function RegisteredStudents() {
   const [activeTab, setActiveTab] = useState<"profiles" | "results">("profiles");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Show details / Delete user state
+  const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
+  const [profileToDelete, setProfileToDelete] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
   // Add Admin modal state
   const [showAddAdmin, setShowAddAdmin] = useState(false);
+
+  const handleDeleteUser = async () => {
+    if (!profileToDelete) return;
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const success = await deleteProfile(profileToDelete.id);
+      if (success) {
+        setProfiles((prev) => prev.filter((p) => p.id !== profileToDelete.id));
+        setResults((prev) => prev.filter((r) => r.student_id !== profileToDelete.id));
+        setProfileToDelete(null);
+      } else {
+        setDeleteError("Failed to delete user profile.");
+      }
+    } catch (err: any) {
+      setDeleteError(err.message || "Failed to delete user profile.");
+    } finally {
+      setDeleting(false);
+    }
+  };
   const [adminForm, setAdminForm] = useState({
     fullName: "",
     email: "",
@@ -136,7 +163,7 @@ export default function RegisteredStudents() {
       </div>
 
       {/* Summary Stat Badges */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Registrations", value: profiles.length, icon: Users, color: "text-indigo-600 bg-indigo-50 border-indigo-100" },
           { label: "Students", value: students.length, icon: GraduationCap, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
@@ -217,6 +244,7 @@ export default function RegisteredStudents() {
                   <th className="px-5 py-4">Course / Department</th>
                   <th className="px-5 py-4">Role</th>
                   <th className="px-5 py-4">Registered</th>
+                  <th className="px-5 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -224,13 +252,11 @@ export default function RegisteredStudents() {
                   <tr key={profile.id} className="hover:bg-zinc-50/50 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5">
-                        <div className={`h-7 w-7 rounded-lg flex items-center justify-center text-xs font-bold uppercase shrink-0 ${
-                          profile.role === "admin"
-                            ? "bg-violet-50 border border-violet-100 text-violet-600"
-                            : "bg-indigo-50 border border-indigo-100 text-indigo-600"
-                        }`}>
-                          {profile.full_name?.charAt(0)}
-                        </div>
+                        <img 
+                          src="/ai_avatar.png" 
+                          alt={profile.full_name || "User Avatar"} 
+                          className="h-7 w-7 rounded-lg border border-zinc-205 object-cover shrink-0" 
+                        />
                         <span className="font-bold text-zinc-900 whitespace-nowrap">{profile.full_name}</span>
                       </div>
                     </td>
@@ -267,6 +293,27 @@ export default function RegisteredStudents() {
                     </td>
                     <td className="px-5 py-4 text-zinc-400">
                       {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : "N/A"}
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setSelectedProfile(profile)}
+                          className="p-1 text-zinc-450 hover:text-indigo-600 hover:bg-zinc-50 rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        
+                        {profile.role !== "admin" && (
+                          <button
+                            onClick={() => { setProfileToDelete(profile); setDeleteError(""); }}
+                            className="p-1 text-zinc-455 hover:text-red-600 hover:bg-zinc-50 rounded-lg transition-colors cursor-pointer"
+                            title="Delete User"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -460,6 +507,128 @@ export default function RegisteredStudents() {
                 {adminCreating ? "Creating Admin..." : "Create Admin Account"}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* View Details Modal */}
+      {selectedProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-y-auto">
+          <div className="w-full max-w-2xl glass-panel bg-white border border-zinc-200 rounded-3xl p-6 shadow-2xl my-8">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6 border-b border-zinc-150 pb-4">
+              <div className="flex items-center gap-3">
+                <img 
+                  src="/ai_avatar.png" 
+                  alt={selectedProfile.full_name} 
+                  className="h-12 w-12 rounded-2xl border border-zinc-205 object-cover shrink-0" 
+                />
+                <div>
+                  <h2 className="text-base font-extrabold text-zinc-900">{selectedProfile.full_name}</h2>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 mt-1 text-[10px] font-bold ${
+                    selectedProfile.role === "admin"
+                      ? "bg-violet-50 text-violet-700 border border-violet-100"
+                      : "bg-indigo-50 text-indigo-650 border border-indigo-100"
+                  }`}>
+                    {selectedProfile.role === "admin" ? <ShieldCheck className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
+                    {selectedProfile.role === "admin" ? "Administrator" : "Student Candidate"}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedProfile(null)}
+                className="p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2">
+              {[
+                { label: "Account Email", value: selectedProfile.email },
+                { label: "Phone Number", value: selectedProfile.phone_number || "N/A" },
+                { label: "University Name", value: selectedProfile.university_name || "N/A" },
+                { label: "College Name", value: selectedProfile.college_name || "N/A" },
+                { label: "Degree Course", value: selectedProfile.degree || "N/A" },
+                { label: "Department / Stream", value: selectedProfile.department_stream || "N/A" },
+                { label: "Active Semester", value: selectedProfile.semester || "N/A" },
+                { label: "Academic Session", value: selectedProfile.academic_session || "N/A" },
+                { label: "Major Subject", value: selectedProfile.major_subject || "N/A" },
+                { label: "Institutional Roll Number", value: selectedProfile.roll_number || "N/A" },
+                { label: "Registration Number", value: selectedProfile.registration_number || "N/A" },
+                { label: "Gender Identity", value: selectedProfile.gender || "N/A" },
+                { label: "Date of Birth", value: selectedProfile.date_of_birth || "N/A" },
+                { label: "Profile Completed", value: selectedProfile.profile_completed ? "Completed" : "Incomplete", colorClass: selectedProfile.profile_completed ? "text-emerald-600 font-bold" : "text-amber-600 font-bold" },
+                { label: "Registered At", value: selectedProfile.created_at ? new Date(selectedProfile.created_at).toLocaleString() : "N/A" },
+              ].map((item, i) => (
+                <div key={i} className="border-b border-zinc-100 pb-2">
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{item.label}</p>
+                  <p className={`text-xs font-semibold text-zinc-805 mt-0.5 ${item.colorClass || ""}`}>{item.value}</p>
+                </div>
+              ))}
+
+              <div className="sm:col-span-2 border-b border-zinc-100 pb-2">
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Full Address</p>
+                <p className="text-xs font-semibold text-zinc-805 mt-0.5">
+                  {selectedProfile.full_address ? (
+                    `${selectedProfile.full_address}, ${selectedProfile.city || ""}, ${selectedProfile.state || ""} - ${selectedProfile.pincode || ""}`
+                  ) : "N/A"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-6 pt-4 border-t border-zinc-150">
+              <button
+                onClick={() => setSelectedProfile(null)}
+                className="px-5 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
+              >
+                Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {profileToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md glass-panel bg-white border border-zinc-200 rounded-3xl p-6 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-red-50 border border-red-100 text-red-600 rounded-2xl">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-sm font-extrabold text-zinc-950">Delete Student Account</h2>
+                <p className="text-[10px] text-zinc-400">This action cannot be undone</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-650 leading-relaxed font-light mb-4">
+              Are you sure you want to permanently delete the profile for <strong>{profileToDelete.full_name}</strong> ({profileToDelete.email})? This will also remove all their associated test submissions and certificate records from the database.
+            </p>
+
+            {deleteError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-750 font-semibold mb-4">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 border-t border-zinc-150 pt-4">
+              <button
+                onClick={() => { setProfileToDelete(null); setDeleteError(""); }}
+                className="px-4 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                disabled={deleting}
+                className="px-4 py-2.5 rounded-xl bg-red-650 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/10 transition-all cursor-pointer"
+              >
+                {deleting ? "Deleting..." : "Permanently Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}
