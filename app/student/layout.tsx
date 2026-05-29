@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getCurrentUser, signOut, UserSession } from "@/lib/supabase/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Footer from "@/components/Footer";
 import { 
   LayoutDashboard, 
   LogOut, 
@@ -212,8 +213,11 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </header>
 
         {/* Content Wrapper */}
-        <main className="flex-grow p-4 sm:p-8">
-          {children}
+        <main className="flex-grow p-4 sm:p-8 flex flex-col justify-between">
+          <div className="flex-grow pb-8">
+            {children}
+          </div>
+          <Footer />
         </main>
       </div>
     </div>

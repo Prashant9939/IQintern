@@ -15,13 +15,9 @@ import {
   Award, 
   Briefcase, 
   FileSpreadsheet, 
-  Play, 
   FileText, 
-  Clock, 
-  AlertCircle, 
   CheckCircle,
   XCircle,
-  HelpCircle,
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
@@ -94,9 +90,6 @@ export default function StudentDashboard() {
   const [profile, setProfile] = useState<any | null>(null);
   const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
 
-  // Modal State
-  const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
-
   // Document Preview Modal State
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [previewTitle, setPreviewTitle] = useState<string>("");
@@ -159,7 +152,7 @@ export default function StudentDashboard() {
         <div>
           <span className="text-indigo-600 text-xs font-bold uppercase tracking-wider">Welcome back</span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-1 tracking-tight">{user?.full_name}</h1>
-          <p className="text-zinc-500 text-xs sm:text-sm mt-1 font-light">
+          <p className="text-zinc-505 text-xs sm:text-sm mt-1 font-light">
             Department: <span className="text-zinc-800 font-semibold">{profile?.department_stream || "N/A"}</span> • Phone: <span className="text-zinc-800">{user?.phone_number}</span>
           </p>
         </div>
@@ -213,6 +206,7 @@ export default function StudentDashboard() {
                     <div className="flex flex-wrap gap-2.5">
                       {offerVisible && (
                         <button
+                          type="button"
                           onClick={() => handleViewDocument("offer_letter", res)}
                           className="flex items-center gap-1.5 rounded-xl border border-zinc-250 bg-white hover:bg-indigo-50/60 hover:text-indigo-755 hover:border-indigo-200 active:bg-indigo-100 active:scale-95 px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
                         >
@@ -222,6 +216,7 @@ export default function StudentDashboard() {
                       )}
                       {certVisible && (
                         <button
+                          type="button"
                           onClick={() => handleViewDocument("certificate", res)}
                           className="flex items-center gap-1.5 rounded-xl border border-zinc-250 bg-white hover:bg-indigo-50/60 hover:text-indigo-755 hover:border-indigo-200 active:bg-indigo-100 active:scale-95 px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
                         >
@@ -231,6 +226,7 @@ export default function StudentDashboard() {
                       )}
                       {reportVisible && (
                         <button
+                          type="button"
                           onClick={() => handleViewDocument("project_report", res)}
                           className="flex items-center gap-1.5 rounded-xl border border-zinc-250 bg-white hover:bg-indigo-50/60 hover:text-indigo-755 hover:border-indigo-200 active:bg-indigo-100 active:scale-95 px-4 py-2.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
                         >
@@ -281,149 +277,58 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Side: Available Tests */}
-        <div className="lg:col-span-8 space-y-6">
-          <h2 className="text-xl font-bold text-zinc-900 tracking-tight flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-indigo-600" />
-            Start Assessment Tracks
-          </h2>
+      {/* Certification Logs Section */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-zinc-900 tracking-tight flex items-center gap-2">
+          <FileSpreadsheet className="h-5 w-5 text-indigo-600" />
+          Test History
+        </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {internships.map((track) => (
-              <div 
-                key={track.id} 
-                className="glass-panel rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/30 transition-all group"
-              >
-                <div>
-                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 mb-3 inline-block">
-                    {track.category}
-                  </span>
-                  <h3 className="text-base font-bold text-zinc-900 group-hover:text-indigo-600 transition-colors mb-1.5">
-                    {track.title}
-                  </h3>
-                  <p className="text-zinc-500 text-xs line-clamp-2 leading-relaxed mb-4 font-light">
-                    {track.description}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setSelectedInternship(track)}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-50 border border-indigo-150 text-indigo-600 hover:bg-indigo-600 hover:text-white active:bg-indigo-700 active:scale-95 px-4 py-2.5 text-xs font-bold transition-all cursor-pointer"
-                >
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                  Take Assessment
-                </button>
-              </div>
-            ))}
+        {results.length === 0 ? (
+          <div className="text-center py-16 border border-zinc-205 rounded-3xl bg-white shadow-sm">
+            <FileText className="h-10 w-10 mx-auto text-zinc-400 mb-3" />
+            <p className="text-sm text-zinc-555 font-bold">No test attempts logged yet.</p>
+            <p className="text-xs text-zinc-400 font-light mt-1">Navigate to the Available Internships tab to take your first test.</p>
           </div>
-        </div>
-
-        {/* Right Side: Certification Logs */}
-        <div className="lg:col-span-4 space-y-6">
-          <h2 className="text-xl font-bold text-zinc-900 tracking-tight flex items-center gap-2">
-            <FileSpreadsheet className="h-5 w-5 text-indigo-600" />
-            Test History
-          </h2>
-
-          <div className="space-y-3">
-            {results.length === 0 ? (
-              <div className="text-center py-10 border border-zinc-200 rounded-3xl bg-white shadow-sm">
-                <FileText className="h-8 w-8 mx-auto text-zinc-400 mb-2" />
-                <p className="text-xs text-zinc-500 font-light">No test attempts logged yet.</p>
-              </div>
-            ) : (
-              results.map((res) => (
-                <div 
-                  key={res.id} 
-                  className="glass-panel rounded-2xl p-4 flex flex-col gap-3 relative overflow-hidden"
-                >
-                  <div className="flex items-start justify-between">
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {results.map((res) => (
+              <div 
+                key={res.id} 
+                className="glass-panel bg-white border border-zinc-200/80 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h4 className="text-xs font-bold text-zinc-900 line-clamp-1">{res.internship_title}</h4>
-                      <span className="text-[10px] text-zinc-400 font-light">{new Date(res.completed_at).toLocaleDateString()}</span>
+                      <h4 className="text-sm font-bold text-zinc-900 line-clamp-1">{res.internship_title}</h4>
+                      <span className="text-[10px] text-zinc-400 font-light block mt-0.5">{new Date(res.completed_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
                     </div>
                     {res.passed ? (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600 border border-emerald-100 shrink-0">
-                        <CheckCircle className="h-3 w-3" /> Pass
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-100 px-3 py-1 text-[10px] font-bold text-emerald-600 shrink-0">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0" /> Pass
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600 border border-red-100 shrink-0">
-                        <XCircle className="h-3 w-3" /> Fail
+                      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-100 px-3 py-1 text-[10px] font-bold text-red-600 border border-red-100 shrink-0">
+                        <XCircle className="h-3.5 w-3.5 shrink-0" /> Fail
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-zinc-500 border-t border-zinc-200/50 pt-2 font-light">
-                    <span>Score: <span className="text-zinc-900 font-semibold">{res.score}/{res.total_questions}</span> ({res.percentage}%)</span>
+                  <div className="flex items-center justify-between text-xs text-zinc-505 border-t border-zinc-100 pt-3 font-light">
+                    <span>Score: <span className="text-zinc-800 font-semibold">{res.score}/{res.total_questions}</span> ({res.percentage}%)</span>
                     <Link
                       href={`/student/results/${res.id}`}
-                      className="text-xs text-indigo-600 hover:text-indigo-700 font-bold transition-all"
+                      className="text-xs text-indigo-650 hover:text-indigo-755 font-bold transition-all"
                     >
-                      View Report
+                      View Report &rarr;
                     </Link>
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
-
-      {/* RULES MODAL */}
-      {selectedInternship && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-indigo-500/5 blur-2xl" />
-
-            <div className="flex items-start gap-4 mb-6">
-              <div className="h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
-                <HelpCircle className="h-6 w-6" />
-              </div>
-              <div>
-                <span className="text-xs text-indigo-600 font-bold uppercase tracking-wider bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">{selectedInternship.category}</span>
-                <h3 className="text-xl font-bold text-zinc-900 mt-2">{selectedInternship.title}</h3>
-                <p className="text-xs text-zinc-400 mt-1">Assessment Code Guidelines & Testing Rules</p>
-              </div>
-            </div>
-
-            {/* Rules list */}
-            <div className="space-y-4 bg-zinc-50 p-5 rounded-2xl border border-zinc-200/60 text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6 font-light">
-              <div className="flex gap-2 items-start">
-                <Clock className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                <span>**Duration:** You have exactly **5 minutes** to solve the multiple-choice questions.</span>
-              </div>
-              <div className="flex gap-2 items-start">
-                <Award className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                <span>**Evaluation:** Passing threshold is **70%**. You need to score at least 4 out of 5 questions.</span>
-              </div>
-              <div className="flex gap-2 items-start">
-                <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                <span>**Anti-Cheating:** Do NOT switch tabs or minimize the test screen. Tab changes will be monitored.</span>
-              </div>
-              <div className="flex gap-2 items-start">
-                <CheckCircle className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                <span>**Submission:** Leaving the screen or timer completion will trigger auto-submission instantly.</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setSelectedInternship(null)}
-                className="rounded-xl border border-zinc-250 bg-white hover:bg-zinc-100 active:bg-zinc-200 active:scale-95 px-5 py-2.5 text-xs font-bold text-zinc-550 hover:text-zinc-800 transition-all cursor-pointer"
-              >
-                Cancel
-              </button>
-              <Link
-                href={`/student/test/${selectedInternship.id}`}
-                className="rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 active:from-indigo-700 active:to-violet-850 active:scale-95 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 transition-all text-center cursor-pointer"
-              >
-                Start Assessment
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* DOCUMENT PREVIEW MODAL */}
       {showPreviewModal && (

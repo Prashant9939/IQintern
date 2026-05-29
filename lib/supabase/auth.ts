@@ -1,5 +1,12 @@
 import { supabase, isSupabaseConfigured } from "./client";
-import { serverSignUpUser, serverLoginUser, seedAdminAccount, createAdminUser as serverCreateAdminUser } from "./server-auth";
+import { 
+  serverSignUpUser, 
+  serverLoginUser, 
+  seedAdminAccount, 
+  createAdminUser as serverCreateAdminUser,
+  serverVerifyEmailAndPhone,
+  serverResetPassword
+} from "./server-auth";
 
 export interface UserSession {
   id: string;
@@ -16,7 +23,7 @@ const STORAGE_KEY = "skillintern_session";
 
 export const getStoredSession = (): UserSession | null => {
   if (typeof window === "undefined") return serverSession;
-  const data = localStorage.getItem(STORAGE_KEY);
+  const data = sessionStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : null;
 };
 
@@ -26,14 +33,14 @@ export const setStoredSession = (session: UserSession | null) => {
     return;
   }
   if (session) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     try {
-      document.cookie = `skillintern_session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = `skillintern_session=${encodeURIComponent(JSON.stringify(session))}; path=/; SameSite=Lax`;
     } catch (e) {
       console.warn("Failed to set session cookie:", e);
     }
   } else {
-    localStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(STORAGE_KEY);
     try {
       document.cookie = `skillintern_session=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
     } catch (e) {
@@ -112,19 +119,19 @@ export async function signUpUser(
 // -------------------------------------------------------------
 // LOGIN LOGIC
 // -------------------------------------------------------------
-export async function loginUser(email: string, password: string) {
-  if (!email || !password) {
-    throw new Error("Email and password are required.");
+export async function loginUser(emailOrPhone: string, password: string) {
+  if (!emailOrPhone || !password) {
+    throw new Error("Email/Phone and password are required.");
   }
 
   if (isSupabaseConfigured() && supabase) {
     try {
       // Auto-seed admin to Supabase DB if it's the admin logging in
-      if (email.toLowerCase() === "admin@skillintern.com") {
+      if (emailOrPhone.toLowerCase() === "admin@skillintern.com") {
         await seedAdminAccount();
       }
 
-      const user = await serverLoginUser(email, password);
+      const user = await serverLoginUser(emailOrPhone, password);
       
       const session: UserSession = {
         id: user.id,
@@ -140,21 +147,21 @@ export async function loginUser(email: string, password: string) {
     } catch (err: any) {
       console.warn("Supabase custom login failed, checking fallback options:", err);
       if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
-        return loginMockUser(email, password);
+        return loginMockUser(emailOrPhone, password);
       }
       throw err;
     }
   } else {
-    return loginMockUser(email, password);
+    return loginMockUser(emailOrPhone, password);
   }
 }
 
 // -------------------------------------------------------------
-// FORGOT PASSWORD
+// FORGOT PASSWORD VERIFICATION & RESET
 // -------------------------------------------------------------
-export async function forgotPassword(email: string) {
-  if (!email) {
-    throw new Error("Email address is required.");
+export async function verifyEmailAndPhone(email: string, phoneNumber: string) {
+  if (!email || !phoneNumber) {
+    throw new Error("Both email and phone number are required.");
   }
   if (!validateEmail(email)) {
     throw new Error("Invalid email format.");
@@ -162,39 +169,82 @@ export async function forgotPassword(email: string) {
 
   if (isSupabaseConfigured() && supabase) {
     try {
-      // For custom authentication system, check if email exists in database
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!profile) {
-        throw new Error("Account not found. Please register first.");
-      }
-
-      // Return success indicating reset verification passed
-      return { success: true };
+      return await serverVerifyEmailAndPhone(email, phoneNumber);
     } catch (err: any) {
       if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
-        return { success: true }; // mock success
+        return verifyMockEmailAndPhone(email, phoneNumber);
       }
       throw err;
     }
   } else {
-    // Mock mode
-    if (typeof window === "undefined") throw new Error("Mock operations only supported in browser");
-
-    const profiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
-    const found = profiles.some((p: any) => p.email.toLowerCase() === email.toLowerCase());
-
-    if (!found) {
-      throw new Error("Account not found. Please register first.");
-    }
-
-    return { success: true };
+    return verifyMockEmailAndPhone(email, phoneNumber);
   }
+}
+
+function verifyMockEmailAndPhone(email: string, phoneNumber: string) {
+  if (typeof window === "undefined") throw new Error("Mock operations only supported in browser");
+
+  const profiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
+  const found = profiles.find(
+    (p: any) =>
+      p.email.toLowerCase() === email.toLowerCase() &&
+      p.phone_number === phoneNumber
+  );
+
+  if (!found) {
+    throw new Error("Incorrect email or phone number.");
+  }
+
+  return { success: true, userId: found.id };
+}
+
+export async function resetPassword(userId: string, email: string, newPassword: string) {
+  if (!userId || !newPassword) {
+    throw new Error("User ID and new password are required.");
+  }
+  if (newPassword.length < 6) {
+    throw new Error("Password must be at least 6 characters.");
+  }
+  const hasCapital = /[A-Z]/.test(newPassword);
+  const hasSmall = /[a-z]/.test(newPassword);
+  const hasSymbol = /[^A-Za-z0-9]/.test(newPassword);
+  const hasNumeric = /[0-9]/.test(newPassword);
+  if (!hasCapital || !hasSmall || !hasSymbol || !hasNumeric) {
+    throw new Error("Password must contain a combination of uppercase letters, lowercase letters, numbers, and symbols.");
+  }
+
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const res = await serverResetPassword(userId, newPassword);
+      console.log(`[EMAIL SEND] To: ${email} | Subject: Password Changed | Message: Your password has successfully changed.`);
+      return res;
+    } catch (err: any) {
+      if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
+        return resetMockPassword(userId, email, newPassword);
+      }
+      throw err;
+    }
+  } else {
+    return resetMockPassword(userId, email, newPassword);
+  }
+}
+
+function resetMockPassword(userId: string, email: string, newPassword: string) {
+  if (typeof window === "undefined") throw new Error("Mock operations only supported in browser");
+
+  const profiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
+  const idx = profiles.findIndex((p: any) => p.id === userId);
+
+  if (idx === -1) {
+    throw new Error("User not found.");
+  }
+
+  profiles[idx].password = newPassword;
+  localStorage.setItem("mock_profiles", JSON.stringify(profiles));
+
+  console.log(`[EMAIL SEND] To: ${email} | Subject: Password Changed | Message: Your password has successfully changed.`);
+
+  return { success: true };
 }
 
 // -------------------------------------------------------------
@@ -294,8 +344,15 @@ function signUpMockUser(
   const mockId = `mock-user-${email.replace(/[^a-zA-Z0-9]/g, "")}`;
   const profiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
 
-  if (profiles.some((p: any) => p.email === email)) {
+  const emailExists = profiles.some((p: any) => p.email.toLowerCase() === email.toLowerCase());
+  const phoneExists = profiles.some((p: any) => p.phone_number === phoneNumber);
+
+  if (emailExists && phoneExists) {
+    throw new Error("An account already exists with these credentials.");
+  } else if (emailExists) {
     throw new Error("An account with this email already exists.");
+  } else if (phoneExists) {
+    throw new Error("An account with this phone number already exists.");
   }
 
   const newProfile = {
@@ -315,7 +372,7 @@ function signUpMockUser(
   return { success: true };
 }
 
-function loginMockUser(email: string, password: string) {
+function loginMockUser(emailOrPhone: string, password: string) {
   if (typeof window === "undefined") throw new Error("Mock login only supported in browser");
 
   const ADMIN_EMAIL = "admin@skillintern.com";
@@ -323,7 +380,7 @@ function loginMockUser(email: string, password: string) {
 
   let profiles: any[] = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
 
-  if (email.toLowerCase() === ADMIN_EMAIL) {
+  if (emailOrPhone.toLowerCase() === ADMIN_EMAIL) {
     const adminIdx = profiles.findIndex(
       (p: any) => p.email.toLowerCase() === ADMIN_EMAIL
     );
@@ -358,16 +415,23 @@ function loginMockUser(email: string, password: string) {
     localStorage.setItem("mock_profiles", JSON.stringify(profiles));
   }
 
-  const found = profiles.find(
-    (p: any) => p.email.toLowerCase() === email.toLowerCase()
-  );
+  let found;
+  if (emailOrPhone.includes("@")) {
+    found = profiles.find(
+      (p: any) => p.email.toLowerCase() === emailOrPhone.toLowerCase()
+    );
+  } else {
+    found = profiles.find(
+      (p: any) => p.phone_number === emailOrPhone
+    );
+  }
 
   if (!found) {
-    throw new Error("Account not found. Please register first.");
+    throw new Error("Invalid email/phone number or password.");
   }
 
   if (found.password !== password) {
-    throw new Error("Wrong password.");
+    throw new Error("Invalid email/phone number or password.");
   }
 
   const session: UserSession = {

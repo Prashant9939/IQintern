@@ -28,16 +28,32 @@ export async function serverSignUpUser(
   }
 
   // 2. Check if email already exists
-  const { data: existingUser, error: checkErr } = await supabase
+  const { data: existingEmailUser, error: emailCheckErr } = await supabase
     .from("profiles")
     .select("id")
     .eq("email", email)
     .maybeSingle();
 
-  if (checkErr) throw new Error(`Database error: ${checkErr.message}`);
-  if (existingUser) throw new Error("An account with this email already exists.");
+  if (emailCheckErr) throw new Error(`Database error: ${emailCheckErr.message}`);
 
-  // 3. Hash password & insert — role is always 'student'
+  // 3. Check if phone number already exists
+  const { data: existingPhoneUser, error: phoneCheckErr } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("phone_number", phoneNumber)
+    .maybeSingle();
+
+  if (phoneCheckErr) throw new Error(`Database error: ${phoneCheckErr.message}`);
+
+  if (existingEmailUser && existingPhoneUser) {
+    throw new Error("An account already exists with these credentials.");
+  } else if (existingEmailUser) {
+    throw new Error("An account with this email already exists.");
+  } else if (existingPhoneUser) {
+    throw new Error("An account with this phone number already exists.");
+  }
+
+  // 4. Hash password & insert — role is always 'student'
   const passwordHash = hashPassword(password);
   const { error } = await supabase.from("profiles").insert({
     email,
@@ -55,20 +71,23 @@ export async function serverSignUpUser(
 // LOGIN
 // -------------------------------------------------------------
 // react-doctor-disable-next-line react-doctor/server-auth-actions
-export async function serverLoginUser(email: string, password: string) {
+export async function serverLoginUser(emailOrPhone: string, password: string) {
   if (!supabase) throw new Error("Supabase is not configured.");
 
-  const { data: user, error: fetchErr } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("email", email)
-    .maybeSingle();
+  let query = supabase.from("profiles").select("*");
+  if (emailOrPhone.includes("@")) {
+    query = query.eq("email", emailOrPhone);
+  } else {
+    query = query.eq("phone_number", emailOrPhone);
+  }
+
+  const { data: user, error: fetchErr } = await query.maybeSingle();
 
   if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
-  if (!user) throw new Error("Account not found. Please register first.");
+  if (!user) throw new Error("Invalid email/phone number or password.");
 
   const enteredHash = hashPassword(password);
-  if (user.password_hash !== enteredHash) throw new Error("Wrong password.");
+  if (user.password_hash !== enteredHash) throw new Error("Invalid email/phone number or password.");
 
   return {
     id: user.id,
@@ -171,3 +190,38 @@ export async function createAdminUser(
   if (error) throw new Error(`Admin creation failed: ${error.message}`);
   return { success: true };
 }
+
+// -------------------------------------------------------------
+// FORGOT PASSWORD VERIFICATION & RESET (SERVER ACTIONS)
+// -------------------------------------------------------------
+// react-doctor-disable-next-line react-doctor/server-auth-actions
+export async function serverVerifyEmailAndPhone(email: string, phoneNumber: string) {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const { data: user, error: fetchErr } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .eq("phone_number", phoneNumber)
+    .maybeSingle();
+
+  if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
+  if (!user) throw new Error("Incorrect email or phone number.");
+
+  return { success: true, userId: user.id };
+}
+
+// react-doctor-disable-next-line react-doctor/server-auth-actions
+export async function serverResetPassword(userId: string, newPassword: string) {
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const passwordHash = hashPassword(newPassword);
+  const { error } = await supabase
+    .from("profiles")
+    .update({ password_hash: passwordHash })
+    .eq("id", userId);
+
+  if (error) throw new Error(`Failed to reset password: ${error.message}`);
+  return { success: true };
+}
+

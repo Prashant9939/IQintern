@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loginUser } from "@/lib/supabase/auth";
 import { Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
@@ -14,6 +14,15 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("reason") === "timeout") {
+        setError("You have been logged out due to inactivity.");
+      }
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +37,7 @@ export default function Login() {
     try {
       const res = await loginUser(email, password);
       setSuccess("Logged in successfully! Redirecting...");
-      
+
       setTimeout(() => {
         if (res.user.role === "admin") {
           window.location.href = "/admin/dashboard";
@@ -80,21 +89,21 @@ export default function Login() {
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
-            {/* Email Address */}
+            {/* Email or Phone Number */}
             <div className="space-y-2">
               <label htmlFor="email" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
-                Email Address
+                Email Address or Phone Number
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                  placeholder="student@example.com"
+                  placeholder="Enter email address or phone number"
                 />
               </div>
             </div>
@@ -136,9 +145,7 @@ export default function Login() {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-zinc-400 mt-2 leading-relaxed">
-                Admin login (email: <span className="text-indigo-600 font-bold">admin@skillintern.com</span>, password: <span className="text-indigo-600 font-bold">Shiwam@99</span>)
-              </p>
+
             </div>
 
             <button

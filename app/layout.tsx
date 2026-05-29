@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
+import SessionTimeoutHandler from "@/components/SessionTimeoutHandler";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -34,9 +35,9 @@ export default function RootLayout({
         className="min-h-full flex flex-col bg-slate-50 text-zinc-900 font-sans selection:bg-indigo-500/20 selection:text-indigo-800"
         suppressHydrationWarning
       >
+        <SessionTimeoutHandler />
         {children}
       </body>
     </html>
-
   );
 }

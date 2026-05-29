@@ -8,7 +8,7 @@ create table public.profiles (
   email text not null unique,
   password_hash text not null,
   full_name text not null,
-  phone_number text not null,
+  phone_number text not null unique,
   role text not null check (role in ('student', 'admin')) default 'student',
   university_name text,
   college_name text,
@@ -28,6 +28,10 @@ create table public.profiles (
   profile_completed boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Create database unique indexes for email and phone
+CREATE UNIQUE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);
+CREATE UNIQUE INDEX IF NOT EXISTS profiles_phone_number_idx ON public.profiles (phone_number);
 
 -- 2. INTERNSHIPS TABLE
 create table public.internships (
