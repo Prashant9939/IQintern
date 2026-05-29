@@ -1,0 +1,251 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-outfit), var(--font-inter), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  /* Indigo and violet shades for light mode readability (Modern Blue & Purple) */
+  --color-indigo-400: #3b82f6;
+  --color-indigo-500: #2563eb;
+  --color-indigo-600: #1d4ed8;
+  --color-violet-400: #c084fc;
+  --color-violet-500: #a855f7;
+  --color-violet-600: #9333ea;
+
+  /* Red and Emerald colors for alerts readability in light mode */
+  --color-red-300: #b91c1c;
+  --color-red-400: #ef4444;
+  --color-red-500: #dc2626;
+  --color-emerald-300: #047857;
+  --color-emerald-400: #10b981;
+  --color-emerald-500: #059669;
+
+  --color-brand-purple: #a855f7;
+  --color-brand-indigo: #3b82f6;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Premium Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shine {
+  from {
+    left: -100%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 8s ease-in-out infinite;
+}
+
+/* Glassmorphism Styles for Light Mode - Clean Cards and Soft Shadows */
+.glass-panel {
+  background: #ffffff;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.01);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.06), 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.glass-panel-glow {
+  background: #ffffff;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 15px 35px -10px rgba(168, 85, 247, 0.08), 0 0 15px -3px rgba(59, 130, 246, 0.04);
+}
+
+.glass-card {
+  background: #ffffff;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card:hover {
+  background: #ffffff;
+  border-color: rgba(59, 130, 246, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.08), 0 4px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+/* Radiant BG Grids */
+.bg-grid-pattern {
+  background-size: 50px 50px;
+  background-image:
+    linear-gradient(to right, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+}
+
+.radial-fade {
+  background: radial-gradient(circle at center, transparent 40%, #ffffff 85%);
+}
+
+.glow-glow {
+  box-shadow: 0 0 40px -5px rgba(79, 70, 229, 0.15);
+}
+
+/* Circular progress timer */
+.timer-circle {
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* Global Button Text Color Override to retain white text on filled indigo/violet elements */
+button[class*=" bg-indigo-"],
+button[class^="bg-indigo-"],
+button[class*=" bg-violet-"],
+button[class^="bg-violet-"],
+button[class*=" bg-gradient-"],
+button[class^="bg-gradient-"],
+button[class*=" bg-emerald-"],
+button[class^="bg-emerald-"],
+button[class*=" bg-red-"],
+button[class^="bg-red-"],
+button[class*=" bg-brand-"],
+button[class^="bg-brand-"],
+a[class*=" bg-indigo-"],
+a[class^="bg-indigo-"],
+a[class*=" bg-violet-"],
+a[class^="bg-violet-"],
+a[class*=" bg-gradient-"],
+a[class^="bg-gradient-"],
+a[class*=" bg-brand-"],
+a[class^="bg-brand-"] {
+  color: #ffffff !important;
+}
+
+/* Make sure text elements inside these elements are also white */
+button[class*=" bg-indigo-"] *,
+button[class^="bg-indigo-"] *,
+button[class*=" bg-violet-"] *,
+button[class^="bg-violet-"] *,
+button[class*=" bg-gradient-"] *,
+button[class^="bg-gradient-"] *,
+button[class*=" bg-brand-"] *,
+button[class^="bg-brand-"] *,
+a[class*=" bg-indigo-"] *,
+a[class^="bg-indigo-"] *,
+a[class*=" bg-violet-"] *,
+a[class^="bg-violet-"] *,
+a[class*=" bg-gradient-"] *,
+a[class^="bg-gradient-"] *,
+a[class*=" bg-brand-"] *,
+a[class^="bg-brand-"] * {
+  color: #ffffff !important;
+}
+
+/* Disable default tap highlight on mobile/safari */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Premium micro-animations & click feedbacks */
+button,
+a.cursor-pointer,
+a[class*="bg-indigo-"],
+a[class*="bg-violet-"],
+a[class*="bg-gradient-"],
+a[class*="bg-brand-"],
+label.cursor-pointer {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active:not(:disabled),
+a.cursor-pointer:active,
+a[class*="bg-indigo-"]:active,
+a[class*="bg-violet-"]:active,
+a[class*="bg-gradient-"]:active,
+a[class*="bg-brand-"]:active,
+label.cursor-pointer:active {
+  transform: scale(0.98);
+  opacity: 0.96;
+}
+
+button.border:hover,
+a.border:hover {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+button.active,
+.sidebar-item.active {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
