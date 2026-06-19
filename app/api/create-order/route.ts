@@ -10,12 +10,6 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createPaymentRecord, getPlatformSettings } from "@/lib/supabase/db";
 
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "",
-});
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -66,6 +60,10 @@ export async function POST(request: Request) {
       if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         throw new Error("Razorpay credentials not configured.");
       }
+      const razorpay = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+      });
       order = await razorpay.orders.create(options);
     } catch (razorError: any) {
       console.warn("Razorpay API error, falling back to mock order:", razorError);
