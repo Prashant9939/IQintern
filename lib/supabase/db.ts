@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prefer-const */
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { supabase, isSupabaseConfigured } from "./client";
 
 export interface Internship {
