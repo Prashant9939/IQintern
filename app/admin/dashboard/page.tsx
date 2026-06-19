@@ -6,7 +6,9 @@ import {
   getTestResults, 
   getStudentProfiles,
   getAllProfiles,
-  seedDatabase
+  seedDatabase,
+  getPlatformSettings,
+  savePlatformSettings
 } from "@/lib/supabase/db";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { 
@@ -45,6 +47,28 @@ export default function AdminDashboard() {
   const [seedMsg, setSeedMsg] = useState("");
   const [seedStatus, setSeedStatus] = useState<"success" | "error" | "">("");
   const [dbEmpty, setDbEmpty] = useState(false);
+
+  const [settings, setSettings] = useState({
+    assessment_fee: 150,
+    payments_enabled: true,
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [settingsMsg, setSettingsMsg] = useState("");
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingSettings(true);
+    setSettingsMsg("");
+    try {
+      await savePlatformSettings(settings);
+      setSettingsMsg("Settings updated successfully!");
+      setTimeout(() => setSettingsMsg(""), 3000);
+    } catch (err: any) {
+      setSettingsMsg(err.message || "Failed to update settings.");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   const handleSeed = async () => {
     setSeeding(true);
@@ -89,11 +113,12 @@ export default function AdminDashboard() {
     setMounted(true);
     async function loadStats() {
       try {
-        const [allUsers, students, internships, results] = await Promise.all([
+        const [allUsers, students, internships, results, platformSettings] = await Promise.all([
           getAllProfiles(),
           getStudentProfiles(),
           getInternships(),
           getTestResults(),
+          getPlatformSettings(),
         ]);
 
         const passCount = results.filter((r) => r.passed).length;
@@ -116,6 +141,9 @@ export default function AdminDashboard() {
           totalAttempts: results.length,
           passRate: rate,
         });
+        if (platformSettings) {
+          setSettings(platformSettings);
+        }
       } catch (err) {
         console.error("Error loading admin stats", err);
       } finally {
@@ -250,6 +278,83 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Assessment Pricing Management */}
+      <div className="glass-panel bg-white border border-zinc-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <h3 className="text-base font-bold text-zinc-900 mb-2 flex items-center gap-2">
+          Assessment Pricing Management
+        </h3>
+        <p className="text-zinc-550 text-xs font-light mb-6">
+          Configure the evaluation fee paid by students and toggle payment gateway functionality.
+        </p>
+
+        <form onSubmit={handleSaveSettings} className="space-y-6 max-w-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">
+                Assessment Fee (INR)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={settings.assessment_fee}
+                onChange={(e) =>
+                  setSettings((prev) => ({
+                    ...prev,
+                    assessment_fee: parseInt(e.target.value) || 0,
+                  }))
+                }
+                className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors font-semibold"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">
+                Payment Collection Status
+              </label>
+              <div className="flex items-center gap-3 h-[46px]">
+                <input
+                  type="checkbox"
+                  id="payments_enabled"
+                  checked={settings.payments_enabled}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      payments_enabled: e.target.checked,
+                    }))
+                  }
+                  className="h-4.5 w-4.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                />
+                <label
+                  htmlFor="payments_enabled"
+                  className="text-xs font-bold text-zinc-700 cursor-pointer select-none"
+                >
+                  {settings.payments_enabled
+                    ? "Payments Enabled (Active)"
+                    : "Payments Disabled (Skip)"}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {settingsMsg && (
+            <div className="p-3.5 rounded-xl text-xs bg-indigo-50 border border-indigo-150 text-indigo-700 font-medium">
+              {settingsMsg}
+            </div>
+          )}
+
+          <div className="flex justify-start">
+            <button
+              type="submit"
+              disabled={savingSettings}
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs px-6 py-3 rounded-xl transition-all cursor-pointer shadow-sm shadow-indigo-650/10 active:scale-95"
+            >
+              {savingSettings ? "Saving Settings..." : "Save Platform Settings"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

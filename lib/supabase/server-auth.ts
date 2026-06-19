@@ -1,14 +1,28 @@
 import { supabase } from "./client";
+import bcrypt from "bcryptjs";
 
-// Use Web Crypto API (works on Node.js 18+, Vercel Edge, and all browsers)
+// Use Web Crypto API for legacy hash compatibility
 const SALT = "skillintern-secure-salt-2026";
 
-async function hashPassword(password: string): Promise<string> {
+async function legacyHashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(password + SALT);
   const hashBuffer = await globalThis.crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+}
+
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  if (hash.length === 64 && !hash.startsWith("$2")) {
+    const enteredHash = await legacyHashPassword(password);
+    return enteredHash === hash;
+  }
+  return bcrypt.compare(password, hash);
 }
 
 // -------------------------------------------------------------
@@ -23,6 +37,11 @@ export async function serverSignUpUser(
 ) {
   if (!supabase) throw new Error("Supabase is not configured.");
 
+  // Enforce password size to minimum 7 characters
+  if (!password || password.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
+  }
+
   // 1. Block the reserved admin email from public sign-up
   if (email.toLowerCase() === "admin@skillintern.com") {
     throw new Error("This email address is reserved. Please use a different email.");
@@ -32,7 +51,7 @@ export async function serverSignUpUser(
   const { data: existingEmailUser, error: emailCheckErr } = await supabase
     .from("profiles")
     .select("id")
-    .eq("email", email)
+    .ilike("email", email.trim())
     .maybeSingle();
 
   if (emailCheckErr) throw new Error(`Database error: ${emailCheckErr.message}`);
@@ -77,9 +96,9 @@ export async function serverLoginUser(emailOrPhone: string, password: string) {
 
   let query = supabase.from("profiles").select("*");
   if (emailOrPhone.includes("@")) {
-    query = query.eq("email", emailOrPhone);
+    query = query.ilike("email", emailOrPhone.trim());
   } else {
-    query = query.eq("phone_number", emailOrPhone);
+    query = query.eq("phone_number", emailOrPhone.trim());
   }
 
   const { data: user, error: fetchErr } = await query.maybeSingle();
@@ -87,8 +106,21 @@ export async function serverLoginUser(emailOrPhone: string, password: string) {
   if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
   if (!user) throw new Error("Invalid email/phone number or password.");
 
-  const enteredHash = await hashPassword(password);
-  if (user.password_hash !== enteredHash) throw new Error("Invalid email/phone number or password.");
+  const isValid = await verifyPassword(password, user.password_hash);
+  if (!isValid) throw new Error("Invalid email/phone number or password.");
+
+  // Auto-upgrade legacy hash to bcrypt in the Supabase database
+  if (user.password_hash.length === 64 && !user.password_hash.startsWith("$2")) {
+    try {
+      const bcryptHash = await hashPassword(password);
+      await supabase
+        .from("profiles")
+        .update({ password_hash: bcryptHash })
+        .eq("id", user.id);
+    } catch (upgradeErr) {
+      console.warn("Failed to auto-upgrade legacy password to bcrypt:", upgradeErr);
+    }
+  }
 
   return {
     id: user.id,
@@ -113,7 +145,7 @@ export async function seedAdminAccount() {
     const { data: existing } = await supabase
       .from("profiles")
       .select("id")
-      .eq("email", "admin@skillintern.com")
+      .ilike("email", "admin@skillintern.com")
       .maybeSingle();
 
     if (existing) return { success: true, message: "Admin already exists." };
@@ -150,11 +182,16 @@ export async function createAdminUser(
 ) {
   if (!supabase) throw new Error("Supabase is not configured.");
 
+  // Enforce password size to minimum 7 characters
+  if (!password || password.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
+  }
+
   // Verify caller is admin via the email param (no cookie dependency)
   const { data: callerProfile, error: callerErr } = await supabase
     .from("profiles")
     .select("role")
-    .eq("email", callerEmail)
+    .ilike("email", callerEmail.trim())
     .maybeSingle();
 
   if (callerErr || !callerProfile || callerProfile.role !== "admin") {
@@ -165,7 +202,7 @@ export async function createAdminUser(
   const { data: existing, error: chkErr } = await supabase
     .from("profiles")
     .select("id")
-    .eq("email", newEmail)
+    .ilike("email", newEmail.trim())
     .maybeSingle();
 
   if (chkErr) throw new Error(`Database error: ${chkErr.message}`);
@@ -196,8 +233,8 @@ export async function serverVerifyEmailAndPhone(email: string, phoneNumber: stri
   const { data: user, error: fetchErr } = await supabase
     .from("profiles")
     .select("id")
-    .eq("email", email)
-    .eq("phone_number", phoneNumber)
+    .ilike("email", email.trim())
+    .eq("phone_number", phoneNumber.trim())
     .maybeSingle();
 
   if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
@@ -209,6 +246,11 @@ export async function serverVerifyEmailAndPhone(email: string, phoneNumber: stri
 // react-doctor-disable-next-line react-doctor/server-auth-actions
 export async function serverResetPassword(userId: string, newPassword: string) {
   if (!supabase) throw new Error("Supabase is not configured.");
+
+  // Enforce password size to minimum 7 characters
+  if (!newPassword || newPassword.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
+  }
 
   const passwordHash = await hashPassword(newPassword);
   const { error } = await supabase

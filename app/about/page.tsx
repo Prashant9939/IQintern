@@ -40,7 +40,7 @@ export default function About() {
 
       <Navbar />
 
-      <main className="flex-grow mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow mx-auto max-w-7xl px-4 pt-28 pb-16 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Our Story</span>
@@ -80,7 +80,7 @@ export default function About() {
               To claim a certification, students must take a proctored, timed multiple-choice questionnaire assessment test. The test evaluates practical code comprehension, design guidelines, and system architectures.
             </p>
             <p>
-              On passing (70% score or higher), the platform generates a unique certificate containing the student's name, test date, and unique validation code. A scorecard is also produced containing their detailed test metadata, ready for resume insertion or LinkedIn sharing.
+              On passing (40% score or higher), the platform generates a unique certificate containing the student's name, test date, and unique validation code. A scorecard is also produced containing their detailed test metadata, ready for resume insertion or LinkedIn sharing.
             </p>
           </div>
         </div>

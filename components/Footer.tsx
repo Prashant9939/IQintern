@@ -1,19 +1,5 @@
 import Link from "next/link";
-import { 
-  Award, 
-  ShieldCheck, 
-  Zap, 
-  Briefcase, 
-  Globe, 
-  Smartphone, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  CreditCard, 
-  Wallet, 
-  Landmark,
-  GraduationCap
-} from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 // Inline SVG brand icons since lucide-react deprecated them in v0.400+
 const LinkedInIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -62,337 +48,165 @@ const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function Footer() {
-  const featureBadges = [
-    { text: "Industry Certified", icon: GraduationCap, color: "text-amber-500 bg-amber-50 border-amber-100" },
-    { text: "Secure Platform", icon: ShieldCheck, color: "text-indigo-500 bg-indigo-50 border-indigo-100" },
-    { text: "Instant Access", icon: Zap, color: "text-violet-500 bg-violet-50 border-violet-100" },
-    { text: "Internship Experience", icon: Briefcase, color: "text-emerald-500 bg-emerald-50 border-emerald-100" },
-    { text: "Expert Guidance", icon: Globe, color: "text-blue-500 bg-blue-50 border-blue-100" },
-    { text: "Mobile Friendly", icon: Smartphone, color: "text-rose-500 bg-rose-50 border-rose-100" }
-  ];
-
-  const paymentMethods = [
-    { name: "Credit Cards", icon: CreditCard },
-    { name: "Debit Cards", icon: CreditCard },
-    { name: "UPI", icon: Smartphone },
-    { name: "Net Banking", icon: Landmark },
-    { name: "Wallet", icon: Wallet },
-    { name: "EMI", icon: Award }
-  ];
-
   return (
-    <footer className="w-full bg-gradient-to-b from-white via-zinc-50/50 to-zinc-100/90 border-t border-zinc-200/80 pt-16 pb-8 mt-auto shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.03)] relative overflow-hidden">
-      {/* Background radial glow */}
-      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 left-0 h-80 w-80 rounded-full bg-violet-500/5 blur-[100px] pointer-events-none" />
+    <footer className="w-full bg-[linear-gradient(to_right,#3a6073,#16222a)] text-slate-100 border-t border-white/10 pt-24 pb-16 mt-auto relative overflow-hidden rounded-t-[32px] md:rounded-t-[48px]">
+      {/* Top glowing line overlay */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
-        
-        {/* Main Grid: Branding and Link Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
-          
-          {/* Brand Info (Col span 4) */}
-          <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="flex items-center gap-2 font-bold text-lg text-zinc-900 group w-fit">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white font-black group-hover:scale-105 transition-transform shadow-sm">
+      {/* Background radial glow */}
+      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-0 h-80 w-80 rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+          {/* Brand Info Column */}
+          <div className="lg:col-span-4 space-y-5">
+            <Link href="/" className="flex items-center gap-2.5 font-bold text-xl text-white group w-fit">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 font-extrabold text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-all">
                 SI
               </div>
-              <span className="text-xl font-extrabold tracking-tight">
-                Skill<span className="text-indigo-600 font-black">Intern</span>
+              <span className="text-xl font-extrabold tracking-tight text-white">
+                Skill<span className="text-sky-200 font-black">Intern</span>
               </span>
             </Link>
             
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
-                Empowering Students, Building Future Careers
-              </p>
-              <p className="text-[11px] text-zinc-400 font-medium leading-none">
-                A Professional Internship & Certification Platform
-              </p>
-            </div>
-            
-            <p className="text-zinc-500 text-xs sm:text-sm font-light leading-relaxed">
-              SkillIntern helps students gain practical industry exposure through internship programs, assessments, certification, and career-focused learning experiences across multiple domains.
+            <p className="text-sm text-slate-200 font-light leading-relaxed max-w-sm">
+              Empowering candidates with tamper-proof practical credentials verified by secure database systems.
             </p>
 
-            {/* Social Icons with custom borders & hover gradients */}
-            <div className="flex gap-2.5 pt-2">
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="h-8.5 w-8.5 rounded-xl border border-zinc-200 bg-white text-zinc-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50/30 flex items-center justify-center transition-all cursor-pointer"
-                title="LinkedIn"
-              >
-                <LinkedInIcon className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://github.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="h-8.5 w-8.5 rounded-xl border border-zinc-200 bg-white text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 flex items-center justify-center transition-all cursor-pointer"
-                title="GitHub"
-              >
-                <GitHubIcon className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="h-8.5 w-8.5 rounded-xl border border-zinc-200 bg-white text-zinc-500 hover:text-sky-500 hover:border-sky-200 hover:bg-sky-50/30 flex items-center justify-center transition-all cursor-pointer"
-                title="Twitter"
-              >
-                <TwitterIcon className="h-4 w-4" />
-              </a>
-              <a 
-                href="mailto:support@skillintern.com" 
-                className="h-8.5 w-8.5 rounded-xl border border-zinc-200 bg-white text-zinc-500 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50/30 flex items-center justify-center transition-all cursor-pointer"
-                title="Email Support"
-              >
-                <Mail className="h-4 w-4" />
-              </a>
-              <a 
-                href="tel:+919939503289" 
-                className="h-8.5 w-8.5 rounded-xl border border-zinc-200 bg-white text-zinc-500 hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50/30 flex items-center justify-center transition-all cursor-pointer"
-                title="Phone Support"
-              >
-                <Phone className="h-4 w-4" />
-              </a>
+            {/* Glowing Student Counter Badge */}
+            <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 px-3.5 py-1.5 rounded-full mt-2 shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+              </span>
+              <span className="text-[11px] font-bold text-emerald-300 uppercase tracking-wider">
+                24,000+ Students Enrolled
+              </span>
             </div>
           </div>
 
-          {/* Links Column 1: Programs (Col span 2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
+          {/* Programs Column */}
+          <div className="lg:col-span-2 lg:col-start-6 space-y-4 text-left">
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
               Programs
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               <li>
-                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Frontend Developer
+                <Link href="/internships" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Internship Tracks
                 </Link>
               </li>
               <li>
-                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Backend Engineer
+                <Link href="/student/dashboard" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  UI/UX Product Designer
+                <Link href="/#verify" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Certificate Verification
                 </Link>
               </li>
               <li>
-                <Link href="/internships" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Full Stack Tracks
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Links Column 2: Support (Col span 2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
-              Support
-            </h4>
-            <ul className="space-y-2.5">
-              <li>
-                <Link href="/#faqs" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  FAQs & Help
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Contact Support
-                </Link>
-              </li>
-              <li>
-                <Link href="/#verify" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Secure Validation
-                </Link>
-              </li>
-              <li>
-                <Link href="/student/dashboard" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Candidate Dashboard
+                <Link href="/#faqs" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  FAQs
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Links Column 3: Colleges (Col span 2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
-              Colleges
+          {/* Company Column */}
+          <div className="lg:col-span-2 space-y-4 text-left">
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
+              Company
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               <li>
-                <Link href="/contact" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Partner Partnerships
+                <Link href="/about" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="/auth/login" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Faculty Portal
+                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Contact
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Cohort Metrics
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Institutional Plans
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Links Column 4: Legal (Col span 2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200/60 pb-2">
-              Legal
-            </h4>
-            <ul className="space-y-2.5">
-              <li>
-                <Link href="/#privacy" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                <Link href="/" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/#terms" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
+                <Link href="/" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
                   Terms & Conditions
                 </Link>
               </li>
-              <li>
-                <Link href="/#refund" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Refund Policy
-                </Link>
+            </ul>
+          </div>
+
+          {/* Contact Column */}
+          <div className="lg:col-span-3 space-y-4 text-left">
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
+              Contact
+            </h4>
+            <ul className="space-y-3.5 text-[15px] text-slate-200 font-normal">
+              <li className="flex items-center gap-2.5">
+                <Mail className="h-4.5 w-4.5 text-sky-200 shrink-0" />
+                <a href="mailto:support@skillintern.com" className="hover:text-white transition-colors duration-200 truncate">
+                  support@skillintern.com
+                </a>
               </li>
-              <li>
-                <Link href="/#cookies" className="text-xs text-zinc-500 hover:text-indigo-600 font-medium transition-colors cursor-pointer">
-                  Cookie Policy
-                </Link>
+              <li className="flex items-center gap-2.5">
+                <Phone className="h-4.5 w-4.5 text-sky-200 shrink-0" />
+                <a href="tel:+919939503289" className="hover:text-white transition-colors duration-200">
+                  +91 9939503289
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MapPin className="h-4.5 w-4.5 text-sky-200 shrink-0 mt-0.5" />
+                <span className="text-slate-200">Bhojpur, Bihar, India</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <hr className="border-zinc-200/60" />
-
-        {/* Feature Badges & Get In Touch Double Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Modern Rounded Feature Badges (Col span 7) */}
-          <div className="lg:col-span-7 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">
-              Why SkillIntern?
-            </h4>
-            <div className="flex flex-wrap gap-2.5">
-              {featureBadges.map((badge, idx) => {
-                const Icon = badge.icon;
-                return (
-                  <div 
-                    key={idx} 
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-bold shadow-sm transition-all hover:-translate-y-0.5 cursor-default ${badge.color}`}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    {badge.text}
-                  </div>
-                );
-              })}
-            </div>
+        {/* Bottom Bar: Copyright & Socials */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5 pt-8 mt-16">
+          <div className="text-slate-300 text-sm tracking-tight text-center md:text-left">
+            © 2026 SkillIntern. All rights reserved.
           </div>
 
-          {/* Contact Details & Trust Indicators (Col span 5) */}
-          <div className="lg:col-span-5 space-y-4">
-            <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">
-              Get In Touch & Security
-            </h4>
-            
-            {/* Modern Card-Style Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {/* Phone & Email Card */}
-              <div className="bg-white/80 backdrop-blur border border-zinc-200/80 p-4 rounded-2xl shadow-sm hover:border-indigo-200 transition-all flex flex-col gap-2">
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider block">Direct Contact</span>
-                <a href="mailto:support@skillintern.com" className="text-xs text-zinc-700 hover:text-indigo-600 font-bold flex items-center gap-1.5 transition-colors">
-                  <Mail className="h-3.5 w-3.5 text-indigo-500" />
-                  support@skillintern.com
-                </a>
-                <a href="tel:+919939503289" className="text-xs text-zinc-700 hover:text-indigo-600 font-bold flex items-center gap-1.5 transition-colors">
-                  <Phone className="h-3.5 w-3.5 text-emerald-500" />
-                  +91 9939503289
-                </a>
-              </div>
-
-              {/* Address & Trust Indicators Card */}
-              <div className="bg-white/80 backdrop-blur border border-zinc-200/80 p-4 rounded-2xl shadow-sm hover:border-indigo-200 transition-all flex flex-col gap-2">
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider block">Office & Trust</span>
-                <span className="text-xs text-zinc-700 font-bold flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-rose-500 shrink-0" />
-                  Bhojpur, Bihar, India
-                </span>
-                <div className="flex gap-2 pt-1 border-t border-zinc-100 mt-1">
-                  <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
-                    ✓ 100% Secure
-                  </span>
-                  <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded">
-                    ★ Industry Ready
-                  </span>
-                </div>
-              </div>
-            </div>
+          {/* Social Icons */}
+          <div className="flex items-center gap-4">
+            <a 
+              href="https://linkedin.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
+              title="LinkedIn"
+            >
+              <LinkedInIcon className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
+              title="GitHub"
+            >
+              <GitHubIcon className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://twitter.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
+              title="Twitter"
+            >
+              <TwitterIcon className="h-5 w-5" />
+            </a>
           </div>
         </div>
-
-        {/* Divider */}
-        <hr className="border-zinc-200/60" />
-
-        {/* Bottom Section: Copyright, Payments, Counter */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-2">
-          
-          {/* Copyright Info */}
-          <div className="space-y-1 text-center md:text-left">
-            <p className="text-xs font-bold text-zinc-800">
-              © 2026 SkillIntern. All rights reserved.
-            </p>
-            <p className="text-[10px] text-zinc-400 font-light leading-none">
-              Designed for modern internship and certification experiences.
-            </p>
-          </div>
-
-          {/* Payment Methods */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mr-1">Supported Payments:</span>
-            {paymentMethods.map((pay, idx) => {
-              const PayIcon = pay.icon;
-              return (
-                <div 
-                  key={idx} 
-                  className="flex items-center gap-1 bg-white border border-zinc-200/80 px-2.5 py-1 rounded-lg text-[9px] font-bold text-zinc-600 shadow-sm cursor-default hover:border-zinc-350 transition-colors"
-                  title={pay.name}
-                >
-                  <PayIcon className="h-3 w-3 text-zinc-400" />
-                  {pay.name}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Glowing Student Counter Badge */}
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
-              24,000+ Students Enrolled
-            </span>
-          </div>
-
-        </div>
-
       </div>
     </footer>
   );

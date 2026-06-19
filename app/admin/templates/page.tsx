@@ -5,6 +5,7 @@ import {
   getDocumentTemplates,
   saveDocumentTemplate,
   DocumentTemplate,
+  deleteDocumentTemplate,
 } from "@/lib/supabase/db";
 import {
   FileText,
@@ -15,6 +16,8 @@ import {
   Edit3,
   Upload,
   X,
+  Trash2,
+  Plus,
 } from "lucide-react";
 
 export default function AdminTemplates() {
@@ -28,6 +31,119 @@ export default function AdminTemplates() {
 
   // Action loaders
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  // Add Template Modal State
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newCode, setNewCode] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [addingTemplate, setAddingTemplate] = useState(false);
+
+  // Preview Modal State
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewHtml, setPreviewHtml] = useState("");
+
+  const DEFAULT_BOILERPLATE = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Document Template</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #4f46e5; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    p { font-size: 14px; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Document Title</h1>
+    <p>Student Name: <strong>{{STUDENT_NAME}}</strong></p>
+    <p>College Name: <strong>{{COLLEGE_NAME}}</strong></p>
+    <p>Internship Track: <strong>{{INTERNSHIP_TITLE}}</strong></p>
+  </div>
+</body>
+</html>`;
+
+  const handleOpenAddModal = () => {
+    setNewName("");
+    setNewCode("");
+    setNewContent(DEFAULT_BOILERPLATE);
+    setShowAddModal(true);
+  };
+
+  const handleAddTemplateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName || !newCode || !newContent) {
+      alert("Please fill in all template fields.");
+      return;
+    }
+    const cleanCode = newCode.trim().toLowerCase().replace(/\s+/g, "_");
+    setAddingTemplate(true);
+    try {
+      await saveDocumentTemplate(cleanCode, newContent, true, newName);
+      setShowAddModal(false);
+      await loadData();
+      alert("Template successfully created!");
+    } catch (err) {
+      console.error("Failed to create template:", err);
+      alert("Failed to create template.");
+    } finally {
+      setAddingTemplate(false);
+    }
+  };
+
+  const handleDeleteTemplate = async (code: string) => {
+    if (["offer_letter", "certificate", "marksheet", "project_report"].includes(code)) {
+      alert("Core templates cannot be deleted because they are essential for student graduation workflows.");
+      return;
+    }
+    if (!confirm(`Are you sure you want to permanently delete the template "${code}"?`)) {
+      return;
+    }
+    setUpdatingId(code);
+    try {
+      await deleteDocumentTemplate(code);
+      await loadData();
+      alert("Template deleted successfully.");
+    } catch (err) {
+      console.error("Failed to delete template:", err);
+      alert("Error deleting template.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handlePreviewTemplate = (tpl: DocumentTemplate) => {
+    const dummyValues: Record<string, string> = {
+      "{{STUDENT_NAME}}": "Rahul Sharma",
+      "{{NAME}}": "Rahul Sharma",
+      "{{ROLL_NUMBER}}": "SI-2026-CS-892",
+      "{{roll_number}}": "SI-2026-CS-892",
+      "{{COLLEGE_NAME}}": "Indian Institute of Technology (IIT)",
+      "{{DEPARTMENT}}": "Information Technology",
+      "{{SEMESTER}}": "8th Semester",
+      "{{COURSE}}": "Computer Science & Engineering",
+      "{{INTERNSHIP_TITLE}}": "Full-Stack Web Development",
+      "{{SCORE}}": "94%",
+      "{{GRADE}}": "A+",
+      "{{COMPLETION_DATE}}": "July 29, 2026",
+      "{{JOINING_DATE}}": "July 01, 2026",
+      "{{VERIFICATION_ID}}": "SI-2026-REACT-892",
+      "{{DURATION}}": "120 Hrs"
+    };
+
+    let output = tpl.html_content;
+    for (const [placeholder, val] of Object.entries(dummyValues)) {
+      const regex = new RegExp(placeholder, "g");
+      output = output.replace(regex, val);
+    }
+
+    setPreviewHtml(output);
+    setPreviewTitle(tpl.name);
+    setShowPreviewModal(true);
+  };
 
   async function loadData() {
     setLoading(true);
@@ -125,15 +241,24 @@ export default function AdminTemplates() {
       {/* Header Banner */}
       <div>
         <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">Document Automation Templates</h1>
-        <p className="text-zinc-500 text-xs sm:text-sm font-light mt-1">
+        <p className="text-zinc-550 text-xs sm:text-sm font-light mt-1">
           Configure, edit, and manage client-side rendered student document templates (Offer Letters, Certificates, Reports).
         </p>
       </div>
 
       <div className="space-y-6 animate-fade-in">
         <div className="flex justify-between items-center">
-          <h3 className="text-base font-bold text-zinc-800">HTML Document Templates</h3>
-          <span className="text-[10px] text-zinc-400 font-light">Manage client-side rendered student documents</span>
+          <div>
+            <h3 className="text-base font-bold text-zinc-800">HTML Document Templates</h3>
+            <p className="text-[10px] text-zinc-400 font-light mt-0.5">Manage client-side rendered student documents</p>
+          </div>
+          <button
+            onClick={handleOpenAddModal}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-605 hover:bg-indigo-700 active:scale-95 transition-all text-white font-bold text-xs cursor-pointer shadow-md shadow-indigo-600/10"
+          >
+            <Plus className="h-4 w-4" />
+            Add Template
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,35 +270,34 @@ export default function AdminTemplates() {
               <div>
                 <div className="flex items-start justify-between mb-4">
                   <span className="text-[9px] text-zinc-400 font-mono">CODE: {tpl.code}</span>
-                  <button
-                    onClick={() => handleToggleHtmlVisibility(tpl)}
-                    disabled={updatingId !== null}
-                    title={tpl.is_visible ? "Click to Hide from Students" : "Click to Show to Students"}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer hover:shadow-sm ${
-                      tpl.is_visible
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 active:bg-emerald-200 active:scale-95"
-                        : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-700 active:bg-zinc-200 active:scale-95"
-                    }`}
-                  >
-                    {tpl.is_visible ? (
-                      <>
-                        <Eye className="h-3 w-3" /> Visible
-                      </>
-                    ) : (
-                      <>
-                        <EyeOff className="h-3 w-3" /> Hidden
-                      </>
+                  <div className="flex items-center gap-1.5">
+                    {!["offer_letter", "certificate", "marksheet", "project_report"].includes(tpl.code) && (
+                      <button
+                        onClick={() => handleDeleteTemplate(tpl.code)}
+                        className="p-1 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-755 transition-colors cursor-pointer animate-fade-in"
+                        title="Delete Template"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     )}
-                  </button>
+                    <button
+                      onClick={() => handleToggleHtmlVisibility(tpl)}
+                      disabled={updatingId !== null}
+                      title={tpl.is_visible ? "Click to Hide from Students" : "Click to Show to Students"}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer hover:shadow-sm ${
+                        tpl.is_visible
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 active:bg-emerald-200 active:scale-95"
+                          : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-700 active:bg-zinc-200 active:scale-95"
+                      }`}
+                    >
+                      {tpl.is_visible ? "Visible" : "Hidden"}
+                    </button>
+                  </div>
                 </div>
 
                 <h4 className="text-base font-bold text-zinc-900 mb-1">{tpl.name}</h4>
-                <p className="text-zinc-550 text-xs font-light mb-4 leading-relaxed">
-                  {tpl.code === "offer_letter"
-                    ? "Customizable HTML layout for internship offer letters."
-                    : tpl.code === "certificate"
-                    ? "Verified certificate layout featuring dynamic name, grade and date."
-                    : "Multi-page A4 landscape or portrait project summary report."}
+                <p className="text-zinc-550 text-xs font-light mb-4 leading-relaxed line-clamp-2 min-h-[32px]">
+                  Customizable HTML layout for student {tpl.name}.
                 </p>
                 
                 <p className="text-zinc-400 text-[9px] font-light mb-4 flex items-center gap-1">
@@ -183,30 +307,40 @@ export default function AdminTemplates() {
               </div>
 
               <div className="border-t border-zinc-100 pt-4 flex gap-2 justify-between items-center">
-                <label className="flex items-center gap-1.5 border border-zinc-250 bg-zinc-50 hover:bg-indigo-50/60 hover:text-indigo-700 hover:border-indigo-150 active:bg-indigo-100 active:scale-95 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
-                  <Upload className="h-3.5 w-3.5" />
-                  Replace File
-                  <input
-                    type="file"
-                    accept=".html"
-                    disabled={updatingId !== null}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleReplaceHtmlTemplate(tpl.code, file);
-                      }
-                    }}
-                    className="hidden"
-                  />
-                </label>
-
                 <button
-                  onClick={() => handleOpenHtmlEditor(tpl)}
-                  className="flex items-center gap-1 bg-indigo-50 border border-indigo-150 hover:bg-indigo-600 hover:text-white active:bg-indigo-750 active:scale-95 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
+                  onClick={() => handlePreviewTemplate(tpl)}
+                  className="flex items-center gap-1.5 border border-zinc-250 bg-zinc-50 hover:bg-zinc-150 hover:text-zinc-800 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
                 >
-                  <Edit3 className="h-3.5 w-3.5" />
-                  Edit HTML
+                  <Eye className="h-3.5 w-3.5 text-zinc-500" />
+                  Preview
                 </button>
+
+                <div className="flex gap-2">
+                  <label className="flex items-center gap-1.5 border border-zinc-250 bg-zinc-50 hover:bg-indigo-50/60 hover:text-indigo-700 hover:border-indigo-150 active:bg-indigo-100 active:scale-95 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
+                    <Upload className="h-3.5 w-3.5" />
+                    Replace
+                    <input
+                      type="file"
+                      accept=".html"
+                      disabled={updatingId !== null}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleReplaceHtmlTemplate(tpl.code, file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+
+                  <button
+                    onClick={() => handleOpenHtmlEditor(tpl)}
+                    className="flex items-center gap-1 bg-indigo-50 border border-indigo-150 hover:bg-indigo-600 hover:text-white active:bg-indigo-750 active:scale-95 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
+                  >
+                    <Edit3 className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -260,7 +394,7 @@ export default function AdminTemplates() {
                   setEditingHtmlTemplate(null);
                   setEditingHtmlContent("");
                 }}
-                className="rounded-xl border border-zinc-250 bg-white hover:bg-zinc-100 active:bg-zinc-200 active:scale-95 px-4 py-2.5 text-xs font-bold text-zinc-550 hover:text-zinc-850 transition-all cursor-pointer animate-fade-in"
+                className="rounded-xl border border-zinc-250 bg-white hover:bg-zinc-105 active:bg-zinc-200 active:scale-95 px-4 py-2.5 text-xs font-bold text-zinc-550 hover:text-zinc-850 transition-all cursor-pointer animate-fade-in"
               >
                 Cancel
               </button>
@@ -278,6 +412,112 @@ export default function AdminTemplates() {
                   "Save Changes"
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADD DOCUMENT TEMPLATE MODAL */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-2xl bg-white rounded-3xl flex flex-col overflow-hidden shadow-2xl border border-zinc-200">
+            <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-zinc-200 bg-zinc-50">
+              <div className="flex items-center gap-2">
+                <Plus className="h-5 w-5 text-indigo-650" />
+                <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wider">Add Document Template</h3>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddTemplateSubmit} className="flex-grow flex flex-col p-6 space-y-4 overflow-hidden bg-zinc-50">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Template Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-805 placeholder-zinc-400 transition-colors"
+                    placeholder="e.g. Recommendation Letter"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Template Code</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCode}
+                    onChange={(e) => setNewCode(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-850 placeholder-zinc-400 transition-colors"
+                    placeholder="e.g. recommendation_letter"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-2 min-h-[300px]">
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">HTML Boilerplate Content</label>
+                <textarea
+                  value={newContent}
+                  onChange={(e) => setNewContent(e.target.value)}
+                  className="flex-grow w-full font-mono text-xs p-5 rounded-2xl border border-zinc-250 bg-zinc-950 text-emerald-400 focus:outline-none focus:border-indigo-500 shadow-inner resize-none overflow-y-auto leading-relaxed"
+                  spellCheck="false"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="rounded-xl border border-zinc-250 bg-white hover:bg-zinc-100 px-4 py-2.5 text-xs font-bold text-zinc-550 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addingTemplate}
+                  className="flex items-center gap-1.5 rounded-xl bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 text-xs transition-all disabled:opacity-50 cursor-pointer shadow-sm shadow-indigo-650/10"
+                >
+                  {addingTemplate ? "Creating..." : "Create Template"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* DOCUMENT PREVIEW MODAL */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-5xl h-[85vh] bg-white rounded-3xl flex flex-col overflow-hidden shadow-2xl border border-zinc-200">
+            <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-zinc-200 bg-zinc-50">
+              <div className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-indigo-600" />
+                <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wider">{previewTitle} Mock Preview</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  setPreviewHtml("");
+                }}
+                className="rounded-xl border border-zinc-250 bg-white hover:bg-zinc-150 text-xs font-bold text-zinc-650 px-4 py-2 transition-all cursor-pointer"
+              >
+                Close Preview
+              </button>
+            </div>
+
+            <div className="flex-grow bg-zinc-100 p-4 flex items-center justify-center overflow-hidden">
+              <iframe
+                title="Document Template Preview"
+                srcDoc={previewHtml}
+                className="w-full h-full border border-zinc-200 bg-white rounded-2xl shadow-inner"
+                sandbox="allow-modals allow-scripts allow-same-origin allow-downloads"
+              />
             </div>
           </div>
         </div>

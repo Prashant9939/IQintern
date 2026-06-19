@@ -39,7 +39,7 @@ create table public.internships (
   title text not null,
   description text not null,
   requirements text[] default '{}'::text[],
-  duration text not null default '3 Months',
+  duration text not null default '120 Hrs',
   category text not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -156,6 +156,36 @@ create table public.document_templates (
 
 -- Disable Row Level Security (RLS)
 alter table public.document_templates disable row level security;
+
+
+-- 8. PAYMENTS TABLE
+create table public.payments (
+  id uuid default gen_random_uuid() primary key,
+  student_id uuid references public.profiles(id) on delete cascade not null,
+  internship_id text not null,
+  amount integer not null, -- in paise (15000 paise for 150 INR)
+  status text not null default 'pending', -- pending, completed, failed
+  razorpay_order_id text unique,
+  razorpay_payment_id text,
+  razorpay_signature text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Disable Row Level Security (RLS) on payments table
+alter table public.payments disable row level security;
+
+
+-- 9. PLATFORM SETTINGS TABLE
+create table public.platform_settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Disable Row Level Security (RLS) on settings table
+alter table public.platform_settings disable row level security;
+
+
 
 
 

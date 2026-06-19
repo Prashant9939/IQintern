@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { getAllProfiles, getTestResults, TestResult, deleteProfile } from "@/lib/supabase/db";
+import { getAllProfiles, getTestResults, TestResult, deleteProfile, updateStudentProfile, getAllPayments, getInternships, updateTestResult, Internship, Payment } from "@/lib/supabase/db";
 import { getCurrentUser, createAdminUser, UserSession } from "@/lib/supabase/auth";
 import {
   Users,
@@ -21,6 +21,8 @@ import {
   EyeOff,
   Lock,
   Trash2,
+  Edit,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -28,6 +30,8 @@ export default function RegisteredStudents() {
   const currentUserRef = useRef<UserSession | null>(null);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [results, setResults] = useState<TestResult[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [internships, setInternships] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"profiles" | "results">("profiles");
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,8 +42,102 @@ export default function RegisteredStudents() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
+  // Override Result state
+  const [editingResult, setEditingResult] = useState<TestResult | null>(null);
+  const [updatingResult, setUpdatingResult] = useState(false);
+  const [resultMsg, setResultMsg] = useState("");
+
   // Add Admin modal state
   const [showAddAdmin, setShowAddAdmin] = useState(false);
+
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editForm, setEditForm] = useState({
+    full_name: "",
+    email: "",
+    phone_number: "",
+  });
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [profileMsg, setProfileMsg] = useState("");
+
+  useEffect(() => {
+    if (selectedProfile) {
+      setEditForm({
+        full_name: selectedProfile.full_name || "",
+        email: selectedProfile.email || "",
+        phone_number: selectedProfile.phone_number || "",
+      });
+      setIsEditingProfile(false);
+      setProfileMsg("");
+    }
+  }, [selectedProfile]);
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProfile) return;
+    setUpdatingProfile(true);
+    setProfileMsg("");
+    try {
+      const res = await updateStudentProfile(selectedProfile.id, {
+        full_name: editForm.full_name,
+        email: editForm.email,
+        phone_number: editForm.phone_number,
+      });
+      if (res.success) {
+        setProfileMsg("Profile updated successfully!");
+        setProfiles((prev) =>
+          prev.map((p) => (p.id === selectedProfile.id ? { ...p, ...res.data } : p))
+        );
+        setSelectedProfile((prev: any) => ({ ...prev, ...res.data }));
+        setTimeout(() => {
+          setIsEditingProfile(false);
+          setProfileMsg("");
+        }, 1500);
+      } else {
+        setProfileMsg("Failed to update profile.");
+      }
+    } catch (err: any) {
+      setProfileMsg(err.message || "An error occurred while updating profile.");
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
+
+  const handleSaveResult = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingResult) return;
+    setUpdatingResult(true);
+    setResultMsg("");
+    try {
+      const score = Number(editingResult.score);
+      const total = Number(editingResult.total_questions);
+      const pct = total > 0 ? Number(((score / total) * 100).toFixed(2)) : 0;
+      const passed = editingResult.passed;
+
+      const res = await updateTestResult(editingResult.id, {
+        score,
+        total_questions: total,
+        percentage: pct,
+        passed,
+      });
+
+      if (res) {
+        setResultMsg("Test result updated successfully!");
+        setResults((prev) =>
+          prev.map((r) => (r.id === editingResult.id ? { ...r, ...res } : r))
+        );
+        setTimeout(() => {
+          setEditingResult(null);
+          setResultMsg("");
+        }, 1500);
+      } else {
+        setResultMsg("Failed to update test result.");
+      }
+    } catch (err: any) {
+      setResultMsg(err.message || "An error occurred while updating test result.");
+    } finally {
+      setUpdatingResult(false);
+    }
+  };
 
   const handleDeleteUser = async () => {
     if (!profileToDelete) return;
@@ -60,6 +158,7 @@ export default function RegisteredStudents() {
       setDeleting(false);
     }
   };
+
   const [adminForm, setAdminForm] = useState({
     fullName: "",
     email: "",
@@ -75,14 +174,18 @@ export default function RegisteredStudents() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [user, profileList, testLogs] = await Promise.all([
+        const [user, profileList, testLogs, paymentList, internshipList] = await Promise.all([
           getCurrentUser(),
           getAllProfiles(),
           getTestResults(),
+          getAllPayments(),
+          getInternships(),
         ]);
         currentUserRef.current = user;
         setProfiles(profileList);
         setResults(testLogs);
+        setPayments(paymentList);
+        setInternships(internshipList);
       } catch (err) {
         console.error("Failed to load student logs", err);
       } finally {
@@ -119,6 +222,16 @@ export default function RegisteredStudents() {
     } finally {
       setAdminCreating(false);
     }
+  };
+
+  const getSelectedInternshipsForStudent = (studentId: string) => {
+    const completedPayments = payments.filter((p) => p.student_id === studentId && p.status === "completed");
+    if (completedPayments.length === 0) return "None";
+    const titles = completedPayments.map((p) => {
+      const track = internships.find((i) => i.id === p.internship_id);
+      return track ? track.title : p.internship_id;
+    });
+    return Array.from(new Set(titles)).join(", ");
   };
 
   const students = profiles.filter((p) => p.role === "student");
@@ -242,6 +355,7 @@ export default function RegisteredStudents() {
                   <th className="px-5 py-4">Email</th>
                   <th className="px-5 py-4">Phone</th>
                   <th className="px-5 py-4">Course / Department</th>
+                  <th className="px-5 py-4">Selected Internship(s)</th>
                   <th className="px-5 py-4">Role</th>
                   <th className="px-5 py-4">Registered</th>
                   <th className="px-5 py-4 text-right">Actions</th>
@@ -277,6 +391,9 @@ export default function RegisteredStudents() {
                         <BookOpen className="h-3.5 w-3.5 text-indigo-550 shrink-0" />
                         <span className="max-w-[160px] truncate font-medium">{profile.department_stream || "N/A"}</span>
                       </span>
+                    </td>
+                    <td className="px-5 py-4 font-bold text-zinc-900">
+                      {profile.role === "admin" ? "N/A" : getSelectedInternshipsForStudent(profile.id)}
                     </td>
                     <td className="px-5 py-4">
                       {profile.role === "admin" ? (
@@ -357,7 +474,7 @@ export default function RegisteredStudents() {
                         <span className="text-zinc-350 text-[10px] italic">N/A</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">{res.score} / {res.total_questions}</td>
+                    <td className="px-6 py-4 font-bold text-zinc-800">{res.score} / {res.total_questions}</td>
                     <td className="px-6 py-4 text-indigo-650 font-bold">{res.percentage}%</td>
                     <td className="px-6 py-4">
                       {res.passed ? (
@@ -372,13 +489,25 @@ export default function RegisteredStudents() {
                     </td>
                     <td className="px-6 py-4 text-zinc-400">{new Date(res.completed_at).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/student/results/${res.id}`}
-                        target="_blank"
-                        className="text-indigo-600 hover:text-indigo-700 font-bold transition-colors"
-                      >
-                        Inspect Result
-                      </Link>
+                      <div className="flex justify-end items-center gap-3">
+                        <Link
+                          href={`/student/results/${res.id}`}
+                          target="_blank"
+                          className="text-indigo-600 hover:text-indigo-700 font-bold transition-colors"
+                        >
+                          Inspect
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setEditingResult(res);
+                            setResultMsg("");
+                          }}
+                          className="inline-flex items-center gap-1 text-xs text-indigo-650 hover:text-indigo-800 font-bold cursor-pointer"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                          Override
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -544,48 +673,155 @@ export default function RegisteredStudents() {
             </div>
 
             {/* Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2">
-              {[
-                { label: "Account Email", value: selectedProfile.email },
-                { label: "Phone Number", value: selectedProfile.phone_number || "N/A" },
-                { label: "University Name", value: selectedProfile.university_name || "N/A" },
-                { label: "College Name", value: selectedProfile.college_name || "N/A" },
-                { label: "Degree Course", value: selectedProfile.degree || "N/A" },
-                { label: "Department / Stream", value: selectedProfile.department_stream || "N/A" },
-                { label: "Active Semester", value: selectedProfile.semester || "N/A" },
-                { label: "Academic Session", value: selectedProfile.academic_session || "N/A" },
-                { label: "Major Subject", value: selectedProfile.major_subject || "N/A" },
-                { label: "Institutional Roll Number", value: selectedProfile.roll_number || "N/A" },
-                { label: "Registration Number", value: selectedProfile.registration_number || "N/A" },
-                { label: "Gender Identity", value: selectedProfile.gender || "N/A" },
-                { label: "Date of Birth", value: selectedProfile.date_of_birth || "N/A" },
-                { label: "Profile Completed", value: selectedProfile.profile_completed ? "Completed" : "Incomplete", colorClass: selectedProfile.profile_completed ? "text-emerald-600 font-bold" : "text-amber-600 font-bold" },
-                { label: "Registered At", value: selectedProfile.created_at ? new Date(selectedProfile.created_at).toLocaleString() : "N/A" },
-              ].map((item, i) => (
-                <div key={i} className="border-b border-zinc-100 pb-2">
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{item.label}</p>
-                  <p className={`text-xs font-semibold text-zinc-805 mt-0.5 ${item.colorClass || ""}`}>{item.value}</p>
+            <form onSubmit={handleSaveProfile} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                {/* Full Name */}
+                {isEditingProfile && (
+                  <div className="sm:col-span-2 border-b border-zinc-100 pb-2">
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.full_name}
+                      onChange={(e) => setEditForm((f) => ({ ...f, full_name: e.target.value }))}
+                      className="w-full px-3 py-2 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800"
+                    />
+                  </div>
+                )}
+
+                {/* Email */}
+                <div className="border-b border-zinc-100 pb-2">
+                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Account Email</label>
+                  {isEditingProfile ? (
+                    <input
+                      type="email"
+                      required
+                      value={editForm.email}
+                      onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                      className="w-full px-3 py-2 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800"
+                    />
+                  ) : (
+                    <p className="text-xs font-semibold text-zinc-805 mt-0.5">{selectedProfile.email}</p>
+                  )}
                 </div>
-              ))}
 
-              <div className="sm:col-span-2 border-b border-zinc-100 pb-2">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Full Address</p>
-                <p className="text-xs font-semibold text-zinc-805 mt-0.5">
-                  {selectedProfile.full_address ? (
-                    `${selectedProfile.full_address}, ${selectedProfile.city || ""}, ${selectedProfile.state || ""} - ${selectedProfile.pincode || ""}`
-                  ) : "N/A"}
-                </p>
+                {/* Phone Number */}
+                <div className="border-b border-zinc-100 pb-2">
+                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Phone Number</label>
+                  {isEditingProfile ? (
+                    <input
+                      type="text"
+                      required
+                      value={editForm.phone_number}
+                      onChange={(e) => setEditForm((f) => ({ ...f, phone_number: e.target.value }))}
+                      className="w-full px-3 py-2 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800"
+                    />
+                  ) : (
+                    <p className="text-xs font-semibold text-zinc-805 mt-0.5">{selectedProfile.phone_number || "N/A"}</p>
+                  )}
+                </div>
+
+                {/* Other fields are read-only */}
+                {[
+                  { label: "University Name", value: selectedProfile.university_name || "N/A" },
+                  { label: "College Name", value: selectedProfile.college_name || "N/A" },
+                  { label: "Degree Course", value: selectedProfile.degree || "N/A" },
+                  { label: "Department / Stream", value: selectedProfile.department_stream || "N/A" },
+                  { label: "Active Semester", value: selectedProfile.semester || "N/A" },
+                  { label: "Academic Session", value: selectedProfile.academic_session || "N/A" },
+                  { label: "Major Subject", value: selectedProfile.major_subject || "N/A" },
+                  { label: "Institutional Roll Number", value: selectedProfile.roll_number || "N/A" },
+                  { label: "Registration Number", value: selectedProfile.registration_number || "N/A" },
+                  { label: "Gender Identity", value: selectedProfile.gender || "N/A" },
+                  { label: "Date of Birth", value: selectedProfile.date_of_birth || "N/A" },
+                  { label: "Profile Completed", value: selectedProfile.profile_completed ? "Completed" : "Incomplete", colorClass: selectedProfile.profile_completed ? "text-emerald-600 font-bold" : "text-amber-600 font-bold" },
+                  { label: "Registered At", value: selectedProfile.created_at ? new Date(selectedProfile.created_at).toLocaleString() : "N/A" },
+                ].map((item, i) => (
+                  <div key={i} className="border-b border-zinc-100 pb-2">
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{item.label}</p>
+                    <p className={`text-xs font-semibold text-zinc-805 mt-0.5 ${item.colorClass || ""}`}>{item.value}</p>
+                  </div>
+                ))}
+
+                <div className="sm:col-span-2 border-b border-zinc-100 pb-2">
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Full Address</p>
+                  <p className="text-xs font-semibold text-zinc-805 mt-0.5">
+                    {selectedProfile.full_address ? (
+                      `${selectedProfile.full_address}, ${selectedProfile.city || ""}, ${selectedProfile.state || ""} - ${selectedProfile.pincode || ""}`
+                    ) : "N/A"}
+                  </p>
+                </div>
+
+                {selectedProfile.role !== "admin" && (
+                  <div className="sm:col-span-2 border-b border-zinc-100 pb-2">
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Enrolled Internship(s)</p>
+                    <div className="text-xs font-semibold text-zinc-805 mt-1 space-y-1.5 bg-slate-50 p-3 rounded-xl border border-zinc-200">
+                      {payments.filter(p => p.student_id === selectedProfile.id && p.status === "completed").length === 0 ? (
+                        <p className="text-zinc-550 italic font-medium">No internships enrolled yet.</p>
+                      ) : (
+                        payments
+                          .filter(p => p.student_id === selectedProfile.id && p.status === "completed")
+                          .map((p, pIdx) => {
+                            const trackObj = internships.find(i => i.id === p.internship_id);
+                            const title = trackObj ? trackObj.title : p.internship_id;
+                            const date = p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "N/A";
+                            return (
+                              <div key={pIdx} className="flex justify-between items-center gap-2 border-b border-zinc-150 last:border-b-0 pb-1 last:pb-0">
+                                <span className="font-bold text-zinc-900">{title}</span>
+                                <span className="text-[10px] text-zinc-500 font-bold">Paid ₹{(p.amount / 100).toFixed(2)} on {date}</span>
+                              </div>
+                            );
+                          })
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
 
-            <div className="flex justify-end mt-6 pt-4 border-t border-zinc-150">
-              <button
-                onClick={() => setSelectedProfile(null)}
-                className="px-5 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
-              >
-                Close Details
-              </button>
-            </div>
+              {profileMsg && (
+                <div className="p-3.5 rounded-xl text-xs bg-indigo-50 border border-indigo-150 text-indigo-700 font-medium">
+                  {profileMsg}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-150">
+                {isEditingProfile ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingProfile(false)}
+                      className="px-5 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updatingProfile}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      {updatingProfile ? "Saving..." : "Save Updates"}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingProfile(true)}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      Edit User Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProfile(null)}
+                      className="px-5 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      Close Details
+                    </button>
+                  </>
+                )}
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -629,6 +865,121 @@ export default function RegisteredStudents() {
                 {deleting ? "Deleting..." : "Permanently Delete"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Override Test Result Modal */}
+      {editingResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md glass-panel bg-white border border-zinc-200 rounded-3xl p-6 shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-indigo-50 border border-indigo-100">
+                  <Edit className="h-4 w-4 text-indigo-600" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-extrabold text-zinc-900">Override Test Score</h2>
+                  <p className="text-[10px] text-zinc-400">Manually edit assessment scores and status</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingResult(null)}
+                className="p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Student and Track Details */}
+            <div className="mb-4 p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-1">
+              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Candidate / Track</p>
+              <p className="text-xs font-bold text-zinc-800">{editingResult.student_name}</p>
+              <p className="text-[11px] text-zinc-550 font-medium">{editingResult.internship_title}</p>
+            </div>
+
+            <form onSubmit={handleSaveResult} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="override-score" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Score</label>
+                  <input
+                    id="override-score"
+                    type="number"
+                    required
+                    min={0}
+                    value={editingResult.score}
+                    onChange={(e) => setEditingResult((r) => r ? { ...r, score: Number(e.target.value) } : null)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="override-total" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Total Questions</label>
+                  <input
+                    id="override-total"
+                    type="number"
+                    required
+                    min={1}
+                    value={editingResult.total_questions}
+                    onChange={(e) => setEditingResult((r) => r ? { ...r, total_questions: Number(e.target.value) } : null)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-zinc-205 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Assessment Status</label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditingResult((r) => r ? { ...r, passed: true } : null)}
+                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      editingResult.passed
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm"
+                        : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-zinc-100"
+                    }`}
+                  >
+                    <CheckCircle className="h-3.5 w-3.5" />
+                    Pass
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingResult((r) => r ? { ...r, passed: false } : null)}
+                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      !editingResult.passed
+                        ? "bg-red-50 text-red-700 border-red-200 shadow-sm"
+                        : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-zinc-100"
+                    }`}
+                  >
+                    <XCircle className="h-3.5 w-3.5" />
+                    Fail
+                  </button>
+                </div>
+              </div>
+
+              {resultMsg && (
+                <div className="p-3.5 rounded-xl text-xs bg-indigo-50 border border-indigo-150 text-indigo-700 font-medium">
+                  {resultMsg}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-150">
+                <button
+                  type="button"
+                  onClick={() => setEditingResult(null)}
+                  className="px-4 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatingResult}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white text-xs font-bold shadow-lg shadow-indigo-500/10 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                >
+                  {updatingResult ? "Saving..." : "Save Override"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
-import { signUpUser } from "@/lib/supabase/auth";
+import { signUpUser, loginUser } from "@/lib/supabase/auth";
 import { User, Phone, Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
@@ -34,8 +34,13 @@ export default function Register() {
 
     try {
       await signUpUser(email, password, fullName, phoneNumber);
-      setSuccess("Account registered successfully! Redirecting to login page...");
+      setSuccess("Account registered successfully! Setting up your session...");
       
+      // Auto login the user
+      await loginUser(email, password);
+      
+      setSuccess("Account registered successfully! Redirecting to payment...");
+
       // Clear form
       setFormData({
         fullName: "",
@@ -44,9 +49,9 @@ export default function Register() {
         password: "",
       });
 
-      // Redirect to login page
+      // Redirect to payment page
       setTimeout(() => {
-        window.location.href = "/auth/login";
+        window.location.href = "/student/payment";
       }, 1500);
     } catch (err: any) {
       setError(err.message || "Failed to complete registration.");
@@ -64,7 +69,7 @@ export default function Register() {
 
       <Navbar />
 
-      <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow flex items-center justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="w-full max-w-lg glass-panel rounded-3xl p-8 relative overflow-hidden">
           {/* Neon side blur */}
           <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-violet-500/10 blur-2xl pointer-events-none" />
@@ -162,7 +167,7 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full pl-10 pr-10 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                  placeholder="At least 6 characters"
+                  placeholder="At least 7 characters"
                 />
                 <button
                   type="button"

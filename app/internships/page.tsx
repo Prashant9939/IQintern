@@ -48,7 +48,7 @@ export default function Internships() {
 
       <Navbar />
 
-      <main className="flex-grow mx-auto max-w-7xl w-full px-4 py-16 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow mx-auto max-w-7xl w-full px-4 pt-28 pb-16 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Available Tracks</span>
@@ -151,7 +151,7 @@ export default function Internships() {
                 <div className="mt-auto pt-4 border-t border-zinc-200/50 flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-zinc-400 text-xs font-medium">
                     <HelpCircle className="h-3.5 w-3.5" />
-                    <span>10 Questions • 70% to Pass</span>
+                    <span>10 Questions • 40% to Pass</span>
                   </div>
                   
                   {user ? (

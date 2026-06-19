@@ -30,7 +30,7 @@ export default function Contact() {
 
       <Navbar />
 
-      <main className="flex-grow mx-auto max-w-7xl w-full px-4 py-16 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow mx-auto max-w-7xl w-full px-4 pt-28 pb-16 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Get in Touch</span>

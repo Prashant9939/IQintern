@@ -59,7 +59,7 @@ export default function Login() {
 
       <Navbar />
 
-      <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow flex items-center justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="w-full max-w-md glass-panel rounded-3xl p-8 relative overflow-hidden">
           {/* Neon side blur */}
           <div className="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none" />

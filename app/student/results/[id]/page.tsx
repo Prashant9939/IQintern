@@ -56,7 +56,7 @@ export default function ResultsPage() {
       <div className="flex items-center justify-center py-20 bg-slate-50 min-h-screen">
         <div className="text-center">
           <Loader2 className="h-10 w-10 animate-spin text-indigo-500 mx-auto mb-4" />
-          <p className="text-zinc-550 text-sm font-medium">Fetching evaluation data...</p>
+          <p className="text-zinc-650 text-sm font-semibold">Fetching evaluation data...</p>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ export default function ResultsPage() {
                 <CheckCircle className="h-10 w-10" />
               </div>
             ) : (
-              <div className="h-20 w-20 rounded-full bg-red-50 text-red-655 border border-red-200 flex items-center justify-center shadow-lg shadow-red-500/10 animate-float">
+              <div className="h-20 w-20 rounded-full bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shadow-lg shadow-red-500/10 animate-float">
                 <XCircle className="h-10 w-10" />
               </div>
             )}
@@ -82,36 +82,49 @@ export default function ResultsPage() {
 
           {/* Header */}
           <div className="mt-8 mb-8">
-            <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Assessment Result</span>
+            <span className="text-xs text-zinc-650 font-bold uppercase tracking-wider">Assessment Result</span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-1 tracking-tight">
               {result.internship_title}
             </h1>
-            <p className="text-zinc-500 text-sm mt-2 max-w-md mx-auto font-light leading-relaxed">
-              {result.passed 
+            <p className="text-zinc-700 text-sm mt-2 max-w-md mx-auto font-medium leading-relaxed">
+            {result.passed 
                 ? "Congratulations! You successfully cleared the passing threshold and finished the assessment." 
-                : "You scored below the passing mark of 70%. Feel free to study the checklist requirements and retake the test."}
+                : "You scored below the passing mark of 40%. Feel free to study the checklist requirements and retake the test."}
             </p>
           </div>
 
           {/* Score Stats card */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 mb-8">
-            <div className="text-center">
-              <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block">Score</span>
-              <span className="text-lg sm:text-xl font-extrabold text-zinc-900 mt-1 block">{result.score} / {result.total_questions}</span>
-            </div>
-            <div className="text-center border-y sm:border-y-0 sm:border-x border-zinc-200/60 py-3 sm:py-0">
-              <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block">Percentage</span>
-              <span className="text-lg sm:text-xl font-extrabold text-indigo-600 mt-1 block">{result.percentage}%</span>
-            </div>
-            <div className="text-center">
-              <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider block">Result</span>
-              <span className={`text-xs sm:text-sm font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full ${
-                result.passed ? "bg-emerald-50 text-emerald-600 border border-emerald-150" : "bg-red-50 text-red-655 border border-red-150"
-              }`}>
-                {result.passed ? "PASS" : "FAIL"}
-              </span>
-            </div>
-          </div>
+          {(() => {
+            const pct = result.percentage || 0;
+            let grade = "F";
+            if (pct >= 90) grade = "A+";
+            else if (pct >= 80) grade = "A";
+            else if (pct >= 70) grade = "B+";
+            else if (pct >= 60) grade = "B";
+            else if (pct >= 50) grade = "C";
+            else if (pct >= 40) grade = "D";
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 mb-8">
+                <div className="text-center">
+                  <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider block">Grade</span>
+                  <span className="text-lg sm:text-xl font-extrabold text-indigo-650 mt-1 block">{grade}</span>
+                </div>
+                <div className="text-center border-y sm:border-y-0 sm:border-x border-zinc-200/60 py-3 sm:py-0">
+                  <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider block">Percentage</span>
+                  <span className="text-lg sm:text-xl font-extrabold text-zinc-900 mt-1 block">{result.percentage}%</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider block">Result</span>
+                  <span className={`text-xs sm:text-sm font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full ${
+                    result.passed ? "bg-emerald-50 text-emerald-600 border border-emerald-150" : "bg-red-50 text-red-600 border border-red-150"
+                  }`}>
+                    {result.passed ? "PASS" : "FAIL"}
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Action Downloads for Certificate Info */}
           {result.passed && (
@@ -121,7 +134,7 @@ export default function ResultsPage() {
               </div>
               <div className="space-y-1">
                 <h4 className="text-xs font-bold text-zinc-900">Your Internship Documents Are Ready!</h4>
-                <p className="text-zinc-550 text-xs font-light leading-relaxed">
+                <p className="text-zinc-700 text-xs font-semibold leading-relaxed">
                   All your personalized documents (including your <strong>Offer Letter</strong>, <strong>Internship Certificate</strong>, and <strong>Project Report</strong>) are available for viewing, verification, and printing.
                 </p>
                 <div className="pt-2">
@@ -140,7 +153,7 @@ export default function ResultsPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-between w-full pt-6 border-t border-zinc-200/60">
             <Link
               href="/student/dashboard"
-              className="text-xs text-zinc-550 hover:text-indigo-650 flex items-center gap-1 font-bold transition-colors"
+              className="text-xs text-zinc-700 hover:text-indigo-700 flex items-center gap-1 font-extrabold transition-colors"
             >
               Return to Dashboard
               <ChevronRight className="h-3.5 w-3.5" />

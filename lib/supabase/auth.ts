@@ -83,14 +83,18 @@ export async function signUpUser(
   if (!email || !password || !fullName || !phoneNumber) {
     throw new Error("All fields are required.");
   }
-  if (!validateEmail(email)) {
+  const sanitizedEmail = email.trim().replace(/['"\\;%_]/g, "");
+  const sanitizedFullName = fullName.trim().replace(/<[^>]*>/g, "").replace(/['"\\;]/g, "");
+  const sanitizedPhone = phoneNumber.trim().replace(/['"\\;%_]/g, "");
+
+  if (!validateEmail(sanitizedEmail)) {
     throw new Error("Invalid email format.");
   }
-  if (!validatePhoneNumber(phoneNumber)) {
+  if (!validatePhoneNumber(sanitizedPhone)) {
     throw new Error("Invalid phone number. Must be 10 to 15 digits.");
   }
-  if (password.length < 6) {
-    throw new Error("Password must be at least 6 characters.");
+  if (password.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
   }
   const hasCapital = /[A-Z]/.test(password);
   const hasSmall = /[a-z]/.test(password);
@@ -102,17 +106,17 @@ export async function signUpUser(
 
   if (isSupabaseConfigured() && supabase) {
     try {
-      return await serverSignUpUser(email, password, fullName, phoneNumber);
+      return await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone);
     } catch (err: any) {
       console.warn("Supabase custom signup failed, falling back to mock registration:", err);
       // If table profiles doesn't exist, we fall back to mock signup so the UI works
       if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
-        return signUpMockUser(email, password, fullName, phoneNumber);
+        return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone);
       }
       throw err;
     }
   } else {
-    return signUpMockUser(email, password, fullName, phoneNumber);
+    return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone);
   }
 }
 
@@ -124,14 +128,32 @@ export async function loginUser(emailOrPhone: string, password: string) {
     throw new Error("Email/Phone and password are required.");
   }
 
+  const sanitizedInput = emailOrPhone.trim().replace(/['"\\;%_]/g, "");
+
+  if (sanitizedInput.includes("@")) {
+    if (!validateEmail(sanitizedInput)) {
+      throw new Error("Invalid email format.");
+    }
+  } else {
+    if (!validatePhoneNumber(sanitizedInput)) {
+      throw new Error("Invalid phone number format. Must be 10 to 15 digits.");
+    }
+  }
+
+  if (password.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
+  }
+
+  checkLoginRateLimit(sanitizedInput);
+
   if (isSupabaseConfigured() && supabase) {
     try {
       // Auto-seed admin to Supabase DB if it's the admin logging in
-      if (emailOrPhone.toLowerCase() === "admin@skillintern.com") {
+      if (sanitizedInput.toLowerCase() === "admin@skillintern.com") {
         await seedAdminAccount();
       }
 
-      const user = await serverLoginUser(emailOrPhone, password);
+      const user = await serverLoginUser(sanitizedInput, password);
       
       const session: UserSession = {
         id: user.id,
@@ -139,20 +161,30 @@ export async function loginUser(emailOrPhone: string, password: string) {
         full_name: user.full_name,
         phone_number: user.phone_number,
         department_stream: user.department_stream,
-        role: user.role as "student" | "admin"
+        role: user.role as "student" | "admin",
+        profile_completed: user.profile_completed
       };
 
       setStoredSession(session);
+      recordLoginAttempt(sanitizedInput, true);
       return { user: session };
     } catch (err: any) {
+      recordLoginAttempt(sanitizedInput, false);
       console.warn("Supabase custom login failed, checking fallback options:", err);
       if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
-        return loginMockUser(emailOrPhone, password);
+        return loginMockUser(sanitizedInput, password);
       }
       throw err;
     }
   } else {
-    return loginMockUser(emailOrPhone, password);
+    try {
+      const res = await loginMockUser(sanitizedInput, password);
+      recordLoginAttempt(sanitizedInput, true);
+      return res;
+    } catch (err) {
+      recordLoginAttempt(sanitizedInput, false);
+      throw err;
+    }
   }
 }
 
@@ -202,8 +234,8 @@ export async function resetPassword(userId: string, email: string, newPassword: 
   if (!userId || !newPassword) {
     throw new Error("User ID and new password are required.");
   }
-  if (newPassword.length < 6) {
-    throw new Error("Password must be at least 6 characters.");
+  if (newPassword.length < 7) {
+    throw new Error("Password must be at least 7 characters.");
   }
   const hasCapital = /[A-Z]/.test(newPassword);
   const hasSmall = /[a-z]/.test(newPassword);
@@ -300,6 +332,15 @@ export function devToggleRole() {
   if (!current) return;
   
   const newRole: "student" | "admin" = current.role === "admin" ? "student" : "admin";
+  
+  if (typeof window !== "undefined") {
+    if (current.role === "admin") {
+      sessionStorage.setItem("admin_student_view_active", "true");
+    } else {
+      sessionStorage.removeItem("admin_student_view_active");
+    }
+  }
+
   const updated: UserSession = { ...current, role: newRole };
   setStoredSession(updated);
 
@@ -321,8 +362,71 @@ export function devToggleRole() {
 // CURRENT USER
 // -------------------------------------------------------------
 export async function getCurrentUser(): Promise<UserSession | null> {
-  // Custom auth keeps session inside localStorage/stored session only
-  return getStoredSession();
+  const session = getStoredSession();
+  if (!session) return null;
+
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data: user, error } = await supabase
+        .from("profiles")
+        .select("id, email, full_name, phone_number, role, profile_completed, department_stream")
+        .eq("id", session.id)
+        .single();
+        
+      if (error || !user) {
+        setStoredSession(null);
+        return null;
+      }
+      
+      let expectedRole = user.role;
+      if (user.role === "admin") {
+        if (typeof window !== "undefined" && sessionStorage.getItem("admin_student_view_active") === "true") {
+          expectedRole = session.role;
+        }
+      }
+      
+      if (session.role !== expectedRole) {
+        setStoredSession(null);
+        return null;
+      }
+
+      return {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        phone_number: user.phone_number,
+        department_stream: user.department_stream || undefined,
+        role: session.role,
+        profile_completed: user.role === "admin" ? true : !!user.profile_completed
+      };
+    } catch (err) {
+      console.warn("getCurrentUser database verification failed:", err);
+      return session;
+    }
+  } else {
+    // Mock mode validation
+    if (typeof window !== "undefined") {
+      const mockProfiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
+      const user = mockProfiles.find((p: any) => p.id === session.id);
+      if (!user) {
+        setStoredSession(null);
+        return null;
+      }
+      
+      let expectedRole = user.role;
+      if (user.role === "admin") {
+        if (sessionStorage.getItem("admin_student_view_active") === "true") {
+          expectedRole = session.role;
+        }
+      }
+      
+      if (session.role !== expectedRole) {
+        setStoredSession(null);
+        return null;
+      }
+    }
+    return session;
+  }
 }
 
 // -------------------------------------------------------------
@@ -446,3 +550,41 @@ function loginMockUser(emailOrPhone: string, password: string) {
   setStoredSession(session);
   return { user: session };
 }
+
+// -------------------------------------------------------------
+// LOGIN RATE LIMIT HELPERS
+// -------------------------------------------------------------
+interface RateLimitState {
+  attempts: number;
+  lockoutUntil: number;
+}
+
+function checkLoginRateLimit(identifier: string): void {
+  if (typeof window === "undefined") return;
+  const key = `rate_limit_login_${identifier.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+  const data = localStorage.getItem(key);
+  if (data) {
+    const state: RateLimitState = JSON.parse(data);
+    if (state.lockoutUntil && Date.now() < state.lockoutUntil) {
+      const remainingMinutes = Math.ceil((state.lockoutUntil - Date.now()) / (1000 * 60));
+      throw new Error(`Too many failed login attempts. Please try again in ${remainingMinutes} minute(s).`);
+    }
+  }
+}
+
+function recordLoginAttempt(identifier: string, success: boolean): void {
+  if (typeof window === "undefined") return;
+  const key = `rate_limit_login_${identifier.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+  if (success) {
+    localStorage.removeItem(key);
+  } else {
+    const data = localStorage.getItem(key);
+    let state: RateLimitState = data ? JSON.parse(data) : { attempts: 0, lockoutUntil: 0 };
+    state.attempts += 1;
+    if (state.attempts >= 5) {
+      state.lockoutUntil = Date.now() + 15 * 60 * 1000; // 15 mins lock
+    }
+    localStorage.setItem(key, JSON.stringify(state));
+  }
+}
+

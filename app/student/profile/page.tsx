@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUser, updateStoredSessionFields, UserSession } from "@/lib/supabase/auth";
-import { getStudentProfile, updateStudentProfile } from "@/lib/supabase/db";
+import { getStudentProfile, updateStudentProfile, getUniversities, University } from "@/lib/supabase/db";
 import { 
   GraduationCap, 
   User, 
@@ -48,6 +48,8 @@ export default function StudentProfile() {
   });
 
   const [initialData, setInitialData] = useState({ ...formData });
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [availableColleges, setAvailableColleges] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -58,6 +60,10 @@ export default function StudentProfile() {
           return;
         }
         setUser(u);
+        
+        // Fetch universities
+        const univs = await getUniversities();
+        setUniversities(univs);
         
         const profile = await getStudentProfile(u.id);
         if (profile) {
@@ -92,6 +98,15 @@ export default function StudentProfile() {
     }
     loadProfile();
   }, []);
+
+  useEffect(() => {
+    const selectedUniv = universities.find((u) => u.name === formData.university_name);
+    if (selectedUniv) {
+      setAvailableColleges(selectedUniv.colleges);
+    } else {
+      setAvailableColleges([]);
+    }
+  }, [formData.university_name, universities]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -195,7 +210,7 @@ export default function StudentProfile() {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
             {isEditing ? "Edit Profile Details" : "My Profile"}
           </h1>
-          <p className="text-zinc-500 text-xs sm:text-sm font-light leading-relaxed max-w-xl">
+          <p className="text-zinc-700 text-xs sm:text-sm font-semibold leading-relaxed max-w-xl">
             {isEditing 
               ? "Update your academic, personal, and contact details below. Ensure details are accurate as they appear on your certification documentation."
               : "View your verified academic profile, contact details, and institutional records."}
@@ -256,58 +271,36 @@ export default function StudentProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Account Details</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Primary identifier credentials</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Primary identifier credentials</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Full Name</label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="full_name"
-                  required
-                  value={formData.full_name}
-                  onChange={handleChange}
-                  placeholder="Full Name"
-                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                />
-              ) : (
-                <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-800 font-semibold">
-                  {formData.full_name || "N/A"}
-                </div>
-              )}
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Full Name</label>
+              <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-700 font-bold flex items-center gap-2 cursor-not-allowed">
+                <Lock className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                <span>{formData.full_name || "N/A"}</span>
+              </div>
             </div>
 
             {/* Email - Read Only */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Email Address (Primary Account ID)</label>
-              <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-500 flex items-center gap-2 cursor-not-allowed">
-                <Lock className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Email Address (Primary Account ID)</label>
+              <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-700 font-bold flex items-center gap-2 cursor-not-allowed">
+                <Lock className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
                 <span>{user?.email}</span>
               </div>
             </div>
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Phone Number</label>
-              {isEditing ? (
-                <input
-                  type="tel"
-                  name="phone_number"
-                  required
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                  placeholder="Phone Number"
-                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                />
-              ) : (
-                <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-800 font-semibold">
-                  {formData.phone_number || "N/A"}
-                </div>
-              )}
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Phone Number</label>
+              <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-700 font-bold flex items-center gap-2 cursor-not-allowed">
+                <Lock className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                <span>{formData.phone_number || "N/A"}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -322,24 +315,29 @@ export default function StudentProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Academic Credentials</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">University enrollment and specialization records</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">University enrollment and specialization records</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* University Name */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">University Name</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">University Name</label>
               {isEditing ? (
-                <input
-                  type="text"
+                <select
                   name="university_name"
                   required
                   value={formData.university_name}
                   onChange={handleChange}
-                  placeholder="University Name"
-                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                />
+                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-700 transition-colors cursor-pointer font-medium"
+                >
+                  <option value="">Select University</option>
+                  {universities.map((u) => (
+                    <option key={u.name} value={u.name}>
+                      {u.name}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-800 font-semibold">
                   {formData.university_name || "N/A"}
@@ -349,17 +347,23 @@ export default function StudentProfile() {
 
             {/* College Name */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">College Name</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">College Name</label>
               {isEditing ? (
-                <input
-                  type="text"
+                <select
                   name="college_name"
                   required
+                  disabled={!formData.university_name}
                   value={formData.college_name}
                   onChange={handleChange}
-                  placeholder="College Name"
-                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                />
+                  className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-700 transition-colors cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select College</option>
+                  {availableColleges.map((col) => (
+                    <option key={col} value={col}>
+                      {col}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <div className="px-4 py-3 text-sm bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-800 font-semibold">
                   {formData.college_name || "N/A"}
@@ -371,7 +375,7 @@ export default function StudentProfile() {
 
             {/* Degree */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Degree</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Degree</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -391,7 +395,7 @@ export default function StudentProfile() {
 
             {/* Department / Stream */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Department / Stream</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Department / Stream</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -411,7 +415,7 @@ export default function StudentProfile() {
 
             {/* Major Subject */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Major Subject</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Major Subject</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -431,7 +435,7 @@ export default function StudentProfile() {
 
             {/* Semester */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Current Semester</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Current Semester</label>
               {isEditing ? (
                 <select
                   name="semester"
@@ -454,7 +458,7 @@ export default function StudentProfile() {
 
             {/* Academic Session */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Academic Session</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Academic Session</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -474,7 +478,7 @@ export default function StudentProfile() {
 
             {/* Roll Number */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Roll Number</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Roll Number</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -494,7 +498,7 @@ export default function StudentProfile() {
 
             {/* Registration Number */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Registration Number</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Registration Number</label>
               {isEditing ? (
                 <input
                   type="text"
@@ -524,14 +528,14 @@ export default function StudentProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Personal Information</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Demographics and identity details</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Demographics and identity details</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Gender */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Gender</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Gender</label>
               {isEditing ? (
                 <select
                   name="gender"
@@ -554,7 +558,7 @@ export default function StudentProfile() {
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Date of Birth</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Date of Birth</label>
               {isEditing ? (
                 <input
                   type="date"
@@ -583,14 +587,14 @@ export default function StudentProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Contact Address</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Permanent dispatch address details</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Permanent dispatch address details</p>
             </div>
           </div>
 
           <div className="space-y-5">
             {/* Full Address */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Full Address</label>
+              <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Full Address</label>
               {isEditing ? (
                 <textarea
                   name="full_address"
@@ -611,7 +615,7 @@ export default function StudentProfile() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* City */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">City</label>
+                <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">City</label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -631,7 +635,7 @@ export default function StudentProfile() {
 
               {/* State */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">State</label>
+                <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">State</label>
                 {isEditing ? (
                   <select
                     name="state"
@@ -654,7 +658,7 @@ export default function StudentProfile() {
 
               {/* Pincode */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Pincode</label>
+                <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider block">Pincode</label>
                 {isEditing ? (
                   <input
                     type="text"

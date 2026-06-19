@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUser, updateStoredSessionFields, UserSession } from "@/lib/supabase/auth";
-import { updateStudentProfile } from "@/lib/supabase/db";
+import { updateStudentProfile, getUniversities, University } from "@/lib/supabase/db";
 import { 
   GraduationCap, 
   User, 
@@ -38,11 +38,18 @@ export default function CompleteProfile() {
     pincode: "",
   });
 
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [availableColleges, setAvailableColleges] = useState<string[]>([]);
+
   useEffect(() => {
     async function loadUser() {
       try {
         const u = await getCurrentUser();
         setUser(u);
+        
+        // Fetch universities
+        const univs = await getUniversities();
+        setUniversities(univs);
       } catch (err) {
         console.error("Error loading user profile", err);
       } finally {
@@ -51,6 +58,15 @@ export default function CompleteProfile() {
     }
     loadUser();
   }, []);
+
+  useEffect(() => {
+    const selectedUniv = universities.find((u) => u.name === formData.university_name);
+    if (selectedUniv) {
+      setAvailableColleges(selectedUniv.colleges);
+    } else {
+      setAvailableColleges([]);
+    }
+  }, [formData.university_name, universities]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -138,14 +154,14 @@ export default function CompleteProfile() {
             <Lock className="h-3 w-3" /> Action Required
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">Complete Your Profile</h1>
-          <p className="text-zinc-500 text-xs sm:text-sm font-light leading-relaxed max-w-xl">
+          <p className="text-zinc-700 text-xs sm:text-sm font-semibold leading-relaxed max-w-xl">
             Please fill out your academic details, personal info, and address. This information will be printed on your official certificates and verified during selection.
           </p>
         </div>
         <div className="flex flex-col items-start md:items-end gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-2xl px-5 py-3 text-xs self-stretch md:self-auto shadow-sm">
-          <span className="text-zinc-400 block font-semibold">Logged in as</span>
+          <span className="text-zinc-600 block font-bold">Logged in as</span>
           <span className="text-zinc-800 font-bold text-sm block">{user?.full_name}</span>
-          <span className="text-zinc-500 block">{user?.email}</span>
+          <span className="text-zinc-750 block font-semibold">{user?.email}</span>
         </div>
       </div>
 
@@ -184,44 +200,55 @@ export default function CompleteProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Academic Credentials</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Your official university enrolment and course details</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Your official university enrolment and course details</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* University Name */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">University Name</label>
-              <input
-                type="text"
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">University Name</label>
+              <select
                 name="university_name"
                 required
                 value={formData.university_name}
                 onChange={handleChange}
-                placeholder="e.g. Delhi Technological University"
-                className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-              />
+                className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-700 transition-colors cursor-pointer font-medium"
+              >
+                <option value="">Select University</option>
+                {universities.map((u) => (
+                  <option key={u.name} value={u.name}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* College Name */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">College Name</label>
-              <input
-                type="text"
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">College Name</label>
+              <select
                 name="college_name"
                 required
+                disabled={!formData.university_name}
                 value={formData.college_name}
                 onChange={handleChange}
-                placeholder="e.g. Main Campus / College Name"
-                className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-              />
+                className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-700 transition-colors cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">Select College</option>
+                {availableColleges.map((col) => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
             </div>
 
 
 
             {/* Degree */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Degree Awarded/Pursuing</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Degree Awarded/Pursuing</label>
               <input
                 type="text"
                 name="degree"
@@ -235,7 +262,7 @@ export default function CompleteProfile() {
 
             {/* Department / Stream */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Department / Stream</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Department / Stream</label>
               <input
                 type="text"
                 name="department_stream"
@@ -249,7 +276,7 @@ export default function CompleteProfile() {
 
             {/* Major Subject */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Major Subject</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Major Subject</label>
               <input
                 type="text"
                 name="major_subject"
@@ -263,7 +290,7 @@ export default function CompleteProfile() {
 
             {/* Semester */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Current Semester</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Current Semester</label>
               <select
                 name="semester"
                 required
@@ -280,7 +307,7 @@ export default function CompleteProfile() {
 
             {/* Academic Session */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Academic Session</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Academic Session</label>
               <input
                 type="text"
                 name="academic_session"
@@ -294,7 +321,7 @@ export default function CompleteProfile() {
 
             {/* Roll Number */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Roll Number</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Roll Number</label>
               <input
                 type="text"
                 name="roll_number"
@@ -308,7 +335,7 @@ export default function CompleteProfile() {
 
             {/* Registration Number */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Registration Number</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Registration Number</label>
               <input
                 type="text"
                 name="registration_number"
@@ -332,14 +359,14 @@ export default function CompleteProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Personal Information</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Demographic information as listed on identification papers</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Demographic information as listed on identification papers</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Gender */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Gender</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Gender</label>
               <select
                 name="gender"
                 required
@@ -356,7 +383,7 @@ export default function CompleteProfile() {
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Date of Birth</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Date of Birth</label>
               <input
                 type="date"
                 name="date_of_birth"
@@ -379,14 +406,14 @@ export default function CompleteProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Contact Address</h3>
-              <p className="text-xs text-zinc-400 font-light mt-0.5">Permanent address for dispatching certificates/documents</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Permanent address for dispatching certificates/documents</p>
             </div>
           </div>
 
           <div className="space-y-5">
             {/* Full Address */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Full Address</label>
+              <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Full Address</label>
               <textarea
                 name="full_address"
                 required
@@ -401,7 +428,7 @@ export default function CompleteProfile() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* City */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">City</label>
+                <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">City</label>
                 <input
                   type="text"
                   name="city"
@@ -415,7 +442,7 @@ export default function CompleteProfile() {
 
               {/* State */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">State</label>
+                <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">State</label>
                 <select
                   name="state"
                   required
@@ -432,7 +459,7 @@ export default function CompleteProfile() {
 
               {/* Pincode */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Pincode</label>
+                <label className="text-xs font-bold text-zinc-650 uppercase tracking-wider block">Pincode</label>
                 <input
                   type="text"
                   name="pincode"

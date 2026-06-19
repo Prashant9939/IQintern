@@ -1,19 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCurrentUser, signOut, UserSession } from "@/lib/supabase/auth";
+import { getCurrentUser, signOut, UserSession, devToggleRole } from "@/lib/supabase/auth";
+import { getStudentPayments, getPlatformSettings } from "@/lib/supabase/db";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import { 
   LayoutDashboard, 
   LogOut, 
-  User, 
   Menu, 
   X,
-  Lock,
   Award,
-  Briefcase
+  Briefcase,
+  Bell,
+  RefreshCw,
+  Clipboard,
+  FileText,
+  LineChart,
+  Settings,
+  HelpCircle,
+  ChevronDown
 } from "lucide-react";
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +28,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -30,22 +38,40 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         return;
       }
       if (u.role !== "student") {
-        // Redirect admins to admin dashboard
         window.location.href = "/admin/dashboard";
         return;
       }
       setUser(u);
       
-      // Redirect if profile is not completed and they are trying to access dashboard/tests/results
-      if (!u.profile_completed && pathname !== "/student/complete-profile") {
-        window.location.href = "/student/complete-profile";
-        return;
+      const [pays, settings] = await Promise.all([
+        getStudentPayments(u.id),
+        getPlatformSettings()
+      ]);
+
+      const hasPaid = !settings.payments_enabled || pays.length > 0;
+
+      if (!hasPaid) {
+        if (pathname !== "/student/payment") {
+          window.location.href = "/student/payment";
+          return;
+        }
+      } else {
+        if (pathname === "/student/payment") {
+          window.location.href = "/student/dashboard";
+          return;
+        }
       }
-      
-      // Redirect to dashboard if they have completed their profile and try to visit the completion page
-      if (u.profile_completed && pathname === "/student/complete-profile") {
-        window.location.href = "/student/dashboard";
-        return;
+
+      if (hasPaid) {
+        if (!u.profile_completed && pathname !== "/student/complete-profile") {
+          window.location.href = "/student/complete-profile";
+          return;
+        }
+        
+        if (u.profile_completed && pathname === "/student/complete-profile") {
+          window.location.href = "/student/dashboard";
+          return;
+        }
       }
 
       setLoading(false);
@@ -53,24 +79,34 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     loadUser();
   }, [pathname]);
 
+  const [isAdminImpersonating, setIsAdminImpersonating] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const active = sessionStorage.getItem("admin_student_view_active") === "true" || user?.email === "admin@skillintern.com";
+      setIsAdminImpersonating(active);
+    }
+  }, [user]);
+
   const handleLogout = async () => {
     await signOut();
     window.location.href = "/";
   };
 
-  const navItems: { name: string; href: string; icon: any }[] = user?.profile_completed
-    ? [
-        { name: "Dashboard Overview", href: "/student/dashboard", icon: LayoutDashboard },
-        { name: "Available Internships", href: "/student/internships", icon: Briefcase },
-        { name: "My Profile", href: "/student/profile", icon: User },
-      ]
-    : [
-        { name: "Complete Profile", href: "/student/complete-profile", icon: User },
-      ];
+  const navItems = [
+    { name: "Overview", href: "/student/dashboard", icon: LayoutDashboard },
+    { name: "Tracks", href: "/student/internships", icon: Briefcase },
+    { name: "Certificates", href: "/student/certificates", icon: Award },
+    { name: "Assessments", href: "/student/assessments", icon: Clipboard },
+    { name: "Documents", href: "/student/documents", icon: FileText },
+    { name: "Progress", href: "/student/progress", icon: LineChart },
+    { name: "Settings", href: "/student/profile", icon: Settings },
+    { name: "Help & Support", href: "/contact", icon: HelpCircle },
+  ];
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-slate-50 items-center justify-center">
+      <div className="flex min-h-screen bg-[#FAFAFC] items-center justify-center">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent mx-auto mb-4" />
           <p className="text-zinc-500 text-sm font-medium">Verifying credentials...</p>
@@ -82,22 +118,93 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   if (!user) return null;
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 text-zinc-800 relative">
-      {/* Background Gradients */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-100 pointer-events-none" />
+    <div className="h-screen bg-[#FAFAFC] text-zinc-800 relative flex flex-col font-sans selection:bg-indigo-500/20 selection:text-indigo-800 overflow-hidden">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
       <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
+
+      {/* Full Screen Top Header */}
+      <header className="hidden md:flex h-18 items-center justify-between px-8 border-b border-zinc-150/85 bg-white shrink-0 sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#5B5FF7] to-[#7B7FFA] font-extrabold text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-all">
+              SI
+            </div>
+            <div className="text-left">
+              <h1 className="text-zinc-900 text-base font-bold leading-none">SkillIntern</h1>
+              <p className="text-[9px] uppercase tracking-widest text-[#64748B] mt-1 font-bold">DASHBOARD</p>
+            </div>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <button className="relative text-zinc-400 hover:text-zinc-700 transition-colors p-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <Bell className="h-5 w-5 text-zinc-400" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#5B5FF7] rounded-full"></span>
+          </button>
+
+          <div className="h-5 w-[1px] bg-zinc-200" />
+
+          {/* Profile Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-zinc-150"
+            >
+              <div className="h-9 w-9 rounded-full bg-[#5B5FF7]/10 flex items-center justify-center text-[#5B5FF7] font-bold text-sm border border-[#5B5FF7]/20 shrink-0">
+                {user.full_name?.substring(0, 1) || "S"}
+              </div>
+              <div className="text-left hidden lg:block">
+                <p className="text-xs font-bold text-zinc-900 leading-tight">{user.full_name}</p>
+                <p className="text-[10px] text-zinc-400 font-semibold leading-tight">Student</p>
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+            </button>
+
+            {userDropdownOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-48 bg-white border border-zinc-200/80 rounded-xl shadow-lg py-1.5 z-50 animate-fade-in">
+                <Link 
+                  href="/student/profile" 
+                  onClick={() => setUserDropdownOpen(false)}
+                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-slate-50 hover:text-zinc-900 transition-colors"
+                >
+                  My Profile
+                </Link>
+                {isAdminImpersonating && (
+                  <button
+                    onClick={() => {
+                      devToggleRole();
+                      setUserDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors text-left"
+                  >
+                    Back to Admin Panel
+                  </button>
+                )}
+                <div className="h-[1px] bg-zinc-100 my-1" />
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
 
       {/* Mobile Sticky Header */}
       <header className="sticky top-0 z-30 md:hidden flex h-16 w-full items-center justify-between border-b border-zinc-200/80 bg-white/95 backdrop-blur px-4 shadow-sm shrink-0">
-        <Link href="/" className="flex items-center gap-2 font-bold text-zinc-850">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 font-extrabold text-white">
+        <Link href="/" className="flex items-center gap-2 font-bold text-zinc-900">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5B5FF7] font-extrabold text-white shadow-md shadow-indigo-500/10">
             SI
           </div>
-          <span>Skill<span className="text-indigo-600 font-extrabold">Intern</span></span>
+          <span className="text-base font-semibold">Skill<span className="text-[#5B5FF7] font-extrabold">Intern</span></span>
         </Link>
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="p-2 rounded-xl text-zinc-550 hover:bg-zinc-100 hover:text-zinc-800 transition-colors cursor-pointer"
+          className="p-2 rounded-xl text-zinc-500 hover:bg-slate-100 hover:text-zinc-800 transition-colors cursor-pointer"
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
@@ -112,30 +219,26 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         />
       )}
 
-      {/* Sidebar - Desktop & Mobile Drawer */}
+      {/* Mobile Sidebar Navigation Drawer */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-zinc-200/80 bg-white transition-transform duration-300 ease-in-out shadow-lg
-        md:sticky md:z-20 md:translate-x-0 md:shadow-sm md:h-screen md:top-0
-        ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-zinc-205 bg-white transition-transform duration-300 ease-in-out shadow-lg
+        md:hidden
+        ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
-        {/* Brand */}
         <div className="flex h-16 items-center justify-between px-6 border-b border-zinc-200/60 shrink-0">
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg text-zinc-800">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 font-extrabold text-white">
-              SI
-            </div>
-            <span>Skill<span className="text-indigo-600 font-extrabold">Intern</span></span>
+          <Link href="/" className="flex items-center gap-2 font-bold text-zinc-800" onClick={() => setMobileMenuOpen(false)}>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5B5FF7] font-extrabold text-white">SI</div>
+            <span>Skill<span className="text-[#5B5FF7] font-extrabold">Intern</span></span>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="md:hidden p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl hover:bg-slate-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-grow p-4 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -147,8 +250,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${
                   active
-                    ? "bg-indigo-600 text-white border-indigo-650 shadow-md shadow-indigo-600/15"
-                    : "text-zinc-660 hover:bg-indigo-50/70 hover:text-indigo-700 hover:border-indigo-100 active:bg-indigo-100/80 active:scale-95 border-transparent"
+                    ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white border-transparent shadow-md shadow-[#5B5FF7]/15"
+                    : "text-zinc-650 hover:bg-indigo-50/75 hover:text-indigo-700 active:bg-indigo-100/80 active:scale-95 border-transparent"
                 }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -158,21 +261,23 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           })}
         </nav>
 
+        {/* Footer controls on Mobile */}
         <div className="p-4 border-t border-zinc-200/60 mt-auto shrink-0 bg-white">
-          <div className="flex items-center gap-3 p-2 bg-zinc-50 rounded-2xl border border-zinc-200/60 mb-3">
-            <img 
-              src="/ai_avatar.png" 
-              alt={user.full_name} 
-              className="h-9 w-9 rounded-xl border border-zinc-205 object-cover shrink-0" 
-            />
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-zinc-900 truncate">{user.full_name}</p>
-              <p className="text-[10px] text-zinc-500 truncate">{user.email}</p>
-            </div>
-          </div>
+          {isAdminImpersonating && (
+            <button
+              onClick={() => {
+                devToggleRole();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-500 hover:text-white active:bg-amber-650 active:scale-95 py-2.5 text-xs font-bold text-amber-700 transition-all mb-3 cursor-pointer shadow-sm"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Back to Admin Panel
+            </button>
+          )}
           <button
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white hover:bg-red-500 hover:text-white hover:border-red-500 active:bg-red-600 active:scale-95 py-2.5 text-xs font-bold text-red-600 transition-all cursor-pointer shadow-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white hover:bg-red-500 hover:text-white active:bg-red-650 active:scale-95 py-2.5 text-xs font-bold text-red-600 transition-all cursor-pointer shadow-sm"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
@@ -180,20 +285,65 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-grow flex flex-col min-w-0 z-10 md:h-screen md:overflow-y-auto">
-        {/* Desktop Header */}
-        <header className="hidden md:flex h-16 items-center justify-between px-8 border-b border-zinc-200/60 bg-white/40 shrink-0">
-          <span className="text-xs text-zinc-500 font-semibold">Student Dashboard</span>
-          <div className="flex items-center gap-2 text-zinc-600 text-xs bg-white border border-zinc-200 px-3.5 py-1.5 rounded-full shadow-sm">
-            <Lock className="h-3 w-3 text-emerald-500" />
-            <span>Secure Student Session</span>
-          </div>
-        </header>
+      {/* Main Workspace Layout (Full Screen) */}
+      <div className="w-full flex-1 flex min-h-0 overflow-hidden">
+        
+        {/* Left Sidebar (Desktop) */}
+        <aside className="hidden md:flex w-[260px] flex-col border-r border-zinc-150/85 bg-white shrink-0 justify-between p-6 sticky top-18 h-[calc(100vh-4.5rem)] overflow-y-auto">
+          
+          {/* Sidebar Navigation */}
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${
+                    active
+                      ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white shadow-md shadow-[#5B5FF7]/10"
+                      : "text-zinc-550 hover:bg-slate-50 hover:text-zinc-800 transition-colors border-transparent"
+                  }`}
+                >
+                  <Icon className="h-4.5 w-4.5" />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* Content Wrapper */}
-        <main className="flex-grow p-4 sm:p-8 flex flex-col justify-between">
-          <div className="flex-grow pb-8 relative z-20">
+          {/* Upgrade Skills Bento Box Card */}
+          <div className="bg-[#EEF0FE] rounded-2xl p-5 relative overflow-hidden mt-6 shadow-xs border border-[#8F93FF]/15">
+            <div className="relative z-10">
+              <h4 className="text-[#5B5FF7] font-bold text-[14px]">Upgrade Your Skills</h4>
+              <p className="text-zinc-650 text-[11px] font-light mt-1 max-w-[150px]">
+                Explore advanced tracks and boost your career.
+              </p>
+              <Link
+                href="/student/internships"
+                className="inline-flex items-center gap-1 bg-white text-[#5B5FF7] text-[11px] font-bold px-3 py-2 rounded-lg shadow-xs hover:bg-slate-50 transition-all mt-3 w-fit"
+              >
+                Explore Tracks &rarr;
+              </Link>
+            </div>
+            {/* Illustration inline SVG */}
+            <div className="absolute right-[-10px] bottom-[-10px] opacity-90 pointer-events-none">
+              <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 15L15 32.5L50 50L85 32.5L50 15Z" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round"/>
+                <path d="M15 32.5V57.5L50 75L85 57.5V32.5" fill="#B4B7FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round"/>
+                <path d="M50 50V75" stroke="#5B5FF7" strokeWidth="3"/>
+                <path d="M85 32.5L85 62.5" stroke="#5B5FF7" strokeWidth="3" strokeLinecap="round"/>
+                <circle cx="85" cy="62.5" r="5" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="2"/>
+              </svg>
+            </div>
+          </div>
+
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col bg-[#FAFAFC] relative min-w-0 overflow-y-auto">
+          <div className="flex-grow p-6 sm:p-8 pb-12 relative z-10">
             {children}
           </div>
           <Footer />

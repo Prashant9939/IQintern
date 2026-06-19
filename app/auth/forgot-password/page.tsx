@@ -88,7 +88,7 @@ export default function ForgotPassword() {
 
       <Navbar />
 
-      <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <main className="flex-grow flex items-center justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="w-full max-w-md glass-panel rounded-3xl p-8 relative overflow-hidden">
           {/* Neon side blur */}
           <div className="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none" />
@@ -184,7 +184,7 @@ export default function ForgotPassword() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="w-full pl-10 pr-10 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                    placeholder="At least 6 characters"
+                    placeholder="At least 7 characters"
                   />
                   <button
                     type="button"

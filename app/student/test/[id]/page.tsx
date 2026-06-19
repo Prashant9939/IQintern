@@ -7,6 +7,9 @@ import {
   getInternshipById, 
   getQuestions, 
   saveTestResult, 
+  getPaidInternshipIds,
+  getStudentPayments,
+  getPlatformSettings,
   Internship, 
   Question 
 } from "@/lib/supabase/db";
@@ -28,6 +31,9 @@ export default function TestPage() {
   const [internship, setInternship] = useState<Internship | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasPaid, setHasPaid] = useState(false);
+  const [isEligible, setIsEligible] = useState(true);
+  const [remainingDays, setRemainingDays] = useState(0);
 
   // Test state
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -47,6 +53,35 @@ export default function TestPage() {
           return;
         }
         setUser(u);
+
+        // Fetch settings, payment status and payment details
+        const [paidIds, pays, settings] = await Promise.all([
+          getPaidInternshipIds(u.id),
+          getStudentPayments(u.id),
+          getPlatformSettings()
+        ]);
+        
+        const userHasPaid = paidIds.includes(internshipId) || !settings.payments_enabled;
+        setHasPaid(userHasPaid);
+
+        if (!userHasPaid) {
+          setLoading(false);
+          return;
+        }
+
+        // Verify eligibility lock (28 days from payment date)
+        const payObj = pays.find((p) => p.internship_id === internshipId && p.status === "completed");
+        if (settings.payments_enabled && payObj) {
+          const payDate = new Date(payObj.created_at);
+          const diffTime = Date.now() - payDate.getTime();
+          const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          if (daysPassed < 28) {
+            setIsEligible(false);
+            setRemainingDays(28 - daysPassed);
+            setLoading(false);
+            return;
+          }
+        }
 
         const [int, qList] = await Promise.all([
           getInternshipById(internshipId),
@@ -91,7 +126,7 @@ export default function TestPage() {
 
       const total = questions.length;
       const percentage = total > 0 ? (correctCount / total) * 100 : 0;
-      const passed = percentage >= 70;
+      const passed = percentage >= 40;
 
       // 2. Save result (with automatic mock fallback in saveTestResult)
       const resultObj = await saveTestResult({
@@ -169,7 +204,54 @@ export default function TestPage() {
       <div className="flex items-center justify-center py-20 bg-slate-50 min-h-screen">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent mx-auto mb-4" />
-          <p className="text-zinc-550 text-sm font-medium">Preparing assessment environment...</p>
+          <p className="text-zinc-650 text-sm font-semibold">Preparing assessment environment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasPaid) {
+    return (
+      <div className="flex items-center justify-center py-20 p-4 min-h-screen bg-slate-50">
+        <div className="glass-panel rounded-3xl border border-zinc-200 p-8 max-w-md text-center bg-white shadow-xl flex flex-col items-center">
+          <div className="h-16 w-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mb-6 border border-red-100">
+            <AlertTriangle className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-extrabold text-zinc-900 mb-3 tracking-tight">Access Locked</h2>
+          <p className="text-sm text-zinc-700 mb-6 font-semibold leading-relaxed">
+            You must complete the assessment fee payment in order to take this internship evaluation test.
+          </p>
+          <button
+            onClick={() => router.push("/student/internships")}
+            className="w-full rounded-2xl bg-indigo-650 text-white py-3.5 text-xs font-bold hover:bg-indigo-755 active:scale-95 transition-all shadow-lg shadow-indigo-600/10 cursor-pointer"
+          >
+            Go to Internships Portal
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isEligible) {
+    return (
+      <div className="flex items-center justify-center py-20 p-4 min-h-screen bg-slate-50">
+        <div className="glass-panel rounded-3xl border border-zinc-200 p-8 max-w-md text-center bg-white shadow-xl flex flex-col items-center">
+          <div className="h-16 w-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mb-6 border border-amber-100">
+            <Clock className="h-8 w-8 animate-spin" style={{ animationDuration: "4s" }} />
+          </div>
+          <h2 className="text-2xl font-extrabold text-zinc-900 mb-3 tracking-tight">Assessment Locked</h2>
+          <p className="text-sm text-zinc-700 mb-6 font-semibold leading-relaxed">
+            You must wait 28 days from your payment date before attempting this assessment.
+          </p>
+          <div className="bg-amber-50 text-amber-800 border border-amber-150 px-4 py-3 rounded-2xl text-xs font-bold mb-6 w-full">
+            Unlocks in {remainingDays} days
+          </div>
+          <button
+            onClick={() => router.push("/student/dashboard")}
+            className="w-full rounded-2xl bg-indigo-650 text-white py-3.5 text-xs font-bold hover:bg-indigo-755 active:scale-95 transition-all shadow-lg shadow-indigo-600/10 cursor-pointer"
+          >
+            Go to Student Dashboard
+          </button>
         </div>
       </div>
     );
@@ -181,7 +263,7 @@ export default function TestPage() {
         <div className="glass-panel rounded-3xl border border-zinc-200 p-8 max-w-md text-center bg-white shadow-sm">
           <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto mb-4 animate-bounce" />
           <h2 className="text-lg font-bold text-zinc-900 mb-2">No Questions Available</h2>
-          <p className="text-xs text-zinc-500 mb-6 font-light">This internship track currently does not have any active evaluation questions.</p>
+          <p className="text-xs text-zinc-600 mb-6 font-semibold">This internship track currently does not have any active evaluation questions.</p>
           <button
             onClick={() => router.push("/student/dashboard")}
             className="rounded-xl bg-indigo-50 border border-indigo-150 text-indigo-600 px-4 py-2 text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
@@ -253,10 +335,10 @@ export default function TestPage() {
           {/* Question Box */}
           <div className="glass-panel rounded-3xl p-6 sm:p-8 relative flex flex-col bg-white border border-zinc-200/80 shadow-md">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
-              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-zinc-600 uppercase tracking-wider">
                 Question {currentIdx + 1} of {totalQuestions}
               </span>
-              <span className="text-xs text-zinc-500 flex items-center gap-1 font-medium">
+              <span className="text-xs text-zinc-700 flex items-center gap-1 font-semibold">
                 <HelpCircle className="h-3.5 w-3.5 text-indigo-500" />
                 1 Mark
               </span>

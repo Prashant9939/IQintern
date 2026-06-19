@@ -54,7 +54,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Web Development",
     description: "Build responsive, high-performance web applications using modern web technologies. Focus on frontend layout systems, JavaScript/TypeScript framework architectures, and practical API integration.",
     requirements: ["HTML5, CSS3, ES6+ JavaScript", "Basic understanding of React/Next.js frameworks", "8 Real-world Projects requirement"],
-    duration: "12 Weeks",
+    duration: "120 Hrs",
     category: "Engineering",
   },
   {
@@ -62,7 +62,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Python Programming",
     description: "Master the fundamentals of Python programming, core automation script design, object-oriented concepts, and API creation. Focus on practical scripting models.",
     requirements: ["Basic algorithmic thinking", "5 Scripting Projects requirement", "Level: Beginner to Intermediate"],
-    duration: "8 Weeks",
+    duration: "120 Hrs",
     category: "Development",
   },
   {
@@ -70,7 +70,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Artificial Intelligence",
     description: "Design, build, and deploy machine learning and deep learning models. Focus on neural networks, natural language processing, and computer vision architectures.",
     requirements: ["Strong Python skills & basic statistics", "4 ML/Deep Learning Models requirement", "Level: Advanced"],
-    duration: "16 Weeks",
+    duration: "120 Hrs",
     category: "Data & AI",
   },
   {
@@ -78,7 +78,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Cyber Security",
     description: "Understand security protocols, network defenses, vulnerability auditing, and penetration testing methodologies. Focus on ethical hacking controls.",
     requirements: ["Basic networking concepts (TCP/IP)", "6 Penetration Testing Audits requirement", "Level: Intermediate"],
-    duration: "10 Weeks",
+    duration: "120 Hrs",
     category: "Security",
   },
   {
@@ -86,7 +86,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Data Science",
     description: "Analyze complex datasets, configure automated ETL data pipelines, create interactive analytics dashboards, and draw statistical inferences.",
     requirements: ["Python data analysis libraries (pandas)", "5 Data Analysis Pipelines requirement", "Level: Intermediate to Advanced"],
-    duration: "12 Weeks",
+    duration: "120 Hrs",
     category: "Data & AI",
   },
   {
@@ -94,7 +94,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Digital Marketing",
     description: "Design high-conversion SEO optimization layouts, run test ad campaigns, manage search metrics, and analyze consumer conversions.",
     requirements: ["Basic digital platforms literacy", "3 SEO & Ad Campaign Audits requirement", "Level: Beginner"],
-    duration: "6 Weeks",
+    duration: "120 Hrs",
     category: "Business",
   },
   {
@@ -102,7 +102,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "UI/UX Product Design",
     description: "Design interactive user flows, build high-fidelity interactive wireframes, and design clean system typography. Focus on human-centered design structures.",
     requirements: ["Figma design tool fundamentals", "4 High-Fidelity Prototypes requirement", "Level: Beginner to Intermediate"],
-    duration: "8 Weeks",
+    duration: "120 Hrs",
     category: "Design",
   },
   {
@@ -110,7 +110,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Cloud Computing",
     description: "Deploy and manage secure virtual machines, setup scale load balancers, configure database instances, and audit cloud network architecture.",
     requirements: ["Basic virtual hosting concepts", "5 Cloud Deployment Architectures requirement", "Level: Intermediate"],
-    duration: "12 Weeks",
+    duration: "120 Hrs",
     category: "Engineering",
   },
   {
@@ -118,7 +118,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Finance & Accounting",
     description: "Analyze corporate financial statements, build portfolio valuation models, audit ledger compliance, and write tax compliance files.",
     requirements: ["Spreadsheets and financial auditing formulas", "3 Portfolio Valuation Reports requirement", "Level: Beginner to Intermediate"],
-    duration: "8 Weeks",
+    duration: "120 Hrs",
     category: "Business",
   },
   {
@@ -126,7 +126,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Human Resources (HR)",
     description: "Design corporate hiring pipelines, organize employee onboarding documents, manage payroll records, and draft compliance policy manuals.",
     requirements: ["Corporate communication & documentation skills", "4 Corporate Hiring Pipelines requirement", "Level: Beginner"],
-    duration: "6 Weeks",
+    duration: "120 Hrs",
     category: "Business",
   },
   {
@@ -134,7 +134,7 @@ const DEFAULT_INTERNSHIPS: Internship[] = [
     title: "Entrepreneurship",
     description: "Construct modern business model canvas sheets, outline startup validation checkpoints, audit market research reports, and practice venture pitch decks.",
     requirements: ["Innovative business planning logic", "2 Business Model Canvas Plans requirement", "Level: Intermediate"],
-    duration: "10 Weeks",
+    duration: "120 Hrs",
     category: "Management",
   }
 ];
@@ -312,7 +312,8 @@ export async function getInternships(): Promise<Internship[]> {
       const { data, error } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
       if (error) {
         console.warn("getInternships query failed, falling back to mock data:", error);
-        return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+        const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+        return list.map(item => ({ ...item, duration: "120 Hrs" }));
       }
 
       // If on client-side and the loaded list is empty or has fewer tracks than defaults,
@@ -322,17 +323,19 @@ export async function getInternships(): Promise<Internship[]> {
         await seedDatabase();
         const { data: updatedData } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
         if (updatedData && updatedData.length > 0) {
-          return updatedData;
+          return updatedData.map(item => ({ ...item, duration: "120 Hrs" }));
         }
       }
 
       if (!data || data.length === 0) {
-        return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+        const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+        return list.map(item => ({ ...item, duration: "120 Hrs" }));
       }
-      return data;
+      return data.map(item => ({ ...item, duration: "120 Hrs" }));
     } catch (err) {
       console.warn("getInternships failed, falling back to mock data:", err);
-      return getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+      const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+      return list.map(item => ({ ...item, duration: "120 Hrs" }));
     }
   } else {
     if (typeof window !== "undefined") {
@@ -359,11 +362,11 @@ export async function getInternships(): Promise<Internship[]> {
         const defaults = await seedDefaultTemplatesFromFiles();
         localStorage.setItem("mock_document_templates", JSON.stringify(defaults));
 
-        return DEFAULT_INTERNSHIPS;
+        return DEFAULT_INTERNSHIPS.map(item => ({ ...item, duration: "120 Hrs" }));
       }
-      return list;
+      return list.map(item => ({ ...item, duration: "120 Hrs" }));
     }
-    return DEFAULT_INTERNSHIPS;
+    return DEFAULT_INTERNSHIPS.map(item => ({ ...item, duration: "120 Hrs" }));
   }
 }
 
@@ -871,12 +874,21 @@ function stripPassword(p: any) {
 }
 
 export async function updateStudentProfile(userId: string, data: any): Promise<{ success: boolean; data?: any }> {
+  const sanitizedData: any = {};
+  for (const key in data) {
+    if (typeof data[key] === "string") {
+      sanitizedData[key] = sanitizeInput(data[key]);
+    } else {
+      sanitizedData[key] = data[key];
+    }
+  }
+
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data: updatedData, error } = await supabase
         .from("profiles")
         .update({
-          ...data,
+          ...sanitizedData,
           profile_completed: true
         })
         .eq("id", userId)
@@ -901,16 +913,23 @@ function updateStudentProfileMock(userId: string, data: any): { success: boolean
   const idx = profiles.findIndex((p: any) => p.id === userId);
   
   if (idx !== -1) {
+    const sanitizedData: any = {};
+    for (const key in data) {
+      if (typeof data[key] === "string") {
+        sanitizedData[key] = sanitizeInput(data[key]);
+      } else {
+        sanitizedData[key] = data[key];
+      }
+    }
     const updated = {
       ...profiles[idx],
-      ...data,
+      ...sanitizedData,
       profile_completed: true
     };
     profiles[idx] = updated;
     localStorage.setItem("mock_profiles", JSON.stringify(profiles));
     return { success: true, data: updated };
   }
-  
   return { success: false };
 }
 
@@ -1161,31 +1180,53 @@ async function getMockDocumentTemplates(): Promise<DocumentTemplate[]> {
 }
 
 async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
-  const codes = ["offer_letter", "certificate", "project_report"];
+  const codes = [
+    "offer_letter",
+    "certificate",
+    "appreciation_certificate",
+    "marksheet",
+    "attendance_sheet",
+    "consent_form",
+    "daily_log_book",
+    "feedback_form",
+    "internship_report"
+  ];
+  
   const names: Record<string, string> = {
     offer_letter: "Offer Letter",
     certificate: "Internship Certificate",
-    project_report: "Project Report"
+    appreciation_certificate: "Appreciation Certificate",
+    marksheet: "Marksheet",
+    attendance_sheet: "Attendance Sheet",
+    consent_form: "Consent Form",
+    daily_log_book: "Daily Log Book",
+    feedback_form: "Feedback Form",
+    internship_report: "Internship Report"
   };
+
   const files: Record<string, string> = {
     offer_letter: "offer_letter.html",
     certificate: "certificate.html",
-    project_report: "project_report.html"
+    internship_report: "project_report.html"
   };
   
   const templates = await Promise.all(
     codes.map(async (code) => {
       let html = "";
-      try {
-        const res = await fetch(`/templates/${files[code]}`);
-        if (res.ok) {
-          html = await res.text();
-        } else {
-          throw new Error(`Fetch status ${res.status}`);
+      if (files[code]) {
+        try {
+          const res = await fetch(`/templates/${files[code]}`);
+          if (res.ok) {
+            html = await res.text();
+          } else {
+            throw new Error(`Fetch status ${res.status}`);
+          }
+        } catch (e) {
+          console.warn(`Could not fetch template file for ${code}, using fallback:`, e);
+          html = getFallbackTemplateHtml(code, names[code]);
         }
-      } catch (e) {
-        console.warn(`Could not fetch template file for ${code}, using fallback:`, e);
-        html = `<!DOCTYPE html><html><body style="font-family: sans-serif; padding: 40px; background: #fafafa;"><div style="background: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #ccc; border-radius: 8px;"><h1>Internship ${names[code]}</h1><hr/><p>Student Name: <strong>{{STUDENT_NAME}}</strong></p><p>College Name: <strong>{{COLLEGE_NAME}}</strong></p><p>Internship Track: <strong>{{INTERNSHIP_TITLE}}</strong></p><p>Grade: <strong>{{GRADE}}</strong></p><p>Verification ID: <strong>{{VERIFICATION_ID}}</strong></p></div></body></html>`;
+      } else {
+        html = getFallbackTemplateHtml(code, names[code]);
       }
       
       return {
@@ -1201,29 +1242,308 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
   return templates;
 }
 
+function getFallbackTemplateHtml(code: string, name: string): string {
+  if (code === "appreciation_certificate") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Appreciation Certificate</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 50px; max-width: 850px; margin: 0 auto; border: 8px double #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; position: relative; }
+    h1 { color: #1e3a8a; font-size: 28px; margin-bottom: 20px; text-transform: uppercase; }
+    .subtitle { font-size: 16px; font-style: italic; color: #64748b; margin-bottom: 30px; }
+    .name { font-size: 24px; font-weight: bold; color: #7c3aed; margin: 20px 0; border-bottom: 1px solid #e2e8f0; display: inline-block; padding-bottom: 5px; }
+    .text { font-size: 14px; margin: 20px 0; color: #475569; }
+    .footer { display: flex; justify-content: space-between; margin-top: 65px; border-top: 1px solid #cbd5e1; padding-top: 10px; font-size: 12px; color: #64748b; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>CERTIFICATE OF APPRECIATION</h1>
+    <div class="subtitle">This certificate is proudly presented to</div>
+    <div class="name">{{STUDENT_NAME}}</div>
+    <div class="text">
+      For outstanding performance and exceptional dedication during their tenure as a <strong>{{INTERNSHIP_TITLE}}</strong> intern. We highly appreciate their commitment, diligence, and professionalism.
+    </div>
+    <div class="footer">
+      <div>Date: {{COMPLETION_DATE}}</div>
+      <div>Verification ID: {{VERIFICATION_ID}}</div>
+      <div>SkillIntern Coordinator</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">Print Certificate</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  if (code === "marksheet") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Evaluation Marksheet</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 700px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #7c3aed; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #f5f3ff; border-radius: 8px; border: 1px solid #ddd6fe; }
+    .meta div { font-size: 13px; }
+    .score-box { text-align: center; margin: 30px 0; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .score { font-size: 48px; font-weight: 800; color: #7c3aed; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #7c3aed; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>EVALUATION MARKSHEET</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{STUDENT_NAME}}</div>
+      <div><strong>College Name:</strong> {{COLLEGE_NAME}}</div>
+      <div><strong>Internship Track:</strong> {{INTERNSHIP_TITLE}}</div>
+      <div><strong>Verification ID:</strong> {{VERIFICATION_ID}}</div>
+      <div><strong>Date:</strong> {{COMPLETION_DATE}}</div>
+    </div>
+    <div class="score-box">
+      <div class="score">{{PERCENTAGE}}%</div>
+      <div style="font-size: 14px; font-weight: bold; color: #475569; margin-top: 8px;">Final Grade: {{GRADE}}</div>
+      <div style="font-size: 12px; color: #059669; font-weight: bold; margin-top: 4px;">Assessment Result: PASSED</div>
+    </div>
+    <p style="font-size: 13px; text-align: center; color: #64748b;">This marksheet details the candidate's core competency score on the SkillIntern MCQ Assessment Engine.</p>
+    <button class="print-btn" onclick="window.print()">Print Marksheet</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  if (code === "attendance_sheet") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Attendance Sheet</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #e0f2fe; border-radius: 8px; border: 1px solid #bae6fd; }
+    .meta div { font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: #f8fafc; border: 1px solid #cbd5e1; text-align: center; padding: 10px; font-size: 11px; color: #475569; }
+    td { border: 1px solid #cbd5e1; padding: 12px 10px; font-size: 12px; text-align: center; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>INTERNSHIP ATTENDANCE RECORD</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{STUDENT_NAME}}</div>
+      <div><strong>College Name:</strong> {{COLLEGE_NAME}}</div>
+      <div><strong>Internship Track:</strong> {{INTERNSHIP_TITLE}}</div>
+      <div><strong>Attendance Status:</strong> 100% Present</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Days Scheduled</th>
+          <th>Days Present</th>
+          <th>Approval Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>__/__/____</td><td>__/__/____</td><td>5</td><td>5</td><td>Approved</td></tr>
+        <tr><td>2</td><td>__/__/____</td><td>__/__/____</td><td>5</td><td>5</td><td>Approved</td></tr>
+        <tr><td>3</td><td>__/__/____</td><td>__/__/____</td><td>5</td><td>5</td><td>Approved</td></tr>
+        <tr><td>4</td><td>__/__/____</td><td>__/__/____</td><td>5</td><td>5</td><td>Approved</td></tr>
+      </tbody>
+    </table>
+    <button class="print-btn" onclick="window.print()">Print Record</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  if (code === "consent_form") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Consent Form</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 24px 0; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; }
+    .meta div { font-size: 13px; }
+    .content { margin-top: 24px; font-size: 14px; }
+    .signature-area { display: flex; justify-content: space-between; margin-top: 60px; }
+    .sig-box { border-top: 1px dashed #94a3b8; width: 200px; text-align: center; padding-top: 8px; font-size: 12px; color: #64748b; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>INTERNSHIP CONSENT FORM</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{STUDENT_NAME}}</div>
+      <div><strong>College Name:</strong> {{COLLEGE_NAME}}</div>
+      <div><strong>Roll Number:</strong> {{ROLL_NUMBER}}</div>
+      <div><strong>Department/Stream:</strong> {{DEPARTMENT}}</div>
+    </div>
+    <div class="content">
+      <p>I hereby express my consent to participate in the SkillIntern Vocational Training and Internship program. I agree to abide by the guidelines, schedules, and code of conduct set forth by the platform and the project coordinators.</p>
+      <p>I confirm that the details provided in my candidate profile are accurate. I understand that my certification is subject to completing the requirements and achieving a passing grade of 40% or above in the assessment portal.</p>
+      <p style="margin-top: 16px;">Date: ________________________</p>
+    </div>
+    <div class="signature-area">
+      <div class="sig-box">Candidate Signature</div>
+      <div class="sig-box">College Coordinator / Dean</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">Print Document</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  if (code === "daily_log_book") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Daily Log Book</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 900px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #4f46e5; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #faf5ff; border-radius: 8px; border: 1px solid #f3e8ff; }
+    .meta div { font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: #f8fafc; border: 1px solid #cbd5e1; text-align: center; padding: 10px; font-size: 11px; color: #475569; }
+    td { border: 1px solid #cbd5e1; padding: 16px 10px; font-size: 12px; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>DAILY ACTIVITY LOGBOOK</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{STUDENT_NAME}}</div>
+      <div><strong>Department:</strong> {{DEPARTMENT}}</div>
+      <div><strong>College Name:</strong> {{COLLEGE_NAME}}</div>
+      <div><strong>Internship Track:</strong> {{INTERNSHIP_TITLE}}</div>
+    </div>
+    <p style="font-size: 13px; margin-bottom: 12px;">Please log your daily tasks, learning notes, and project work below:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 80px;">Day</th>
+          <th style="width: 120px;">Date</th>
+          <th>Learning Outcomes &amp; Activities Performed</th>
+          <th style="width: 100px;">Hours Logged</th>
+          <th style="width: 120px;">Supervisor Init</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="text-align:center;">1</td><td></td><td>Setting up environment, configuring development workspace.</td><td>8</td><td></td></tr>
+        <tr><td style="text-align:center;">2</td><td></td><td>Studying core project framework architectures and guidelines.</td><td>8</td><td></td></tr>
+        <tr><td style="text-align:center;">3</td><td></td><td>Implementing database schemas, relationships, and queries.</td><td>8</td><td></td></tr>
+        <tr><td style="text-align:center;">4</td><td></td><td>Creating responsive frontend pages, forms, and grid layouts.</td><td>8</td><td></td></tr>
+        <tr><td style="text-align:center;">5</td><td></td><td>Integrating APIs and testing conceptual workflows.</td><td>8</td><td></td></tr>
+      </tbody>
+    </table>
+    <button class="print-btn" onclick="window.print()">Print Logbook</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  if (code === "feedback_form") {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Feedback Form</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { color: #e11d48; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 24px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #fff1f2; border-radius: 8px; border: 1px solid #ffe4e6; }
+    .meta div { font-size: 13px; }
+    .section-title { font-weight: bold; margin-top: 20px; font-size: 14px; color: #e11d48; border-bottom: 1px solid #ffe4e6; padding-bottom: 4px; }
+    .q-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .ratings { display: flex; gap: 8px; }
+    .rating-bubble { border: 1px solid #cbd5e1; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; cursor: pointer; }
+    .comment-box { border: 1px solid #cbd5e1; width: 100%; min-height: 80px; margin-top: 8px; border-radius: 6px; }
+    .print-btn { display: block; margin: 20px auto 0 auto; padding: 10px 20px; background: #e11d48; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>INTERNSHIP EXPERIENCE FEEDBACK</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{STUDENT_NAME}}</div>
+      <div><strong>College Name:</strong> {{COLLEGE_NAME}}</div>
+      <div><strong>Internship Track:</strong> {{INTERNSHIP_TITLE}}</div>
+    </div>
+    <div class="section-title">Program Evaluation</div>
+    <div class="q-row">
+      <span>1. How relevant was the learning checklist/curriculum to your stream?</span>
+      <div class="ratings"><div class="rating-bubble">1</div><div class="rating-bubble">2</div><div class="rating-bubble">3</div><div class="rating-bubble">4</div><div class="rating-bubble">5</div></div>
+    </div>
+    <div class="q-row">
+      <span>2. How would you rate the assessment difficulty and integrity?</span>
+      <div class="ratings"><div class="rating-bubble">1</div><div class="rating-bubble">2</div><div class="rating-bubble">3</div><div class="rating-bubble">4</div><div class="rating-bubble">5</div></div>
+    </div>
+    <div class="q-row">
+      <span>3. Overall support and utility of the digital dashboards?</span>
+      <div class="ratings"><div class="rating-bubble">1</div><div class="rating-bubble">2</div><div class="rating-bubble">3</div><div class="rating-bubble">4</div><div class="rating-bubble">5</div></div>
+    </div>
+    <div style="margin-top: 15px;">
+      <span style="font-size: 13px; font-weight: bold;">General Comments / Recommendations:</span>
+      <div class="comment-box"></div>
+    </div>
+    <button class="print-btn" onclick="window.print()">Print Feedback</button>
+  </div>
+</body>
+</html>`;
+  }
+
+  return `<!DOCTYPE html><html><body style="font-family: sans-serif; padding: 40px; background: #fafafa;"><div style="background: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #ccc; border-radius: 8px;"><h1>Internship ${name}</h1><hr/><p>Student Name: <strong>{{STUDENT_NAME}}</strong></p><p>College Name: <strong>{{COLLEGE_NAME}}</strong></p><p>Internship Track: <strong>{{INTERNSHIP_TITLE}}</strong></p><p>Grade: <strong>{{GRADE}}</strong></p><p>Verification ID: <strong>{{VERIFICATION_ID}}</strong></p></div></body></html>`;
+}
+
 export async function getDocumentTemplateByCode(code: string): Promise<DocumentTemplate | null> {
   const list = await getDocumentTemplates();
   return list.find((t) => t.code === code) || null;
 }
 
-export async function saveDocumentTemplate(code: string, htmlContent: string, isVisible: boolean): Promise<DocumentTemplate> {
-  const updatedTpl = {
+export async function saveDocumentTemplate(code: string, htmlContent: string, isVisible: boolean, name?: string): Promise<DocumentTemplate> {
+  const updatedTpl: any = {
     code,
     html_content: htmlContent,
     is_visible: isVisible,
     updated_at: new Date().toISOString()
   };
+  if (name) {
+    updatedTpl.name = name;
+  }
 
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
         .from("document_templates")
-        .update({
-          html_content: htmlContent,
-          is_visible: isVisible,
-          updated_at: updatedTpl.updated_at
-        })
-        .eq("code", code)
+        .upsert(updatedTpl, { onConflict: "code" })
         .select()
         .single();
         
@@ -1231,23 +1551,23 @@ export async function saveDocumentTemplate(code: string, htmlContent: string, is
       return data;
     } catch (err) {
       console.warn("saveDocumentTemplate failed, falling back to mock:", err);
-      return saveDocumentTemplateMock(code, htmlContent, isVisible);
+      return saveDocumentTemplateMock(code, htmlContent, isVisible, name);
     }
   } else {
-    return saveDocumentTemplateMock(code, htmlContent, isVisible);
+    return saveDocumentTemplateMock(code, htmlContent, isVisible, name);
   }
 }
 
-function saveDocumentTemplateMock(code: string, htmlContent: string, isVisible: boolean): DocumentTemplate {
+function saveDocumentTemplateMock(code: string, htmlContent: string, isVisible: boolean, name?: string): DocumentTemplate {
   const list = getMockStorage<DocumentTemplate[]>("mock_document_templates", []);
   const idx = list.findIndex((t) => t.code === code);
   
-  const templateName = code === "offer_letter" ? "Offer Letter" : code === "certificate" ? "Internship Certificate" : "Project Report";
+  const templateName = name || (code === "offer_letter" ? "Offer Letter" : code === "certificate" ? "Internship Certificate" : code === "project_report" ? "Project Report" : code);
   
   const saved: DocumentTemplate = {
     id: idx !== -1 ? list[idx].id : `dt-${code}`,
     code,
-    name: idx !== -1 ? list[idx].name : templateName,
+    name: idx !== -1 ? (name || list[idx].name) : templateName,
     html_content: htmlContent,
     is_visible: isVisible,
     updated_at: new Date().toISOString()
@@ -1262,6 +1582,439 @@ function saveDocumentTemplateMock(code: string, htmlContent: string, isVisible: 
   return saved;
 }
 
+// -------------------------------------------------------------
+// PAYMENTS OPERATIONS
+// -------------------------------------------------------------
+export interface Payment {
+  id: string;
+  student_id: string;
+  internship_id: string;
+  amount: number;
+  status: "pending" | "completed" | "failed";
+  razorpay_order_id: string;
+  razorpay_payment_id?: string;
+  razorpay_signature?: string;
+  created_at: string;
+}
 
+export async function getPaidInternshipIds(userId: string): Promise<string[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .select("internship_id")
+        .eq("student_id", userId)
+        .eq("status", "completed");
+      if (error) {
+        console.warn("getPaidInternshipIds failed, falling back to mock:", error);
+        return getMockPaidInternshipIds(userId);
+      }
+      return (data || []).map((p: any) => p.internship_id);
+    } catch (err) {
+      console.warn("getPaidInternshipIds failed, falling back to mock:", err);
+      return getMockPaidInternshipIds(userId);
+    }
+  } else {
+    return getMockPaidInternshipIds(userId);
+  }
+}
 
+function getMockPaidInternshipIds(userId: string): string[] {
+  if (typeof window === "undefined") return [];
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  return list
+    .filter((p) => p.student_id === userId && p.status === "completed")
+    .map((p) => p.internship_id);
+}
+
+export async function createPaymentRecord(
+  userId: string,
+  internshipId: string,
+  orderId: string,
+  amount: number
+): Promise<Payment> {
+  const paymentData: Omit<Payment, "id" | "created_at"> = {
+    student_id: userId,
+    internship_id: internshipId,
+    amount,
+    status: "pending",
+    razorpay_order_id: orderId,
+  };
+
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .insert(paymentData)
+        .select()
+        .single();
+      if (error) {
+        console.warn("createPaymentRecord failed, falling back to mock:", error);
+        return createPaymentRecordMock(userId, internshipId, orderId, amount);
+      }
+      return data;
+    } catch (err) {
+      console.warn("createPaymentRecord failed, falling back to mock:", err);
+      return createPaymentRecordMock(userId, internshipId, orderId, amount);
+    }
+  } else {
+    return createPaymentRecordMock(userId, internshipId, orderId, amount);
+  }
+}
+
+function createPaymentRecordMock(
+  userId: string,
+  internshipId: string,
+  orderId: string,
+  amount: number
+): Payment {
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  const newPayment: Payment = {
+    id: `pay-${Math.random().toString(36).substr(2, 9)}`,
+    student_id: userId,
+    internship_id: internshipId,
+    amount,
+    status: "pending",
+    razorpay_order_id: orderId,
+    created_at: new Date().toISOString(),
+  };
+  list.push(newPayment);
+  setMockStorage("mock_payments", list);
+  return newPayment;
+}
+
+export async function verifyAndCompletePayment(
+  orderId: string,
+  paymentId: string,
+  signature: string
+): Promise<boolean> {
+  const nowStr = new Date().toISOString();
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase
+        .from("payments")
+        .update({
+          status: "completed",
+          razorpay_payment_id: paymentId,
+          razorpay_signature: signature,
+          created_at: nowStr
+        })
+        .eq("razorpay_order_id", orderId);
+      if (error) {
+        console.warn("verifyAndCompletePayment failed, falling back to mock:", error);
+        return verifyAndCompletePaymentMock(orderId, paymentId, signature);
+      }
+      return true;
+    } catch (err) {
+      console.warn("verifyAndCompletePayment failed, falling back to mock:", err);
+      return verifyAndCompletePaymentMock(orderId, paymentId, signature);
+    }
+  } else {
+    return verifyAndCompletePaymentMock(orderId, paymentId, signature);
+  }
+}
+
+function verifyAndCompletePaymentMock(
+  orderId: string,
+  paymentId: string,
+  signature: string
+): boolean {
+  if (typeof window === "undefined") return true;
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  const idx = list.findIndex((p) => p.razorpay_order_id === orderId);
+  if (idx !== -1) {
+    list[idx] = {
+      ...list[idx],
+      status: "completed",
+      razorpay_payment_id: paymentId,
+      razorpay_signature: signature,
+      created_at: new Date().toISOString()
+    };
+    setMockStorage("mock_payments", list);
+    return true;
+  }
+  return false;
+}
+
+export async function getStudentPayments(userId: string): Promise<Payment[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .select("*")
+        .eq("student_id", userId)
+        .eq("status", "completed")
+        .order("created_at", { ascending: false });
+      if (error) {
+        console.warn("getStudentPayments failed, falling back to mock:", error);
+        return getMockStudentPayments(userId);
+      }
+      return data || [];
+    } catch (err) {
+      console.warn("getStudentPayments failed, falling back to mock:", err);
+      return getMockStudentPayments(userId);
+    }
+  } else {
+    return getMockStudentPayments(userId);
+  }
+}
+
+function getMockStudentPayments(userId: string): Payment[] {
+  if (typeof window === "undefined") return [];
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  return list
+    .filter((p) => p.student_id === userId && p.status === "completed")
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+// -------------------------------------------------------------
+// DOCUMENT TEMPLATES CRUD (ADDITIONAL OPERATIONS)
+// -------------------------------------------------------------
+export async function deleteDocumentTemplate(code: string): Promise<boolean> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase
+        .from("document_templates")
+        .delete()
+        .eq("code", code);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.warn("deleteDocumentTemplate failed, falling back to mock:", err);
+      return deleteDocumentTemplateMock(code);
+    }
+  } else {
+    return deleteDocumentTemplateMock(code);
+  }
+}
+
+function deleteDocumentTemplateMock(code: string): boolean {
+  if (typeof window === "undefined") return false;
+  const list = getMockStorage<DocumentTemplate[]>("mock_document_templates", []);
+  const filtered = list.filter((t) => t.code !== code);
+  if (filtered.length !== list.length) {
+    setMockStorage("mock_document_templates", filtered);
+    return true;
+  }
+  return false;
+}
+
+// -------------------------------------------------------------
+// PLATFORM SETTINGS OPERATIONS
+// -------------------------------------------------------------
+export interface PlatformSettings {
+  assessment_fee: number;
+  payments_enabled: boolean;
+}
+
+export async function getPlatformSettings(): Promise<PlatformSettings> {
+  const defaultValue: PlatformSettings = { assessment_fee: 150, payments_enabled: true };
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .select("*")
+        .eq("key", "settings")
+        .single();
+      if (error || !data) {
+        // If not found, try inserting default
+        await supabase.from("platform_settings").insert({ key: "settings", value: defaultValue });
+        return defaultValue;
+      }
+      return data.value;
+    } catch (err) {
+      console.warn("getPlatformSettings failed, using fallback:", err);
+      return defaultValue;
+    }
+  } else {
+    return getMockStorage<PlatformSettings>("mock_platform_settings", defaultValue);
+  }
+}
+
+export async function savePlatformSettings(settings: PlatformSettings): Promise<PlatformSettings> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .upsert({ key: "settings", value: settings, updated_at: new Date().toISOString() })
+        .select()
+        .single();
+      if (error) throw error;
+      return data.value;
+    } catch (err) {
+      console.warn("savePlatformSettings failed, using fallback:", err);
+      setMockStorage("mock_platform_settings", settings);
+      return settings;
+    }
+  } else {
+    setMockStorage("mock_platform_settings", settings);
+    return settings;
+  }
+}
+
+export interface University {
+  name: string;
+  colleges: string[];
+}
+
+export async function getUniversities(): Promise<University[]> {
+  const defaultUniversities: University[] = [
+    {
+      name: "Delhi Technological University (DTU)",
+      colleges: ["Main Campus", "East Campus", "Delhi School of Management"]
+    },
+    {
+      name: "Veer Kunwar Singh University (VKSU)",
+      colleges: ["H.D. Jain College", "Maharaja College", "S.B. College", "Jagdam College"]
+    },
+    {
+      name: "Test University",
+      colleges: ["Test College", "Mock Institute of Technology"]
+    }
+  ];
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .select("*")
+        .eq("key", "universities")
+        .maybeSingle();
+      if (error || !data) {
+        // If not found, try inserting default
+        await supabase.from("platform_settings").insert({ key: "universities", value: defaultUniversities });
+        return defaultUniversities;
+      }
+      return data.value as University[];
+    } catch (err) {
+      console.warn("getUniversities failed, using fallback:", err);
+      return defaultUniversities;
+    }
+  } else {
+    return getMockStorage<University[]>("mock_universities", defaultUniversities);
+  }
+}
+
+export async function saveUniversities(universities: University[]): Promise<University[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .upsert({ key: "universities", value: universities, updated_at: new Date().toISOString() })
+        .select()
+        .single();
+      if (error) throw error;
+      return data.value as University[];
+    } catch (err) {
+      console.warn("saveUniversities failed, using fallback:", err);
+      setMockStorage("mock_universities", universities);
+      return universities;
+    }
+  } else {
+    setMockStorage("mock_universities", universities);
+    return universities;
+  }
+}
+
+export async function getAllPayments(): Promise<any[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .select(`
+          *,
+          student:profiles(full_name, email, phone_number)
+        `)
+        .order("created_at", { ascending: false });
+        
+      if (error) {
+        console.warn("getAllPayments query failed, falling back to mock data:", error);
+        return getAllPaymentsMock();
+      }
+      return data || [];
+    } catch (err) {
+      console.warn("getAllPayments failed, falling back to mock data:", err);
+      return getAllPaymentsMock();
+    }
+  } else {
+    return getAllPaymentsMock();
+  }
+}
+
+function getAllPaymentsMock(): any[] {
+  if (typeof window === "undefined") return [];
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  const profiles = getMockStorage<any[]>("mock_profiles", []);
+  return list
+    .map((pay) => {
+      const studentProfile = profiles.find((p) => p.id === pay.student_id);
+      return {
+        ...pay,
+        student: studentProfile ? {
+          full_name: studentProfile.full_name,
+          email: studentProfile.email,
+          phone_number: studentProfile.phone_number,
+        } : null
+      };
+    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+export function sanitizeInput(val: string): string {
+  if (typeof val !== "string") return val;
+  return val.replace(/<[^>]*>/g, "").replace(/['"\\;%_]/g, "").trim();
+}
+
+export async function updateTestResult(id: string, updates: Partial<TestResult>): Promise<TestResult | null> {
+  let reference_number = updates.reference_number;
+  if (updates.passed && !reference_number) {
+    const current = await getTestResultById(id);
+    if (current && !current.reference_number) {
+      reference_number = generateReferenceNumber();
+    }
+  }
+
+  const finalUpdates = {
+    ...updates,
+    ...(updates.passed === false ? { reference_number: "" } : (reference_number ? { reference_number } : {}))
+  };
+
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("test_results")
+        .update(finalUpdates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (err) {
+      console.warn("updateTestResult to Supabase failed, falling back to mock:", err);
+      return updateTestResultMock(id, finalUpdates);
+    }
+  } else {
+    return updateTestResultMock(id, finalUpdates);
+  }
+}
+
+function updateTestResultMock(id: string, updates: Partial<TestResult>): TestResult | null {
+  if (typeof window === "undefined") return null;
+  const list = getMockStorage<TestResult[]>("mock_test_results", []);
+  const idx = list.findIndex((r) => r.id === id);
+  if (idx === -1) return null;
+
+  let reference_number = updates.reference_number || list[idx].reference_number;
+  if (updates.passed && !reference_number) {
+    reference_number = generateReferenceNumber();
+  }
+
+  const updated: TestResult = {
+    ...list[idx],
+    ...updates,
+    reference_number: updates.passed === false ? "" : reference_number
+  };
+  list[idx] = updated;
+  setMockStorage("mock_test_results", list);
+  return updated;
+}
 
