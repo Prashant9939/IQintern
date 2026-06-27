@@ -65,6 +65,8 @@ html,
 body {
   overflow-x: hidden;
   width: 100%;
+  /* Do NOT add overflow: hidden here — it prevents iOS Safari scroll lock from working.
+     Scroll locking is handled in JS via position:fixed on body. */
 }
 
 body {
@@ -364,15 +366,155 @@ h1 {
 }
 
 @keyframes slideInRight {
+  /*
+   * iOS WebKit Bug: CSS transform on a position:fixed element creates a new
+   * containing block, repositioning the element relative to the transformed
+   * ancestor instead of the viewport. We use opacity-only animation for the
+   * drawer to avoid this entirely. The slide effect is achieved by the drawer
+   * starting off-screen via CSS right: -100% and transitioning to right: 0
+   * using CSS transitions, not keyframe transforms.
+   */
   from {
     opacity: 0;
-    transform: translateX(100%);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0);
   }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.2s ease-out forwards;
+}
+
+/*
+ * ============================================================
+ * MOBILE DRAWER — iOS WebKit Compatible
+ * ============================================================
+ *
+ * Root causes addressed:
+ *
+ * 1. STACKING CONTEXT: The drawer is rendered outside the navbar's fixed
+ *    div (which has backdrop-filter). On iOS WebKit, backdrop-filter creates
+ *    a new GPU compositing layer — any fixed children are clipped to that
+ *    layer's bounds, not the viewport. By rendering outside, we avoid this.
+ *
+ * 2. HEIGHT: Uses 100dvh (dynamic viewport height) with 100vh fallback.
+ *    iOS Safari's URL bar shrinks/grows, causing 100vh to exceed the actual
+ *    visible viewport. 100dvh always equals the current visible viewport.
+ *
+ * 3. TRANSFORM: No transform used on the drawer. iOS WebKit repositions
+ *    fixed elements relative to any transformed ancestor.
+ *
+ * 4. BACKGROUND: Solid #ffffff (no alpha channel). Semi-transparent
+ *    backgrounds on fixed elements may not composite correctly on iOS,
+ *    causing content bleed-through.
+ *
+ * 5. Z-INDEX: Explicit integer z-index values. CSS custom properties for
+ *    z-index are unreliable across iOS Safari versions.
+ *
+ * 6. SAFE AREAS: env(safe-area-inset-*) ensures content is never clipped
+ *    by notches, Dynamic Island, or home indicator on modern iPhones.
+ *
+ * 7. -webkit-overflow-scrolling: touch enables momentum scrolling for the
+ *    nav list on older iOS devices.
+ * ============================================================
+ */
+
+/* Full-screen portal root — covers entire viewport */
+.mobile-drawer-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  /* dvh fallback chain for iOS compatibility */
+  height: 100vh;
+  height: 100dvh;
+  z-index: 9999;
+  /* Prevent any interaction bleed to elements below */
+  pointer-events: auto;
+}
+
+/* Semi-transparent backdrop — full screen, behind drawer */
+.mobile-drawer-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Solid enough to hide content, won't cause WebKit compositing issues */
+  background-color: rgba(15, 23, 42, 0.6);
+  /* -webkit-backdrop-filter intentionally omitted — it causes additional
+     stacking context layers on iOS that interfere with the drawer panel */
+  cursor: pointer;
+}
+
+/* Drawer panel — right-side slide-in, solid white */
+.mobile-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 18rem; /* 288px = w-72 */
+  max-width: 85vw;
+  /* Solid white — no opacity/alpha that could bleed through */
+  background-color: #ffffff;
+  /* dvh fallback for height */
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px -4px rgba(0, 0, 0, 0.15), -1px 0 0 0 rgba(226, 232, 240, 0.8);
+  /* Transition opacity only — avoids iOS transform-on-fixed bug */
+  animation: drawerFadeIn 0.2s ease-out forwards;
+  /* Safe area: push content below notch at top, above home bar at bottom */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Ensure drawer can scroll internally if needed */
+  overflow: hidden;
+}
+
+@keyframes drawerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Header row: logo + close button */
+.mobile-drawer-header {
+  display: flex;
+  height: 4rem; /* h-16 */
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  flex-shrink: 0;
+  background-color: #ffffff;
+}
+
+/* Navigation items area — independently scrollable */
+.mobile-drawer-nav {
+  flex-grow: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* momentum scroll on older iOS */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem; /* gap-1.5 */
+  overscroll-behavior: contain; /* prevent scroll chaining to body */
+}
+
+/* Footer: auth buttons — always visible, never scrolls off */
+.mobile-drawer-footer {
+  flex-shrink: 0;
+  padding: 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space-y-3 */
 }
 
 .animate-fade-in {
@@ -381,10 +523,6 @@ h1 {
 
 .animate-slide-up {
   animation: slideUp 0.4s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Hover Elevation Utilities */
