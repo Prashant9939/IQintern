@@ -200,7 +200,7 @@ export default function ManageColleges() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Left Column: Add University Form */}
-        <div className="bg-white border border-zinc-200/80 rounded-3xl p-6 space-y-6 shadow-sm sticky top-24">
+        <div className="bg-white border border-zinc-200/80 rounded-3xl p-6 space-y-6 shadow-sm">
           <div className="flex items-center gap-2.5 border-b border-zinc-100 pb-3">
             <Plus className="h-5 w-5 text-indigo-600" />
             <h3 className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Add New University</h3>
@@ -288,18 +288,18 @@ export default function ManageColleges() {
                 )}
 
                 {/* Add College Form within University */}
-                <div className="flex gap-2.5 pt-3 border-t border-zinc-100 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-3 border-t border-zinc-100 mt-2">
                   <input
                     type="text"
                     placeholder="Add college name..."
                     value={newCollegeNames[univ.name] || ""}
                     onChange={(e) => handleCollegeInputChange(univ.name, e.target.value)}
-                    className="flex-grow px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 focus:border-indigo-500/30 focus:bg-white rounded-xl outline-none text-zinc-800 transition-all"
+                    className="flex-grow px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 focus:border-indigo-500/30 focus:bg-white rounded-xl outline-none text-zinc-800 transition-all w-full sm:w-auto"
                   />
                   <button
                     type="button"
                     onClick={() => handleAddCollege(univ.name)}
-                    className="flex items-center gap-1 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs py-2 px-4 border border-indigo-100 transition-all cursor-pointer"
+                    className="flex items-center justify-center gap-1 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs py-2 px-4 border border-indigo-100 transition-all cursor-pointer w-full sm:w-auto shrink-0 animate-fade-in"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Add College

@@ -299,7 +299,10 @@ export default function AdminTemplates() {
       return htmlTemplates.filter((t) => !t.internship_id).map((t) => ({ ...t, isOverride: false }));
     }
 
-    const internshipTemplates = htmlTemplates.filter((t) => t.internship_id === selectedInternshipId);
+    const allowedOverrideCodes = ["project_report", "internship_report"];
+    const internshipTemplates = htmlTemplates.filter(
+      (t) => t.internship_id === selectedInternshipId && allowedOverrideCodes.includes(t.code)
+    );
     const globalTemplates = htmlTemplates.filter((t) => !t.internship_id);
     
     const displayList: (DocumentTemplate & { isOverride?: boolean })[] = [
@@ -307,12 +310,12 @@ export default function AdminTemplates() {
     ];
     
     globalTemplates.forEach((gt) => {
-      const hasOverride = internshipTemplates.some((it) => it.code === gt.code);
+      const hasOverride = allowedOverrideCodes.includes(gt.code) && internshipTemplates.some((it) => it.code === gt.code);
       if (!hasOverride) {
         displayList.push({
           ...gt,
           isOverride: false,
-          id: `fallback-${gt.code}`,
+          id: gt.internship_id ? gt.id : `fallback-${gt.code}`,
         });
       }
     });
@@ -456,32 +459,38 @@ export default function AdminTemplates() {
                   Preview
                 </button>
 
-                <div className="flex gap-2">
-                  <label className="flex items-center gap-1.5 border border-zinc-200 bg-zinc-50 hover:bg-indigo-50/60 hover:text-indigo-700 hover:border-indigo-100 active:bg-indigo-100 active:scale-95 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
-                    <Upload className="h-3.5 w-3.5" />
-                    Replace
-                    <input
-                      type="file"
-                      accept=".html"
-                      disabled={updatingId !== null}
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          handleReplaceHtmlTemplate(tpl, file);
-                        }
-                      }}
-                      className="hidden"
-                    />
-                  </label>
+                {selectedInternshipId !== "global" && !["project_report", "internship_report"].includes(tpl.code) ? (
+                  <span className="text-[10px] text-zinc-450 font-bold italic py-1.5 px-3 border border-dashed border-zinc-200 rounded-xl bg-zinc-50 select-none">
+                    Shared (Edit under Global Default)
+                  </span>
+                ) : (
+                  <div className="flex gap-2">
+                    <label className="flex items-center gap-1.5 border border-zinc-200 bg-zinc-50 hover:bg-indigo-50/60 hover:text-indigo-700 hover:border-indigo-100 active:bg-indigo-100 active:scale-95 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
+                      <Upload className="h-3.5 w-3.5" />
+                      Replace
+                      <input
+                        type="file"
+                        accept=".html"
+                        disabled={updatingId !== null}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleReplaceHtmlTemplate(tpl, file);
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
 
-                  <button
-                    onClick={() => handleOpenHtmlEditor(tpl)}
-                    className="flex items-center gap-1 bg-indigo-55 border border-indigo-100 hover:bg-indigo-600 hover:text-white active:bg-indigo-700 active:scale-95 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
-                  >
-                    <Edit3 className="h-3.5 w-3.5" />
-                    {selectedInternshipId !== "global" && !tpl.isOverride ? "Customize" : "Edit"}
-                  </button>
-                </div>
+                    <button
+                      onClick={() => handleOpenHtmlEditor(tpl)}
+                      className="flex items-center gap-1 bg-indigo-55 border border-indigo-100 hover:bg-indigo-600 hover:text-white active:bg-indigo-700 active:scale-95 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" />
+                      {selectedInternshipId !== "global" && !tpl.isOverride ? "Customize" : "Edit"}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

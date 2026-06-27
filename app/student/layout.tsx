@@ -104,7 +104,6 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     { name: "Tracks", href: "/student/internships", icon: Briefcase },
     { name: "Certificates", href: "/student/certificates", icon: Award },
     { name: "Assessments", href: "/student/assessments", icon: Clipboard },
-    { name: "Documents", href: "/student/documents", icon: FileText },
     { name: "Progress", href: "/student/progress", icon: LineChart },
     { name: "Settings", href: "/student/profile", icon: Settings },
     { name: "Help & Support", href: "/dashboard/help-support", icon: HelpCircle },

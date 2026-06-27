@@ -7,7 +7,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { getAllProfiles, getTestResults, TestResult, deleteProfile, updateStudentProfile, getAllPayments, getInternships, updateTestResult, Internship, Payment } from "@/lib/supabase/db";
+import { getAllProfiles, getTestResults, TestResult, deleteProfile, updateStudentProfile, getAllPayments, getInternships, updateTestResult, Internship, Payment, getResultChangeHistory } from "@/lib/supabase/db";
 import { getCurrentUser, createAdminUser, UserSession } from "@/lib/supabase/auth";
 import {
   Users,
@@ -52,6 +52,28 @@ export default function RegisteredStudents() {
   const [editingResult, setEditingResult] = useState<TestResult | null>(null);
   const [updatingResult, setUpdatingResult] = useState(false);
   const [resultMsg, setResultMsg] = useState("");
+  const [changeHistory, setChangeHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (editingResult) {
+      const resultId = editingResult.id;
+      async function loadHistory() {
+        setLoadingHistory(true);
+        try {
+          const hist = await getResultChangeHistory(resultId);
+          setChangeHistory(hist);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoadingHistory(false);
+        }
+      }
+      loadHistory();
+    } else {
+      setChangeHistory([]);
+    }
+  }, [editingResult]);
 
   // Add Admin modal state
   const [showAddAdmin, setShowAddAdmin] = useState(false);
@@ -131,6 +153,15 @@ export default function RegisteredStudents() {
         setResults((prev) =>
           prev.map((r) => (r.id === editingResult.id ? { ...r, ...res } : r))
         );
+        
+        // Refresh history logs
+        try {
+          const hist = await getResultChangeHistory(editingResult.id);
+          setChangeHistory(hist);
+        } catch (e) {
+          console.error(e);
+        }
+
         setTimeout(() => {
           setEditingResult(null);
           setResultMsg("");
@@ -309,20 +340,20 @@ export default function RegisteredStudents() {
         <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={() => { setActiveTab("profiles"); setSearchQuery(""); }}
-            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
               activeTab === "profiles"
-                ? "bg-indigo-50 text-indigo-600 border-indigo-150 shadow-sm"
-                : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm"
+                ? "bg-indigo-600 border-indigo-600 text-white font-extrabold shadow-sm shadow-indigo-600/10"
+                : "bg-slate-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900 font-bold"
             }`}
           >
             All Accounts ({profiles.length})
           </button>
           <button
             onClick={() => { setActiveTab("results"); setSearchQuery(""); }}
-            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
               activeTab === "results"
-                ? "bg-indigo-50 text-indigo-600 border-indigo-150 shadow-sm"
-                : "bg-zinc-50 border-zinc-200 text-zinc-655 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm"
+                ? "bg-indigo-600 border-indigo-600 text-white font-extrabold shadow-sm shadow-indigo-600/10"
+                : "bg-slate-50 border-zinc-200 text-zinc-655 hover:bg-zinc-100 hover:text-zinc-900 font-bold"
             }`}
           >
             Test Logs ({results.length})
@@ -966,6 +997,36 @@ export default function RegisteredStudents() {
               {resultMsg && (
                 <div className="p-3.5 rounded-xl text-xs bg-indigo-50 border border-indigo-150 text-indigo-700 font-medium">
                   {resultMsg}
+                </div>
+              )}
+
+              {/* History list */}
+              {changeHistory.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-zinc-150 space-y-2">
+                  <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider text-left">Edit History Logs</h4>
+                  <div className="max-h-[120px] overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                    {changeHistory.map((h) => {
+                      const adminName = h.admin?.full_name || "Super Admin";
+                      return (
+                        <div key={h.id} className="text-[11px] text-zinc-550 bg-zinc-50 p-2.5 rounded-xl border border-zinc-100 flex flex-col gap-1 text-left">
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold text-zinc-800">{adminName}</span>
+                            <span className="text-[9px] text-zinc-400">
+                              {new Date(h.changed_at).toLocaleString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                              })}
+                            </span>
+                          </div>
+                          <span>
+                            Changed <strong className="font-semibold text-zinc-700">{h.field_name}</strong> from <span className="line-through text-zinc-450">{h.previous_value ?? "none"}</span> to <strong className="font-extrabold text-[#5B5FF7]">{h.new_value ?? "none"}</strong>
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 

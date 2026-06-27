@@ -5,6 +5,7 @@ import { getCurrentUser, UserSession } from "@/lib/supabase/auth";
 import {
   getInternships,
   getTestResults,
+  getStudentPayments,
   Internship,
   TestResult,
 } from "@/lib/supabase/db";
@@ -15,6 +16,7 @@ import {
   XCircle,
   Clipboard,
   ChevronRight,
+  AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +24,7 @@ export default function AssessmentsPage() {
   const [user, setUser] = useState<UserSession | null>(null);
   const [internships, setInternships] = useState<Internship[]>([]);
   const [results, setResults] = useState<TestResult[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,12 +33,14 @@ export default function AssessmentsPage() {
         const u = await getCurrentUser();
         setUser(u);
         if (u) {
-          const [ints, res] = await Promise.all([
+          const [ints, res, pays] = await Promise.all([
             getInternships(),
             getTestResults(u.id),
+            getStudentPayments(u.id)
           ]);
           setInternships(ints);
           setResults(res);
+          setPayments(pays);
         }
       } catch (err) {
         console.error("Error loading assessments data", err);
@@ -52,6 +57,9 @@ export default function AssessmentsPage() {
     ? Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / results.length)
     : 0;
 
+  const selectedTrackIds = Array.from(new Set(payments.filter(p => p.status === "completed").map(p => p.internship_id)));
+  const selectedTracks = selectedTrackIds.map(id => internships.find(i => i.id === id)).filter(Boolean);
+
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -66,13 +74,50 @@ export default function AssessmentsPage() {
   return (
     <div className="space-y-8 animate-fade-in text-zinc-800 pb-10">
       {/* Page Header */}
-      <section className="text-left">
-        <span className="text-[#5B5FF7] text-xs font-bold uppercase tracking-wider">Assessment Center</span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight mt-1">Test History & Results</h2>
-        <p className="text-zinc-500 text-sm mt-2 font-light leading-relaxed max-w-2xl">
-          Track your assessment attempts, scores, and results across all enrolled internship tracks.
-        </p>
+      <section className="text-left flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+          <span className="text-[#5B5FF7] text-xs font-bold uppercase tracking-wider">Assessment Center</span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight mt-1">Test History & Results</h2>
+          <p className="text-zinc-500 text-sm mt-2 font-light leading-relaxed max-w-2xl">
+            Track your assessment attempts, scores, and results across all enrolled internship tracks.
+          </p>
+        </div>
       </section>
+
+      {/* Selected Internship Banner */}
+      {selectedTracks.length > 0 ? (
+        <div className="bg-gradient-to-r from-indigo-50 to-violet-50/60 border border-indigo-150 rounded-2xl p-5 text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in shadow-xs">
+          <div className="space-y-1">
+            <span className="text-[10px] text-indigo-650 font-bold uppercase tracking-wider bg-indigo-100/50 border border-indigo-200/50 px-2 py-0.5 rounded">
+              Selected Internship Program
+            </span>
+            <h3 className="text-sm font-extrabold text-zinc-950">
+              {selectedTracks.map(t => (t as any).title).join(", ")}
+            </h3>
+            <p className="text-[11px] text-zinc-500 font-light">
+              You are currently registered and eligible for these internship track assessments.
+            </p>
+          </div>
+          <Link
+            href="/student/internships"
+            className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 shadow-sm transition-all text-center shrink-0 cursor-pointer"
+          >
+            Start Assessment
+          </Link>
+        </div>
+      ) : (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left flex items-start gap-3 animate-fade-in">
+          <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-amber-850">No Internship Track Selected Yet</h4>
+            <p className="text-[11px] text-amber-700 font-light">
+              You haven&apos;t locked any internship track. Please navigate to the <Link href="/student/internships" className="font-bold underline text-indigo-700 hover:text-indigo-900">Internship Tracks</Link> page to register.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

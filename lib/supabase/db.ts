@@ -2309,10 +2309,11 @@ async function getDefaultTemplateHtmlForSeeding(code: string): Promise<string> {
 export interface PlatformSettings {
   assessment_fee: number;
   payments_enabled: boolean;
+  assessment_availability_days?: number;
 }
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
-  const defaultValue: PlatformSettings = { assessment_fee: 150, payments_enabled: true };
+  const defaultValue: PlatformSettings = { assessment_fee: 150, payments_enabled: true, assessment_availability_days: 30 };
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
@@ -2517,11 +2518,77 @@ export async function updateTestResult(id: string, updates: Partial<TestResult>)
       return data;
     } catch (err) {
       console.warn("updateTestResult to Supabase failed, falling back to mock:", err);
-      return await updateTestResultMock(id, finalUpdates);
+      const data = await updateTestResultMock(id, finalUpdates);
+      const adminUser = await getCurrentUser();
+      if (adminUser && oldResult && data) {
+        await logMockChangeHistory(adminUser, oldResult, data, finalUpdates);
+      }
+      return data;
     }
   } else {
-    // In mock mode, just perform update without audit logging
-    return await updateTestResultMock(id, finalUpdates);
+    const data = await updateTestResultMock(id, finalUpdates);
+    const adminUser = await getCurrentUser();
+    if (adminUser && oldResult && data) {
+      await logMockChangeHistory(adminUser, oldResult, data, finalUpdates);
+    }
+    return data;
+  }
+}
+
+async function logMockChangeHistory(adminUser: any, oldResult: TestResult, data: TestResult, finalUpdates: any) {
+  const list = getMockStorage<any[]>("mock_result_change_history", []);
+  const changedFields = Object.keys(finalUpdates) as (keyof TestResult)[];
+  for (const field of changedFields) {
+    const oldVal = (oldResult as any)[field];
+    const newVal = (data as any)[field];
+    if (oldVal !== newVal) {
+      list.push({
+        id: `ch-${Math.random().toString(36).substring(7)}`,
+        admin_id: adminUser.id,
+        student_id: data.student_id,
+        test_result_id: data.id,
+        field_name: field,
+        previous_value: oldVal !== undefined ? String(oldVal) : null,
+        new_value: newVal !== undefined ? String(newVal) : null,
+        changed_at: new Date().toISOString(),
+        admin: { full_name: adminUser.full_name || "Super Admin" }
+      });
+    }
+  }
+  setMockStorage("mock_result_change_history", list);
+}
+
+export async function getResultChangeHistory(testResultId: string): Promise<any[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("result_change_history")
+        .select(`
+          id,
+          admin_id,
+          student_id,
+          test_result_id,
+          field_name,
+          previous_value,
+          new_value,
+          changed_at,
+          profiles!result_change_history_admin_id_fkey(full_name)
+        `)
+        .eq("test_result_id", testResultId)
+        .order("changed_at", { ascending: false });
+      if (error) throw error;
+      return (data || []).map((h: any) => ({
+        ...h,
+        admin: { full_name: h.profiles?.full_name || "Super Admin" }
+      }));
+    } catch (err) {
+      console.warn("getResultChangeHistory query failed, falling back to mock:", err);
+      const list = getMockStorage<any[]>("mock_result_change_history", []);
+      return list.filter((h) => h.test_result_id === testResultId).sort((a, b) => b.changed_at.localeCompare(a.changed_at));
+    }
+  } else {
+    const list = getMockStorage<any[]>("mock_result_change_history", []);
+    return list.filter((h) => h.test_result_id === testResultId).sort((a, b) => b.changed_at.localeCompare(a.changed_at));
   }
 }
 

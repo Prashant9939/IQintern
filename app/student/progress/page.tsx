@@ -201,51 +201,67 @@ export default function ProgressPage() {
             {activeTrackDetails.map((track) => (
               <div
                 key={track.trackId}
-                className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300"
+                className="bg-white border border-zinc-150/80 rounded-[24px] p-6 shadow-xs hover:shadow-md transition-all duration-300 text-left"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="text-sm font-bold text-zinc-900 truncate">{track.trackTitle}</h4>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  {/* Track Info */}
+                  <div className="space-y-3 flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-base font-extrabold text-zinc-900 truncate">{track.trackTitle}</h4>
                       {track.passed ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[9px] font-bold text-emerald-700 shrink-0">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-250 px-2 py-0.5 text-[9px] font-bold text-emerald-700 shrink-0 font-mono">
                           <CheckCircle className="h-3 w-3" /> Completed
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[9px] font-bold text-amber-600 shrink-0">
+                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-250 px-2 py-0.5 text-[9px] font-bold text-amber-600 shrink-0 font-mono">
                           In Progress
                         </span>
                       )}
                     </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-700 ${
-                          track.passed ? "bg-emerald-500" : "bg-[#5B5FF7]"
-                        }`}
-                        style={{ width: `${track.passed ? 100 : Math.max(20, track.percentage)}%` }}
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-4 mt-2 text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
-                      <span>Category: <span className="text-zinc-600">{track.category}</span></span>
-                      <span>•</span>
-                      <span>Duration: <span className="text-zinc-600">{track.duration}</span></span>
-                      <span>•</span>
-                      <span>Attempts: <span className="text-zinc-600">{track.attempts}</span></span>
-                      <span>•</span>
-                      <span>Score: <span className={track.passed ? "text-emerald-600" : "text-zinc-600"}>{track.percentage}%</span></span>
+                    
+                    {/* Overall Progress Bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center text-xs text-zinc-500 font-bold">
+                        <span>Overall Progress</span>
+                        <span className="font-extrabold text-[#5B5FF7]">{track.passed ? "100%" : `${Math.max(20, track.percentage)}%`}</span>
+                      </div>
+                      <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-750 ${
+                            track.passed ? "bg-emerald-500" : "bg-[#5B5FF7]"
+                          }`}
+                          style={{ width: `${track.passed ? 100 : Math.max(20, track.percentage)}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <Link
-                    href="/student/internships"
-                    className="flex items-center gap-1 text-xs text-[#5B5FF7] hover:text-[#4A4EE6] font-bold transition-all shrink-0"
-                  >
-                    {track.passed ? "View Track" : "Continue"}
-                    <ChevronRight className="h-3.5 w-3.5 stroke-[3]" />
-                  </Link>
+                  {/* Metrics grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 border-t md:border-t-0 md:border-l border-zinc-100 pt-5 md:pt-0 md:pl-6 shrink-0 min-w-[280px] text-left">
+                    <div>
+                      <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Assessment Score</span>
+                      <strong className={`text-base font-extrabold block mt-0.5 ${track.passed ? "text-emerald-600 font-mono" : "text-zinc-700 font-mono"}`}>
+                        {track.percentage}%
+                      </strong>
+                    </div>
+                    
+                    <div>
+                      <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Attempts</span>
+                      <span className="text-base font-extrabold block mt-0.5 text-zinc-700 font-mono">
+                        {track.attempts}
+                      </span>
+                    </div>
+
+                    <div className="col-span-2 sm:col-span-1 flex items-center justify-end">
+                      <Link
+                        href="/student/internships"
+                        className="flex items-center gap-1 text-xs text-[#5B5FF7] hover:text-[#4A4EE6] font-bold transition-all shrink-0 cursor-pointer"
+                      >
+                        {track.passed ? "View Track" : "Continue"}
+                        <ChevronRight className="h-3.5 w-3.5 stroke-[3]" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

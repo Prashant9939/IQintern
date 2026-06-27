@@ -231,7 +231,7 @@ export default function ManageQuestions() {
               </div>
 
               {/* CRUD controls */}
-              <div className="flex sm:flex-col gap-2 shrink-0 justify-end">
+              <div className="flex sm:flex-col gap-2 shrink-0 justify-start sm:justify-end">
                 <button
                   onClick={() => handleOpenEdit(q)}
                   className="rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
@@ -241,9 +241,10 @@ export default function ManageQuestions() {
                 </button>
                 <button
                   onClick={() => handleDelete(q.id)}
-                  className="rounded-xl border border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 text-red-500 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                  className="rounded-xl border border-red-200 hover:border-red-650 hover:bg-red-600 hover:text-white bg-red-50 text-red-500 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
+                  Delete
                 </button>
               </div>
             </div>

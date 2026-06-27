@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPlatformSettings } from "@/lib/supabase/db";
+import { getPlatformSettings, savePlatformSettings } from "@/lib/supabase/db";
 import {
   Settings,
   ToggleLeft,
@@ -11,6 +11,7 @@ import {
   Mail,
   Wrench,
   Save,
+  Clock
 } from "lucide-react";
 
 export default function AdminSettingsPage() {
@@ -20,6 +21,9 @@ export default function AdminSettingsPage() {
     payments_enabled: true,
     maintenance_mode: false,
   });
+  const [assessmentAvailabilityDays, setAssessmentAvailabilityDays] = useState<number>(30);
+  const [customDays, setCustomDays] = useState<string>("30");
+  const [isCustom, setIsCustom] = useState(false);
 
   useEffect(() => {
     async function loadSettings() {
@@ -29,6 +33,16 @@ export default function AdminSettingsPage() {
           payments_enabled: s.payments_enabled ?? true,
           maintenance_mode: false,
         });
+
+        const days = s.assessment_availability_days ?? 30;
+        if ([7, 15, 30, 45, 60].includes(days)) {
+          setAssessmentAvailabilityDays(days);
+          setIsCustom(false);
+        } else {
+          setAssessmentAvailabilityDays(0); // 0 means custom
+          setCustomDays(days.toString());
+          setIsCustom(true);
+        }
       } catch (err) {
         console.error("Error loading settings", err);
       } finally {
@@ -41,8 +55,12 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Settings save would be implemented with a proper API route
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const daysToSave = isCustom ? Number(customDays) : assessmentAvailabilityDays;
+      await savePlatformSettings({
+        payments_enabled: settings.payments_enabled,
+        assessment_fee: 150, // default fee
+        assessment_availability_days: isNaN(daysToSave) || daysToSave <= 0 ? 30 : daysToSave
+      });
       alert("Settings saved successfully!");
     } catch (err) {
       console.error("Error saving settings", err);
@@ -136,6 +154,60 @@ export default function AdminSettingsPage() {
             </div>
           );
         })}
+
+        {/* Assessment Availability Setting Card */}
+        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 text-[#5B5FF7] flex items-center justify-center shrink-0">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div className="min-w-0 text-left">
+                <h3 className="text-sm font-bold text-zinc-900">Assessment Availability Window</h3>
+                <p className="text-xs text-zinc-500 font-light mt-0.5 leading-relaxed">
+                  Configure how many days after registration a student becomes eligible to take their assessment.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto shrink-0 justify-start sm:justify-end">
+              <select
+                value={isCustom ? "custom" : assessmentAvailabilityDays}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "custom") {
+                    setIsCustom(true);
+                  } else {
+                    setIsCustom(false);
+                    setAssessmentAvailabilityDays(Number(val));
+                  }
+                }}
+                className="px-3.5 py-2.5 text-xs bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors cursor-pointer min-w-[120px]"
+              >
+                <option value={7}>7 Days</option>
+                <option value={15}>15 Days</option>
+                <option value={30}>30 Days</option>
+                <option value={45}>45 Days</option>
+                <option value={60}>60 Days</option>
+                <option value="custom">Custom Value</option>
+              </select>
+
+              {isCustom && (
+                <div className="flex items-center gap-1.5 animate-fade-in w-full sm:w-auto">
+                  <input
+                    type="number"
+                    min={1}
+                    value={customDays}
+                    onChange={(e) => setCustomDays(e.target.value)}
+                    className="px-3.5 py-2.5 text-xs bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors w-24"
+                    placeholder="Days"
+                  />
+                  <span className="text-xs text-zinc-500 font-bold">Days</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Security Info */}

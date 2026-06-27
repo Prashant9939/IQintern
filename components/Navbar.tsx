@@ -53,6 +53,19 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
+  const handleVerifyScroll = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    if (pathname === "/") {
+      const el = document.getElementById("verify");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      window.location.href = "/#verify";
+    }
+  };
+
   return (
     <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
       <nav className="glass-navbar rounded-2xl relative">
@@ -71,20 +84,26 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Nav Links */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-semibold transition-colors hover:text-indigo-600 relative py-1.5 px-1 ${isActive(link.href) ? "text-indigo-600 font-bold" : "text-zinc-650"
-                    }`}
+                  className={`text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 ${
+                    isActive(link.href)
+                      ? "bg-indigo-50 text-indigo-650 font-semibold shadow-xs"
+                      : "text-zinc-650 hover:bg-zinc-50/70 hover:text-indigo-600"
+                  }`}
                 >
                   {link.name}
-                  {isActive(link.href) && (
-                    <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-indigo-600 rounded-full animate-fade-in" />
-                  )}
                 </Link>
               ))}
+              <button
+                onClick={handleVerifyScroll}
+                className="text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 text-zinc-650 hover:bg-zinc-50/70 hover:text-indigo-600 cursor-pointer"
+              >
+                Verify Certificate
+              </button>
             </div>
 
             {/* User Controls / Auth Buttons */}
@@ -158,12 +177,21 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block rounded-xl px-4 py-2.5 text-base font-semibold transition-colors ${isActive(link.href) ? "bg-indigo-500/5 text-indigo-600" : "text-zinc-660 hover:bg-zinc-50 hover:text-indigo-600"
-                  }`}
+                className={`block rounded-xl px-4 py-2.5 text-base font-semibold transition-all duration-200 ${
+                  isActive(link.href)
+                    ? "bg-indigo-50 text-indigo-650 font-semibold"
+                    : "text-zinc-650 hover:bg-zinc-50 hover:text-indigo-650"
+                }`}
               >
                 {link.name}
               </Link>
             ))}
+            <button
+              onClick={handleVerifyScroll}
+              className="w-full text-left block rounded-xl px-4 py-2.5 text-base font-semibold transition-all duration-200 text-zinc-650 hover:bg-zinc-50 hover:text-indigo-650 cursor-pointer"
+            >
+              Verify Certificate
+            </button>
             <div className="border-t border-zinc-200/60 pt-3 space-y-3">
               {/* Developer Mode Role Toggle */}
               {!supabaseConfigured && user && (

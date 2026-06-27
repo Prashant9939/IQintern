@@ -17,6 +17,7 @@ export default function ManageInternships() {
   // Form Modal State
   const [isOpen, setIsOpen] = useState(false);
   const [editingTrack, setEditingTrack] = useState<Internship | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -92,11 +93,14 @@ export default function ManageInternships() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this internship track? This will delete all associated MCQs and logs.")) return;
+    setDeletingId(id);
     try {
       await deleteInternship(id);
       loadInternships();
     } catch (err) {
       console.error("Failed to delete internship", err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -166,19 +170,25 @@ export default function ManageInternships() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 border-t border-zinc-100 pt-4 mt-4">
+              <div className="flex gap-2 border-t border-zinc-150 pt-4 mt-4">
                 <button
+                  disabled={deletingId !== null}
                   onClick={() => handleOpenEdit(track)}
-                  className="flex-grow flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-650 hover:text-zinc-950 py-2.5 text-xs font-bold cursor-pointer transition-all shadow-sm"
+                  className="flex-grow flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-650 hover:text-zinc-950 py-2.5 text-xs font-bold cursor-pointer transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
                   Edit
                 </button>
                 <button
+                  disabled={deletingId !== null}
                   onClick={() => handleDelete(track.id)}
-                  className="flex items-center justify-center rounded-xl border border-red-200 hover:border-red-300 hover:bg-red-100/50 bg-red-50 text-red-500 px-3 py-2.5 text-xs font-semibold cursor-pointer transition-all shadow-sm"
+                  className="flex items-center justify-center rounded-xl border border-red-200 hover:border-red-600 hover:bg-red-600 hover:text-white bg-red-50 text-red-500 px-3 py-2.5 text-xs font-semibold cursor-pointer transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  {deletingId === track.id ? (
+                    <span className="h-3.5 w-3.5 border-2 border-red-500 border-t-transparent animate-spin rounded-full" />
+                  ) : (
+                    <Trash2 className="h-3.5 w-3.5" />
+                  )}
                 </button>
               </div>
             </div>

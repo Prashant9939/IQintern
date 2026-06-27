@@ -47,9 +47,6 @@ export default function Home() {
   // 1. FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // 2. Tabbed Preview state
-  const [activeTab, setActiveTab] = useState("dashboard");
-
   // 3. Certificate Search state
   const [certId, setCertId] = useState("");
   const [verificationResult, setVerificationResult] = useState<any | null>(null);
@@ -720,99 +717,6 @@ export default function Home() {
               </div>
             );
           })()}
-        </section>
-
-        {/* LIVE PLATFORM PREVIEW TABS */}
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 relative z-10 border-t border-zinc-200/60 mt-12">
-          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-            <span className="text-xs text-indigo-650 font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Interface sneak peek</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              Live Platform Previews
-            </h2>
-            <p className="text-zinc-500 text-sm font-light">
-              Explore the premium, unified dashboards designed for optimal vocational workflow metrics.
-            </p>
-          </div>
-
-          {/* Interactive tabs controller */}
-          <div className="max-w-lg mx-auto flex gap-2 border-b border-zinc-200 mb-8 overflow-x-auto pb-2 justify-center">
-            {[
-              { id: "dashboard", name: "Student Panel" },
-              { id: "assessment", name: "MCQ Portal" },
-              { id: "certificate", name: "Document Verification" },
-              { id: "admin", name: "Admin Console" }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 text-xs font-bold transition-all border-b-2 shrink-0 cursor-pointer ${activeTab === tab.id
-                  ? "border-indigo-600 text-indigo-600 font-extrabold"
-                  : "border-transparent text-zinc-400 hover:text-zinc-700"
-                  }`}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab contents preview panels */}
-          <div className="max-w-4xl mx-auto glass-panel bg-white/95 border border-indigo-100/80 rounded-3xl p-6 sm:p-8 min-h-[300px] shadow-lg shadow-indigo-500/5 flex flex-col justify-center transition-all duration-300">
-            {activeTab === "dashboard" && (
-              <div className="space-y-4 text-left animate-fade-in">
-                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded px-2.5 py-0.5 uppercase tracking-wide">Interactive Preview</span>
-                <h3 className="text-xl font-extrabold text-zinc-900">Student Dashboard Overview</h3>
-                <p className="text-xs sm:text-sm text-zinc-500 font-light leading-relaxed">
-                  The central student dashboard tracks active internships, exam scorecards, and certificates. It provides a real-time progress layout with complete checklist breakdowns, ensuring students understand exactly what requirements are needed to unlock credentials.
-                </p>
-                <div className="p-4 bg-zinc-50 border border-zinc-200/80 rounded-2xl max-w-md font-mono text-[11px] text-zinc-500 space-y-1">
-                  <p className="text-zinc-700 font-semibold">✓ Track Status: React Developer (In-Progress)</p>
-                  <p>✓ Current Progress: 4 out of 5 Assessments Passed</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "assessment" && (
-              <div className="space-y-4 text-left animate-fade-in">
-                <span className="text-[10px] font-bold text-violet-655 bg-violet-50 border border-violet-100 rounded px-2.5 py-0.5 uppercase tracking-wide">Interactive Preview</span>
-                <h3 className="text-xl font-extrabold text-zinc-900">Concept Assessment Portal</h3>
-                <p className="text-xs sm:text-sm text-zinc-500 font-light leading-relaxed">
-                  The assessment portal hosts timed exam formats with integrated tab protection algorithms to ensure evaluation integrity. Candidates answer multiple-choice questions curated by industry mentors, getting instant feedback scorecard metrics.
-                </p>
-                <div className="p-4 bg-violet-50/30 border border-violet-100 rounded-2xl max-w-md font-mono text-[11px] text-violet-700 space-y-1">
-                  <p className="text-violet-900 font-semibold">⌛ Timer: 04:59 Minutes Remaining</p>
-                  <p>⚡ Question 1: What hooks should you use for state persistence?</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "certificate" && (
-              <div className="space-y-4 text-left animate-fade-in">
-                <span className="text-[10px] font-bold text-emerald-650 bg-emerald-50 border border-emerald-100 rounded px-2.5 py-0.5 uppercase tracking-wide">Interactive Preview</span>
-                <h3 className="text-xl font-extrabold text-zinc-900">Verified Credentials Page</h3>
-                <p className="text-xs sm:text-sm text-zinc-500 font-light leading-relaxed">
-                  Every successful candidate qualifies for unified document packages including an **Offer Letter**, **Verified Certificate**, and **Project Report**. Credentials can be digitally parsed by employer HR systems using unique hash tags.
-                </p>
-                <div className="p-4 bg-emerald-50/30 border border-emerald-100 rounded-2xl max-w-md font-mono text-[11px] text-emerald-700 space-y-1">
-                  <p className="text-emerald-900 font-semibold">✓ Credential Seal: VERIFIED BY IQINTERN ENGINE</p>
-                  <p>✓ Reference Hash: SI-2026-REACT-A893F</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "admin" && (
-              <div className="space-y-4 text-left animate-fade-in">
-                <span className="text-[10px] font-bold text-amber-650 bg-amber-50 border border-amber-100 rounded px-2.5 py-0.5 uppercase tracking-wide">Interactive Preview</span>
-                <h3 className="text-xl font-extrabold text-zinc-900">Platform Analytics Console</h3>
-                <p className="text-xs sm:text-sm text-zinc-500 font-light leading-relaxed">
-                  The administrator dashboard displays registered student statistics, global passing rate percentages, mock roll indices, and documents visibility settings. Admins can update template HTML code blocks and questions repository dynamically.
-                </p>
-                <div className="p-4 bg-amber-50/30 border border-amber-100 rounded-2xl max-w-md font-mono text-[11px] text-amber-700 space-y-1">
-                  <p className="text-amber-900 font-semibold">📊 Global Student Index: 24,000+ Profiles Active</p>
-                  <p>⚙ Database: Connected Supabase Client</p>
-                </div>
-              </div>
-            )}
-          </div>
         </section>
 
         {/* CERTIFICATE VERIFICATION SHOWCASE (REAL-TIME INPUT MOCKUP) */}

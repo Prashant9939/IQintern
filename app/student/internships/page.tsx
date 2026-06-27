@@ -394,10 +394,10 @@ export default function AvailableInternships() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold border transition-[color,background-color,border-color,box-shadow] duration-200 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
                 selectedCategory === cat
-                  ? "bg-indigo-600 text-white border-transparent shadow-md shadow-indigo-550/15"
-                  : "bg-white border-zinc-200 text-zinc-600 hover:bg-indigo-50/60 hover:text-indigo-600 hover:border-indigo-150"
+                  ? "bg-indigo-600 text-white border-indigo-600 font-extrabold shadow-sm shadow-indigo-600/10"
+                  : "bg-slate-50 border-zinc-200 text-zinc-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 font-bold"
               }`}
             >
               {cat}
@@ -570,14 +570,21 @@ export default function AvailableInternships() {
             {(() => {
               const payObj = payments.find((p) => p.internship_id === selectedInternship.id && p.status === "completed");
               let isEligible = true;
+              let countdownStr = "";
               let remainingDays = 0;
               if (payObj) {
+                const targetDays = settings.assessment_availability_days ?? 30;
                 const payDate = new Date(payObj.created_at);
-                const diffTime = Date.now() - payDate.getTime();
-                const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                if (daysPassed < 28) {
+                const targetTime = payDate.getTime() + targetDays * 24 * 60 * 60 * 1000;
+                const diffTime = targetTime - Date.now();
+                if (diffTime > 0) {
                   isEligible = false;
-                  remainingDays = 28 - daysPassed;
+                  const totalSecs = Math.floor(diffTime / 1000);
+                  const d = Math.floor(totalSecs / (24 * 3600));
+                  const h = Math.floor((totalSecs % (24 * 3600)) / 3600);
+                  const m = Math.floor((totalSecs % 3600) / 60);
+                  remainingDays = d;
+                  countdownStr = `${d} Days ${h.toString().padStart(2, '0')} Hours ${m.toString().padStart(2, '0')} Minutes`;
                 }
               }
               const hasPaid = !settings.payments_enabled || paidTracks.includes(selectedInternship.id);
@@ -586,9 +593,9 @@ export default function AvailableInternships() {
               return (
                 <>
                   {!isEligible && (
-                    <div className="w-full flex items-center gap-3 p-3.5 bg-amber-50 border border-amber-250 rounded-2xl text-xs text-amber-800 font-bold mb-4 animate-pulse">
+                    <div className="w-full flex items-center gap-3 p-3.5 bg-amber-50 border border-amber-250 rounded-2xl text-xs text-amber-805 font-bold mb-4">
                       <Clock className="h-4 w-4 text-amber-600 shrink-0" />
-                      <span>Internship lock active: You will be eligible to take this assessment in <strong>{remainingDays} days</strong> (Minimum duration: 28 days from enrollment date).</span>
+                      <span>Internship lock active: Assessment Available In <strong>{countdownStr}</strong> (Minimum duration: {settings.assessment_availability_days ?? 30} days from enrollment date).</span>
                     </div>
                   )}
 
@@ -631,7 +638,7 @@ export default function AvailableInternships() {
                             disabled
                             className="rounded-xl bg-slate-100 border border-zinc-200 text-zinc-500 px-6 py-2.5 text-xs font-bold transition-all text-center cursor-not-allowed flex items-center justify-center gap-1.5"
                           >
-                            Locked: {remainingDays} days left
+                            Locked: {remainingDays > 0 ? `${remainingDays} days left` : "Available soon"}
                             <Clock className="h-4 w-4" />
                           </button>
                         )}

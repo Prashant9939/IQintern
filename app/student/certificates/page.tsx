@@ -155,6 +155,122 @@ export default function CertificatesPage() {
     setShowPreviewModal(true);
   };
 
+  const handlePrintReceipt = (pay: Payment, internshipTitle: string) => {
+    const formattedDate = pay.created_at ? new Date(pay.created_at).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }) : new Date().toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+    const receiptNo = pay.razorpay_order_id ? `REC-${pay.razorpay_order_id.replace("order_", "")}` : `REC-MOCK-${Math.floor(Math.random() * 1000000)}`;
+
+    const htmlTpl = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Receipt</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
+    .invoice-box { max-width: 800px; margin: auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
+    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    .header-table td { vertical-align: top; }
+    .company-details { text-align: right; font-size: 13px; color: #64748b; line-height: 1.5; }
+    .company-name { font-size: 20px; font-weight: bold; color: #4f46e5; margin-bottom: 5px; }
+    .invoice-title { font-size: 28px; font-weight: 850; color: #1e293b; text-transform: uppercase; letter-spacing: -0.5px; }
+    .meta-details { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px; }
+    .meta-details td { padding: 10px; border: 1px solid #f1f5f9; }
+    .meta-details td.label { font-weight: bold; background: #f8fafc; color: #475569; width: 150px; }
+    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px; }
+    .items-table th { background: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-align: left; padding: 12px; font-weight: bold; color: #475569; }
+    .items-table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; }
+    .items-table tr.total-row td { font-weight: bold; background: #faf5ff; border-top: 2px solid #ddd6fe; color: #4f46e5; }
+    .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+    .print-btn { display: block; margin: 30px auto 0 auto; padding: 12px 24px; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: all 0.2s; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.15); }
+    .print-btn:hover { background: #4338ca; transform: translateY(-1px); }
+    @media print { .print-btn { display: none; } body { padding: 0; background: none; } .invoice-box { border: none; box-shadow: none; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="invoice-box">
+    <table class="header-table">
+      <tr>
+        <td>
+          <div class="invoice-title">Payment Receipt</div>
+          <div style="font-size: 13px; color: #64748b; margin-top: 5px;">Receipt ID: ${receiptNo}</div>
+        </td>
+        <td class="company-details">
+          <div class="company-name">IQ Intern</div>
+          <div>IQ Intern Vocational Training Pvt. Ltd.</div>
+          <div>Email: billing@iqintern.com</div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="meta-details">
+      <tr>
+        <td class="label">Candidate Name</td>
+        <td>${profile?.full_name || user?.full_name || "N/A"}</td>
+        <td class="label">Date</td>
+        <td>${formattedDate}</td>
+      </tr>
+      <tr>
+        <td class="label">Email</td>
+        <td>${user?.email || "N/A"}</td>
+        <td class="label">Phone</td>
+        <td>${user?.phone_number || "N/A"}</td>
+      </tr>
+      <tr>
+        <td class="label">Razorpay Order</td>
+        <td>${pay.razorpay_order_id || "N/A"}</td>
+        <td class="label">Razorpay Payment</td>
+        <td>${pay.razorpay_payment_id || "N/A"}</td>
+      </tr>
+    </table>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="text-align: center; width: 60px;">Qty</th>
+          <th style="text-align: right; width: 100px;">Rate</th>
+          <th style="text-align: right; width: 100px;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>IQ Intern Assessment Fee</strong><br />
+            <span style="font-size: 11px; color: #64748b;">Track: ${internshipTitle}</span>
+          </td>
+          <td style="text-align: center;">1</td>
+          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
+          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="3" style="text-align: right;">Total Amount Paid:</td>
+          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <p>This is a computer-generated transaction receipt verified under the Razorpay Payment Gateway API.</p>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">Print Receipt</button>
+  </div>
+</body>
+</html>`;
+
+    setPreviewHtml(htmlTpl);
+    setPreviewTitle("Payment Receipt");
+    setShowPreviewModal(true);
+  };
+
   const activeTrackIds = Array.from(
     new Set([
       ...payments.map((p) => p.internship_id),
@@ -333,7 +449,9 @@ export default function CertificatesPage() {
                     onClick={() => {
                       const pay = track.payment;
                       if (pay) {
-                        handleViewDocument("certificate", { ...track.bestResult!, internship_title: track.trackTitle } as TestResult);
+                        handlePrintReceipt(pay, track.trackTitle);
+                      } else {
+                        alert("Payment details not found for this track.");
                       }
                     }}
                     className="flex flex-col items-center justify-center text-center p-4 rounded-xl border border-zinc-200 bg-white hover:bg-[#5B5FF7]/5 hover:text-[#5B5FF7] hover:border-[#5B5FF7]/20 hover:shadow-xs active:scale-95 transition-all cursor-pointer group"
