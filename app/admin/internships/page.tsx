@@ -174,7 +174,7 @@ export default function ManageInternships() {
                 <button
                   disabled={deletingId !== null}
                   onClick={() => handleOpenEdit(track)}
-                  className="flex-grow flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-650 hover:text-zinc-950 py-2.5 text-xs font-bold cursor-pointer transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 py-2.5 text-xs font-bold cursor-pointer transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
                   Edit
@@ -182,13 +182,15 @@ export default function ManageInternships() {
                 <button
                   disabled={deletingId !== null}
                   onClick={() => handleDelete(track.id)}
-                  className="flex items-center justify-center rounded-xl border border-red-200 hover:border-red-600 hover:bg-red-600 hover:text-white bg-red-50 text-red-500 px-3 py-2.5 text-xs font-semibold cursor-pointer transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2.5 text-xs font-bold cursor-pointer transition-all shadow-sm shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
+                  aria-label="Delete internship track"
                 >
                   {deletingId === track.id ? (
-                    <span className="h-3.5 w-3.5 border-2 border-red-500 border-t-transparent animate-spin rounded-full" />
+                    <span className="h-3.5 w-3.5 border-2 border-white border-t-transparent animate-spin rounded-full" />
                   ) : (
                     <Trash2 className="h-3.5 w-3.5" />
                   )}
+                  <span>{deletingId === track.id ? "Deleting..." : "Delete"}</span>
                 </button>
               </div>
             </div>

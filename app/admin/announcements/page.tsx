@@ -340,9 +340,11 @@ export default function AnnouncementsPage() {
                     <button
                       type="button"
                       onClick={() => deleteAnnouncement(ann.id)}
-                      className="p-1.5 rounded-lg border border-zinc-200 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all cursor-pointer text-zinc-400"
+                      className="p-1.5 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700 text-white transition-all cursor-pointer shadow-sm shadow-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
+                      aria-label="Delete announcement"
+                      title="Delete announcement"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4 text-white" />
                     </button>
                   </div>
                 </div>

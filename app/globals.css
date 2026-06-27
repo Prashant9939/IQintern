@@ -231,7 +231,7 @@ body {
   transition: stroke-dashoffset 0.1s linear;
 }
 
-/* Global Button Text Color Override to retain white text on filled indigo/violet elements */
+/* Global Button Text Color Override to retain white text on filled colored elements */
 button[class*=" bg-indigo-"],
 button[class^="bg-indigo-"],
 button[class*=" bg-violet-"],
@@ -240,8 +240,12 @@ button[class*=" bg-gradient-"],
 button[class^="bg-gradient-"],
 button[class*=" bg-emerald-"],
 button[class^="bg-emerald-"],
-button[class*=" bg-red-"],
-button[class^="bg-red-"],
+button[class*=" bg-red-500"],
+button[class*=" bg-red-6"],
+button[class*=" bg-red-7"],
+button[class^="bg-red-5"],
+button[class^="bg-red-6"],
+button[class^="bg-red-7"],
 button[class*=" bg-brand-"],
 button[class^="bg-brand-"],
 a[class*=" bg-indigo-"],
@@ -255,7 +259,7 @@ a[class^="bg-brand-"] {
   color: #ffffff !important;
 }
 
-/* Make sure text elements inside these elements are also white */
+/* Make sure text elements inside colored buttons are also white */
 button[class*=" bg-indigo-"] *,
 button[class^="bg-indigo-"] *,
 button[class*=" bg-violet-"] *,
@@ -264,6 +268,12 @@ button[class*=" bg-gradient-"] *,
 button[class^="bg-gradient-"] *,
 button[class*=" bg-brand-"] *,
 button[class^="bg-brand-"] *,
+button[class*=" bg-red-5"] *,
+button[class^="bg-red-5"] *,
+button[class*=" bg-red-6"] *,
+button[class^="bg-red-6"] *,
+button[class*=" bg-red-7"] *,
+button[class^="bg-red-7"] *,
 a[class*=" bg-indigo-"] *,
 a[class^="bg-indigo-"] *,
 a[class*=" bg-violet-"] *,
@@ -302,12 +312,8 @@ label.cursor-pointer:active {
   opacity: 0.96;
 }
 
-button.border:hover,
-a.border:hover {
-  background-color: #faf5ff;
-  border-color: #8b5cf6;
-  color: #8b5cf6;
-}
+/* NOTE: Removed overbroad button.border:hover rule that overrode danger/secondary button styles.
+   Individual components now own their own hover states. */
 
 button.active,
 .sidebar-item.active {
@@ -357,12 +363,28 @@ h1 {
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
 .animate-slide-up {
   animation: slideUp 0.4s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Hover Elevation Utilities */

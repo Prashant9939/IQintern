@@ -256,10 +256,11 @@ export default function ManageColleges() {
                   </div>
                   <button
                     onClick={() => handleRemoveUniversity(univ.name)}
-                    className="p-2 rounded-xl text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-red-500 hover:bg-red-600 active:bg-red-700 text-white transition-colors cursor-pointer shadow-sm shadow-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
                     title="Remove University"
+                    aria-label="Remove University"
                   >
-                    <Trash2 className="h-4.5 w-4.5" />
+                    <Trash2 className="h-4.5 w-4.5 text-white" />
                   </button>
                 </div>
 
@@ -277,10 +278,11 @@ export default function ManageColleges() {
                         <button
                           type="button"
                           onClick={() => handleRemoveCollege(univ.name, col)}
-                          className="h-4 w-4 rounded-full flex items-center justify-center hover:bg-red-100 text-zinc-400 hover:text-red-600 transition-colors cursor-pointer"
+                          className="h-3.5 w-3.5 rounded-full flex items-center justify-center bg-zinc-300 hover:bg-red-500 text-zinc-600 hover:text-white transition-colors cursor-pointer"
                           title="Remove College"
+                          aria-label="Remove College"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-2.5 w-2.5" />
                         </button>
                       </span>
                     ))}

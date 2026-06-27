@@ -6,7 +6,7 @@
 
 ---
 
-**Project:** ugintern
+**Project:** IQintern
 **Generated:** 2026-06-23 15:26:56
 **Category:** SaaS (General)
 

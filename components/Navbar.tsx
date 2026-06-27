@@ -35,6 +35,16 @@ export default function Navbar() {
     setSupabaseConfigured(isSupabaseConfigured());
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isMobileMenuOpen]);
+
   const handleLogout = async () => {
     await signOut();
     setUser(null);
@@ -84,15 +94,15 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Nav Links */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 ${
+                  className={`text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 ${
                     isActive(link.href)
-                      ? "bg-indigo-50 text-indigo-650 font-semibold shadow-xs"
-                      : "text-zinc-650 hover:bg-zinc-50/70 hover:text-indigo-600"
+                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
+                      : "text-zinc-600 hover:bg-indigo-50 hover:text-indigo-700"
                   }`}
                 >
                   {link.name}
@@ -100,7 +110,7 @@ export default function Navbar() {
               ))}
               <button
                 onClick={handleVerifyScroll}
-                className="text-sm font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 text-zinc-650 hover:bg-zinc-50/70 hover:text-indigo-600 cursor-pointer"
+                className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 text-zinc-600 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer"
               >
                 Verify Certificate
               </button>
@@ -169,87 +179,119 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu - Floating Card */}
+        {/* Mobile Menu – Full Overlay Drawer */}
         {isMobileMenuOpen && (
-          <div className="absolute top-[calc(100%+8px)] left-0 right-0 md:hidden glass-panel border border-zinc-200/70 p-4 space-y-3 rounded-2xl shadow-xl z-50 bg-white/95">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block rounded-xl px-4 py-2.5 text-base font-semibold transition-all duration-200 ${
-                  isActive(link.href)
-                    ? "bg-indigo-50 text-indigo-650 font-semibold"
-                    : "text-zinc-650 hover:bg-zinc-50 hover:text-indigo-650"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <button
-              onClick={handleVerifyScroll}
-              className="w-full text-left block rounded-xl px-4 py-2.5 text-base font-semibold transition-all duration-200 text-zinc-650 hover:bg-zinc-50 hover:text-indigo-650 cursor-pointer"
-            >
-              Verify Certificate
-            </button>
-            <div className="border-t border-zinc-200/60 pt-3 space-y-3">
-              {/* Developer Mode Role Toggle */}
-              {!supabaseConfigured && user && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-[998] bg-zinc-900/50 backdrop-blur-sm md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Drawer Panel */}
+            <div className="fixed top-0 right-0 bottom-0 z-[999] w-72 max-w-[85vw] bg-white flex flex-col shadow-2xl md:hidden animate-slide-in-right">
+              {/* Drawer Header */}
+              <div className="flex h-16 items-center justify-between px-5 border-b border-zinc-200/70 shrink-0">
+                <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <img
+                    src={BRANDING.logoIcon}
+                    className="h-10 w-auto object-contain"
+                    alt="Logo"
+                  />
+                </Link>
                 <button
-                  onClick={() => {
-                    devToggleRole();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 py-2.5 text-sm font-bold text-amber-700 hover:bg-amber-100 transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 rounded-xl hover:bg-slate-100 text-zinc-500 hover:text-zinc-800 transition-colors cursor-pointer"
+                  aria-label="Close menu"
                 >
-                  <ShieldAlert className="h-4 w-4 text-amber-400" />
-                  Change Role (Currently: {user.role})
+                  <X className="h-5 w-5" />
                 </button>
-              )}
+              </div>
 
-              {user ? (
-                <div className="space-y-2">
+              {/* Nav Links */}
+              <nav className="flex-grow overflow-y-auto p-4 space-y-1.5">
+                {navLinks.map((link) => (
                   <Link
-                    href={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
+                    key={link.name}
+                    href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-50 border border-indigo-100 py-2.5 text-sm font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                      isActive(link.href)
+                        ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
+                        : "text-zinc-700 hover:bg-indigo-50 hover:text-indigo-700"
+                    }`}
                   >
-                    <LayoutDashboard className="h-4 w-4 text-indigo-500" />
-                    Dashboard
+                    {link.name}
                   </Link>
+                ))}
+                <button
+                  onClick={handleVerifyScroll}
+                  className="w-full text-left flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 text-zinc-700 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer"
+                >
+                  Verify Certificate
+                </button>
+              </nav>
+
+              {/* Auth / User Controls */}
+              <div className="p-4 border-t border-zinc-200/60 space-y-3 shrink-0 bg-white">
+                {/* Developer Mode Role Toggle */}
+                {!supabaseConfigured && user && (
                   <button
                     onClick={() => {
-                      handleLogout();
+                      devToggleRole();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 hover:border-red-300 hover:bg-red-50 py-2.5 text-sm font-bold text-red-500 transition-all cursor-pointer shadow-sm"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 py-2.5 text-sm font-bold text-amber-700 hover:bg-amber-100 transition-all"
                   >
-                    <LogOut className="h-4 w-4" />
-                    Logout
+                    <ShieldAlert className="h-4 w-4 text-amber-400" />
+                    Change Role (Currently: {user.role})
                   </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 text-sm font-semibold text-zinc-650 hover:text-zinc-850 transition-colors"
-                  >
-                    <LogIn className="h-4.5 w-4.5" />
-                    Login
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/10"
-                  >
-                    <UserPlus className="h-4.5 w-4.5" />
-                    Register
-                  </Link>
-                </div>
-              )}
+                )}
+
+                {user ? (
+                  <div className="space-y-2">
+                    <Link
+                      href={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 py-2.5 text-sm font-bold text-white transition-all shadow-sm"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white hover:bg-red-50 py-2.5 text-sm font-bold text-red-600 hover:text-red-700 transition-all cursor-pointer shadow-sm"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Login
+                    </Link>
+                    <Link
+                      href="/auth/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 hover:from-indigo-700 hover:to-violet-600 py-2.5 text-sm font-bold text-white shadow-sm"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </nav>
     </div>

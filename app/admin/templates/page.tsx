@@ -417,10 +417,11 @@ export default function AdminTemplates() {
                     {(tpl.isOverride || (!tpl.internship_id && !["offer_letter", "certificate", "marksheet", "project_report"].includes(tpl.code))) && (
                       <button
                         onClick={() => handleDeleteTemplate(tpl)}
-                        className="p-1 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-750 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700 text-white transition-colors cursor-pointer shadow-sm shadow-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
                         title={tpl.isOverride ? "Delete Custom Override" : "Delete Global Template"}
+                        aria-label="Delete template"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-3.5 w-3.5 text-white" />
                       </button>
                     )}
                     

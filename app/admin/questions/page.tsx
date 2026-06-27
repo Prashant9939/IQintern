@@ -234,14 +234,15 @@ export default function ManageQuestions() {
               <div className="flex sm:flex-col gap-2 shrink-0 justify-start sm:justify-end">
                 <button
                   onClick={() => handleOpenEdit(q)}
-                  className="rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                  className="rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 hover:text-zinc-900 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(q.id)}
-                  className="rounded-xl border border-red-200 hover:border-red-650 hover:bg-red-600 hover:text-white bg-red-50 text-red-500 px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                  className="rounded-xl bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-3.5 py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm shadow-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
+                  aria-label="Delete MCQ question"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete

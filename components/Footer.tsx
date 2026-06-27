@@ -64,7 +64,7 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-5">
             <Link href="/" className="flex items-center gap-2.5 font-bold text-xl text-white group w-fit">
               <img
-                src={BRANDING.logoIcon}
+                src="/white-logo.png"
                 className="h-14 w-auto object-contain group-hover:scale-105 transition-all"
               />
             </Link>

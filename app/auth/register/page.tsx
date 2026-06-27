@@ -249,7 +249,7 @@ export default function Register() {
           <div className="bg-slate-950/25 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-xl">
             <Link href="/" className="flex items-center gap-2 font-bold text-white mb-1.5">
               <img 
-                src="/logo-icon.png" 
+                src="/white-logo.png" 
                 className="h-14 w-auto object-contain" 
               />
             </Link>
