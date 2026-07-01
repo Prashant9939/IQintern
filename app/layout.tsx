@@ -5,8 +5,8 @@ import SessionTimeoutHandler from "@/components/SessionTimeoutHandler";
 import { BRANDING } from "@/config/branding";
 
 export const metadata: Metadata = {
-  title: `${BRANDING.name} | Internship Certification Platform`,
-  description: "Accelerate your career with verified professional internship certificates and test scorecards.",
+  title: `${BRANDING.name} | Internship Evaluation Platform`,
+  description: "Accelerate your career with verified professional internship evaluation scorecards.",
   icons: {
     icon: BRANDING.logoIcon,
     shortcut: BRANDING.logoIcon,

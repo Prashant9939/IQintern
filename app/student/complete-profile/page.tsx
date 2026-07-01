@@ -161,7 +161,7 @@ export default function CompleteProfile() {
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">Complete Your Profile</h1>
           <p className="text-zinc-700 text-xs sm:text-sm font-semibold leading-relaxed max-w-xl">
-            Please fill out your academic details, personal info, and address. This information will be printed on your official certificates and verified during selection.
+            Please fill out your academic details, personal info, and address. This information will be printed on your official documents and verified during selection.
           </p>
         </div>
         <div className="flex flex-col items-start md:items-end gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-2xl px-5 py-3 text-xs self-stretch md:self-auto shadow-sm">
@@ -412,7 +412,7 @@ export default function CompleteProfile() {
             </div>
             <div>
               <h3 className="text-base font-bold text-zinc-900">Contact Address</h3>
-              <p className="text-xs text-zinc-600 font-bold mt-0.5">Permanent address for dispatching certificates/documents</p>
+              <p className="text-xs text-zinc-600 font-bold mt-0.5">Permanent address for dispatching documents</p>
             </div>
           </div>
 

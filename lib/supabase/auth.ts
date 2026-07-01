@@ -32,9 +32,36 @@ let lastVerifiedUser: UserSession | null = null;
 let lastVerificationTime = 0;
 const SESSION_VERIFICATION_TTL = 10 * 1000; // 10 seconds
 
+const getCachedVerifiedUser = (): { user: UserSession; time: number } | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const cached = sessionStorage.getItem("verified_user_cache");
+    if (cached) {
+      return JSON.parse(cached);
+    }
+  } catch (e) {
+    console.warn("Failed to read verified user cache:", e);
+  }
+  return null;
+};
+
+const setCachedVerifiedUser = (user: UserSession | null) => {
+  if (typeof window === "undefined") return;
+  try {
+    if (user) {
+      sessionStorage.setItem("verified_user_cache", JSON.stringify({ user, time: Date.now() }));
+    } else {
+      sessionStorage.removeItem("verified_user_cache");
+    }
+  } catch (e) {
+    console.warn("Failed to write verified user cache:", e);
+  }
+};
+
 export const invalidateSessionCache = () => {
   lastVerifiedUser = null;
   lastVerificationTime = 0;
+  setCachedVerifiedUser(null);
 };
 
 export const getStoredSession = (): UserSession | null => {
@@ -197,6 +224,7 @@ export async function loginUser(emailOrPhone: string, password: string) {
       };
 
       setStoredSession(session);
+      setCachedVerifiedUser(session);
       recordLoginAttempt(sanitizedInput, true);
       return { user: session };
     } catch (err: any) {
@@ -393,6 +421,7 @@ export function devToggleRole() {
 // CURRENT USER
 // -------------------------------------------------------------
 export async function getCurrentUser(): Promise<UserSession | null> {
+  const startTime = performance.now();
   const session = getStoredSession();
   if (!session) return null;
 
@@ -407,8 +436,23 @@ export async function getCurrentUser(): Promise<UserSession | null> {
     return lastVerifiedUser;
   }
 
+  // Check sessionStorage cache
+  const cached = getCachedVerifiedUser();
+  if (
+    cached &&
+    cached.user.id === session.id &&
+    cached.user.role === session.role &&
+    (now - cached.time) < SESSION_VERIFICATION_TTL
+  ) {
+    // Sync in-memory cache
+    lastVerifiedUser = cached.user;
+    lastVerificationTime = cached.time;
+    return cached.user;
+  }
+
   if (isSupabaseConfigured() && supabase) {
     try {
+      console.log("[INSTRUMENTATION] Fetching user session from Supabase DB...");
       const { data: user, error } = await supabase
         .from("profiles")
         .select("id, email, full_name, phone_number, role, profile_completed, department_stream")
@@ -417,6 +461,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
         
       if (error || !user) {
         setStoredSession(null);
+        setCachedVerifiedUser(null);
         return null;
       }
       
@@ -429,6 +474,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
       
       if (session.role !== expectedRole) {
         setStoredSession(null);
+        setCachedVerifiedUser(null);
         return null;
       }
 
@@ -444,6 +490,8 @@ export async function getCurrentUser(): Promise<UserSession | null> {
 
       lastVerifiedUser = validatedUser;
       lastVerificationTime = Date.now();
+      setCachedVerifiedUser(validatedUser);
+      console.log(`[INSTRUMENTATION] User session fetched from Supabase DB in ${(performance.now() - startTime).toFixed(1)}ms`);
       return validatedUser;
     } catch (err) {
       console.warn("getCurrentUser database verification failed:", err);
@@ -456,6 +504,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
       const user = mockProfiles.find((p: any) => p.id === session.id);
       if (!user) {
         setStoredSession(null);
+        setCachedVerifiedUser(null);
         return null;
       }
       
@@ -471,6 +520,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
 
       lastVerifiedUser = validatedUser;
       lastVerificationTime = Date.now();
+      setCachedVerifiedUser(validatedUser);
       return validatedUser;
     }
     return session;
@@ -628,6 +678,7 @@ function loginMockUser(emailOrPhone: string, password: string) {
     profile_completed: found.profile_completed || false,
   };
   setStoredSession(session);
+  setCachedVerifiedUser(session);
   return { user: session };
 }
 

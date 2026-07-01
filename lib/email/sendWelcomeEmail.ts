@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import { getWelcomeEmailHtml } from '@/templates/WelcomeEmail';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
+import { BRANDING } from '@/config/branding';
 
 export interface WelcomeEmailOptions {
   email: string;
@@ -11,7 +12,7 @@ export interface WelcomeEmailOptions {
 export async function sendWelcomeEmail({ email, fullName, userId }: WelcomeEmailOptions) {
   let studentId = userId;
   const templateName = 'WelcomeEmail';
-  const subject = 'Welcome to IQ Intern 🚀 | Your Internship Journey Starts Here';
+  const subject = `Welcome to ${BRANDING.name} 🚀 | Your Internship Journey Starts Here`;
 
   // 1. Fetch user ID by email if not provided (needed for database logging)
   if (!studentId && isSupabaseConfigured() && supabase) {
@@ -75,9 +76,9 @@ export async function sendWelcomeEmail({ email, fullName, userId }: WelcomeEmail
 
     // 5. Send the Welcome Email
     const info = await transporter.sendMail({
-      from: '"IQ Intern Team" <prashantshiwam@gmail.com>',
+      from: `"${BRANDING.emails.fromName}" <${BRANDING.emails.fromEmail}>`,
       to: email,
-      replyTo: 'prashantshiwam@gmail.com',
+      replyTo: BRANDING.emails.support,
       subject,
       html: emailHtml,
     });

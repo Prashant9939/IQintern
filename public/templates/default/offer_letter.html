@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Internship Offer Letter</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 50px; color: #1e293b; line-height: 1.6; background-color: #ffffff; margin: 0; }
+    .letter-box { max-width: 800px; margin: auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,.02); }
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #4f46e5; padding-bottom: 20px; margin-bottom: 30px; }
+    .brand-name { font-size: 24px; font-weight: 850; color: #4f46e5; }
+    .brand-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .meta-date { font-size: 13px; color: #64748b; text-align: right; }
+    .title { font-size: 20px; font-weight: bold; text-align: center; text-transform: uppercase; color: #0f172a; margin-bottom: 30px; letter-spacing: 0.5px; }
+    .salutation { font-size: 14px; font-weight: bold; margin-bottom: 15px; }
+    .body-text { font-size: 13.5px; color: #334155; text-align: justify; margin-bottom: 20px; }
+    .info-table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 13px; }
+    .info-table td { padding: 10px; border: 1px solid #e2e8f0; }
+    .info-table td.label { font-weight: bold; background: #f8fafc; color: #475569; width: 180px; }
+    .footer-signatures { display: flex; justify-content: space-between; margin-top: 50px; }
+    .sig-box { text-align: center; font-size: 12px; color: #64748b; width: 220px; border-top: 1px dashed #cbd5e1; padding-top: 8px; }
+    .verification-info { margin-top: 40px; font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="letter-box">
+    <div class="header">
+      <div>
+        <div class="brand-name">IQ Intern</div>
+        <div class="brand-sub">IQ Intern Vocational Training Pvt. Ltd.</div>
+      </div>
+      <div class="meta-date">
+        Date: {{issueDate}}<br/>
+        Ref: {{verificationId}}
+      </div>
+    </div>
+    
+    <div class="title">Internship Offer Letter</div>
+    
+    <div class="salutation">Dear {{studentName}},</div>
+    
+    <div class="body-text">
+      We are pleased to offer you an internship position as a <strong>{{internshipName}}</strong> intern on the IQ Intern platform. Your selection has been approved based on your academic profile and credentials.
+    </div>
+
+    <div class="body-text">
+      Please review the key details of your internship program outlined below:
+    </div>
+
+    <table class="info-table">
+      <tr>
+        <td class="label">Internship Track</td>
+        <td>{{internshipName}}</td>
+      </tr>
+      <tr>
+        <td class="label">Commencement Date</td>
+        <td>{{startDate}}</td>
+      </tr>
+      <tr>
+        <td class="label">Completion Date</td>
+        <td>{{endDate}}</td>
+      </tr>
+      <tr>
+        <td class="label">Structured Duration</td>
+        <td>{{duration}} (Self-Paced)</td>
+      </tr>
+      <tr>
+        <td class="label">College/Institution</td>
+        <td>{{collegeName}}</td>
+      </tr>
+    </table>
+
+    <div class="body-text">
+      During this internship, you will be expected to review syllabus materials, complete real-world coding or design checkpoints, and attempt proctored evaluations. Upon scoring above the passing threshold, you will unlock your verified digital credentials.
+    </div>
+
+    <div class="footer-signatures">
+      <div class="sig-box">Candidate Acceptance Signature</div>
+      <div class="sig-box">
+        <strong>Authorized Signatory</strong><br/>
+        IQ Intern Internship Bureau
+      </div>
+    </div>
+
+    <div class="verification-info">
+      This letter is digitally signed and generated upon enrollment validation. Verification ID: {{verificationId}}
+    </div>
+  </div>
+</body>
+</html>

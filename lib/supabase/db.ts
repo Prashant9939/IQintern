@@ -1539,11 +1539,11 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
   };
 
   const files: Record<string, string> = {
-    offer_letter: "offer-letter.html",
-    attendance_sheet: "attendance.html",
-    internship_report: "report.html",
+    offer_letter: "offer_letter.html",
+    attendance_sheet: "attendance_sheet.html",
+    internship_report: "project_report.html",
     certificate: "certificate.html",
-    completion_letter: "completion-letter.html",
+    completion_letter: "completion_letter.html",
     assessment: "assessment.html"
   };
   
@@ -1989,6 +1989,20 @@ export interface Payment {
 }
 
 export async function getPaidInternshipIds(userId: string): Promise<string[]> {
+  const cacheKey = `paid_internship_ids_${userId}`;
+  const cached = getCachedData<string[]>(cacheKey);
+  if (cached) return cached;
+
+  // Check if completed payments are already cached to avoid redundant DB queries
+  const paymentsCacheKey = `student_payments_${userId}`;
+  const cachedPayments = getCachedData<Payment[]>(paymentsCacheKey);
+  if (cachedPayments) {
+    const ids = cachedPayments.map((p) => p.internship_id);
+    setCachedData(cacheKey, ids, CACHE_TTL.short);
+    return ids;
+  }
+
+  let ids: string[];
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
@@ -1998,16 +2012,20 @@ export async function getPaidInternshipIds(userId: string): Promise<string[]> {
         .eq("status", "completed");
       if (error) {
         console.warn("getPaidInternshipIds failed, falling back to mock:", error);
-        return getMockPaidInternshipIds(userId);
+        ids = getMockPaidInternshipIds(userId);
+      } else {
+        ids = (data || []).map((p: any) => p.internship_id);
       }
-      return (data || []).map((p: any) => p.internship_id);
     } catch (err) {
       console.warn("getPaidInternshipIds failed, falling back to mock:", err);
-      return getMockPaidInternshipIds(userId);
+      ids = getMockPaidInternshipIds(userId);
     }
   } else {
-    return getMockPaidInternshipIds(userId);
+    ids = getMockPaidInternshipIds(userId);
   }
+
+  setCachedData(cacheKey, ids, CACHE_TTL.short);
+  return ids;
 }
 
 function getMockPaidInternshipIds(userId: string): string[] {
@@ -2314,6 +2332,10 @@ export interface PlatformSettings {
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
   const defaultValue: PlatformSettings = { assessment_fee: 150, payments_enabled: true, assessment_availability_days: 30 };
+  const cacheKey = "platform_settings";
+  const cached = getCachedData<PlatformSettings>(cacheKey);
+  if (cached) return cached;
+
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
@@ -2324,19 +2346,25 @@ export async function getPlatformSettings(): Promise<PlatformSettings> {
       if (error || !data) {
         // If not found, try inserting default
         await supabase.from("platform_settings").insert({ key: "settings", value: defaultValue });
+        setCachedData(cacheKey, defaultValue, CACHE_TTL.long);
         return defaultValue;
       }
+      setCachedData(cacheKey, data.value, CACHE_TTL.long);
       return data.value;
     } catch (err) {
       console.warn("getPlatformSettings failed, using fallback:", err);
+      setCachedData(cacheKey, defaultValue, CACHE_TTL.long);
       return defaultValue;
     }
   } else {
-    return getMockStorage<PlatformSettings>("mock_platform_settings", defaultValue);
+    const res = getMockStorage<PlatformSettings>("mock_platform_settings", defaultValue);
+    setCachedData(cacheKey, res, CACHE_TTL.long);
+    return res;
   }
 }
 
 export async function savePlatformSettings(settings: PlatformSettings): Promise<PlatformSettings> {
+  invalidateCacheKey("platform_settings");
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase

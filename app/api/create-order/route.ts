@@ -25,6 +25,11 @@ export async function POST(request: Request) {
     // Enforce pricing dynamically
     const amount = settings.assessment_fee * 100;
 
+    // Validate amount is at least 100 paise (1 INR)
+    if (amount < 100) {
+      return NextResponse.json({ error: "Invalid payment amount. Amount must be at least 100 paise (1 INR)." }, { status: 400 });
+    }
+
     // Get user session from cookies
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("iqintern_session")?.value;

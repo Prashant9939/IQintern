@@ -15,6 +15,8 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, error: 'Missing required parameters' }, { status: 400 });
     }
 
+
+
     let profile: any = null;
     let internship: any = null;
     let testResult: any = null;
@@ -85,6 +87,27 @@ export async function GET(req: Request) {
     }
     if (!internship) {
       return NextResponse.json({ success: false, error: 'Internship not found' }, { status: 404 });
+    }
+
+    // Gating authorization checks
+    const cleanType = templateType.trim().toLowerCase();
+    const isPaid = payments.some(
+      (p: any) => p.internship_id === internshipId && p.status === 'completed'
+    );
+    const isPassed = testResult?.passed === true || (testResult?.percentage && testResult.percentage >= 40);
+
+    if (['offer_letter', 'receipt', 'payment_receipt'].includes(cleanType)) {
+      if (!isPaid) {
+        return NextResponse.json({ success: false, error: 'Unauthorized: Complete payment to unlock this document' }, { status: 403 });
+      }
+    } else if (
+      ['certificate', 'internship_certificate', 'appreciation_certificate', 'marksheet', 'assessment_marksheet', 'project_report', 'internship_report', 'attendance_sheet', 'attendance_record'].includes(cleanType)
+    ) {
+      if (!isPassed) {
+        return NextResponse.json({ success: false, error: 'Unauthorized: Pass the assessment to unlock this document' }, { status: 403 });
+      }
+    } else {
+      return NextResponse.json({ success: false, error: 'Invalid document template type' }, { status: 400 });
     }
 
     // 2. Format Variables

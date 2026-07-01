@@ -9,13 +9,14 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUser, UserSession } from "@/lib/supabase/auth";
+import { BRANDING } from "@/config/branding";
 import {
   getInternships,
   getTestResults,
   getStudentProfile,
   getDocumentTemplates,
-  verifyCertificate,
   getStudentPayments,
+  getPlatformSettings,
   Internship,
   TestResult,
   DocumentTemplate,
@@ -127,6 +128,7 @@ export default function StudentDashboard() {
   const [internships, setInternships] = useState<Internship[]>([]);
   const [results, setResults] = useState<TestResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [profile, setProfile] = useState<any | null>(null);
   const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -167,29 +169,59 @@ export default function StudentDashboard() {
   };
 
   useEffect(() => {
+    console.log("[INSTRUMENTATION] StudentDashboard page mounted. Loading dashboard data...");
+    const dashStart = performance.now();
     async function loadDashboardData() {
       try {
+        const userStart = performance.now();
         const u = await getCurrentUser();
+        console.log(`[INSTRUMENTATION] Dashboard getCurrentUser finished in ${(performance.now() - userStart).toFixed(1)}ms`);
+
         setUser(u);
+        setLoading(false); // Let the dashboard shell and welcome panel render immediately!
+
         if (u) {
-          const [ints, res, prof, tpls, pays] = await Promise.all([
+          const dbStart = performance.now();
+          const [ints, res, prof, pays] = await Promise.all([
             getInternships(),
             getTestResults(u.id),
             getStudentProfile(u.id),
-            getDocumentTemplates(),
             getStudentPayments(u.id)
           ]);
+          console.log(`[INSTRUMENTATION] Dashboard queries (4 parallel fetches) finished in ${(performance.now() - dbStart).toFixed(1)}ms`);
+
           setInternships(ints);
           setResults(res);
           setProfile(prof);
-          setTemplates(tpls);
           setPayments(pays);
+
+          const annStart = performance.now();
           await fetchAnnouncementsAndReads(u.id);
+          console.log(`[INSTRUMENTATION] Dashboard announcements fetch finished in ${(performance.now() - annStart).toFixed(1)}ms`);
+
+          setDataLoading(false); // Skeletons transition to active content
+
+          // Prefetch likely next pages in the background after interactivity
+          setTimeout(async () => {
+            try {
+              console.log("[INSTRUMENTATION] Dashboard background prefetching page templates & settings...");
+              const preStart = performance.now();
+              await Promise.all([
+                getPlatformSettings(),      // for Tracks page
+                getDocumentTemplates()      // for Documents & Certificates previews
+              ]);
+              console.log(`[INSTRUMENTATION] Dashboard background prefetch finished in ${(performance.now() - preStart).toFixed(1)}ms`);
+            } catch (prefetchErr) {
+              console.warn("Background prefetch failed:", prefetchErr);
+            }
+          }, 800);
         }
       } catch (err) {
         console.error("Error loading dashboard data", err);
-      } finally {
         setLoading(false);
+        setDataLoading(false);
+      } finally {
+        console.log(`[INSTRUMENTATION] Dashboard page load finished. Total time: ${(performance.now() - dashStart).toFixed(1)}ms`);
       }
     }
     loadDashboardData();
@@ -296,10 +328,10 @@ export default function StudentDashboard() {
           <div style="font-size: 13px; color: #64748b; margin-top: 5px;">Receipt ID: ${receiptNo}</div>
         </td>
         <td class="company-details">
-          <div class="company-name">IQ Intern</div>
-          <div>IQ Intern Vocational Training Pvt. Ltd.</div>
-          <div>Optimark Tech Hub, Sector 62, Noida, UP</div>
-          <div>Email: billing@iqintern.com</div>
+          <div class="company-name">${BRANDING.name}</div>
+          <div>${BRANDING.legal.companyName}</div>
+          <div>${BRANDING.address}</div>
+          <div>Email: ${BRANDING.emails.support}</div>
           <div>GSTIN: 09AAECS8274M1Z5 (Mock)</div>
         </td>
       </tr>
@@ -372,7 +404,7 @@ export default function StudentDashboard() {
     setShowPreviewModal(true);
   };
 
-  const handleGetDashboardDocument = (title: string) => {
+  const handleGetDashboardDocument = async (title: string) => {
     const titleToCodeMap: Record<string, string> = {
       "Consent Form": "consent_form",
       "Daily Log": "daily_log_book",
@@ -395,72 +427,83 @@ export default function StudentDashboard() {
       return;
     }
 
-    if (code === "offer_letter" || code === "certificate" || code === "appreciation_certificate" || code === "marksheet" || code === "internship_report") {
-      const passedRes = results.filter((r) => r.passed);
-      const latestPassed = passedRes.length > 0 ? passedRes[0] : null;
-
-      if (code !== "offer_letter" && !latestPassed) {
-        alert(`You must pass the assessment to unlock your official verified ${title}.`);
-        return;
+    try {
+      let tpls = templates;
+      if (tpls.length === 0) {
+        tpls = await getDocumentTemplates();
+        setTemplates(tpls);
       }
 
-      const activeIds = Array.from(new Set([...payments.map(p => p.internship_id), ...results.map(r => r.internship_id)]));
-      const firstActiveTrack = activeIds.length > 0 ? internships.find(i => i.id === activeIds[0]) : null;
-      const activeTrackTitle = firstActiveTrack?.title || "Web Development";
-      const activeTrackId = firstActiveTrack?.id || "web-dev";
+      if (code === "offer_letter" || code === "certificate" || code === "appreciation_certificate" || code === "marksheet" || code === "internship_report") {
+        const passedRes = results.filter((r) => r.passed);
+        const latestPassed = passedRes.length > 0 ? passedRes[0] : null;
 
-      const resObj = latestPassed || {
-        id: "placeholder-offer",
-        student_id: user?.id || "",
-        internship_id: activeTrackId,
-        internship_title: activeTrackTitle,
-        score: 0,
-        total_questions: 5,
-        percentage: 0,
-        passed: false,
-        completed_at: new Date().toISOString(),
-        reference_number: `SI-OFFER-${activeTrackId.replace("int-", "").substring(0, 4).toUpperCase()}`
-      } as TestResult;
+        if (code !== "offer_letter" && !latestPassed) {
+          alert(`You must pass the assessment to unlock your official verified ${title}.`);
+          return;
+        }
 
-      const tpl = templates.find((t) => t.code === code);
-      if (!tpl) {
-        alert(`Document template for ${title} not found in database.`);
-        return;
+        const activeIds = Array.from(new Set([...payments.map(p => p.internship_id), ...results.map(r => r.internship_id)]));
+        const firstActiveTrack = activeIds.length > 0 ? internships.find(i => i.id === activeIds[0]) : null;
+        const activeTrackTitle = firstActiveTrack?.title || "Web Development";
+        const activeTrackId = firstActiveTrack?.id || "web-dev";
+
+        const resObj = latestPassed || {
+          id: "placeholder-offer",
+          student_id: user?.id || "",
+          internship_id: activeTrackId,
+          internship_title: activeTrackTitle,
+          score: 0,
+          total_questions: 5,
+          percentage: 0,
+          passed: false,
+          completed_at: new Date().toISOString(),
+          reference_number: `SI-OFFER-${activeTrackId.replace("int-", "").substring(0, 4).toUpperCase()}`
+        } as TestResult;
+
+        const tpl = tpls.find((t) => t.code === code);
+        if (!tpl) {
+          alert(`Document template for ${title} not found in database.`);
+          return;
+        }
+
+        const rendered = renderDocument(tpl.html_content, profile, resObj.internship_title || "Internship Program", resObj, code, payments);
+        setPreviewHtml(rendered);
+        setPreviewTitle(tpl.name);
+        setShowPreviewModal(true);
+      } else {
+        const activeIds = Array.from(new Set([...payments.map(p => p.internship_id), ...results.map(r => r.internship_id)]));
+        const firstActiveTrack = activeIds.length > 0 ? internships.find(i => i.id === activeIds[0]) : null;
+        const activeTrackTitle = firstActiveTrack?.title || "Web Development";
+        const activeTrackId = firstActiveTrack?.id || "web-dev";
+
+        const resObj = {
+          id: "placeholder-utility",
+          student_id: user?.id || "",
+          internship_id: activeTrackId,
+          internship_title: activeTrackTitle,
+          score: 0,
+          total_questions: 5,
+          percentage: 0,
+          passed: false,
+          completed_at: new Date().toISOString(),
+          reference_number: `SI-UTIL-${activeTrackId.replace("int-", "").substring(0, 4).toUpperCase()}`
+        } as TestResult;
+
+        const tpl = tpls.find((t) => t.code === code);
+        if (!tpl) {
+          alert(`Document template for ${title} not found in database.`);
+          return;
+        }
+
+        const rendered = renderDocument(tpl.html_content, profile, resObj.internship_title || "Internship Program", resObj, code, payments);
+        setPreviewHtml(rendered);
+        setPreviewTitle(tpl.name);
+        setShowPreviewModal(true);
       }
-
-      const rendered = renderDocument(tpl.html_content, profile, resObj.internship_title || "Internship Program", resObj, code, payments);
-      setPreviewHtml(rendered);
-      setPreviewTitle(tpl.name);
-      setShowPreviewModal(true);
-    } else {
-      const activeIds = Array.from(new Set([...payments.map(p => p.internship_id), ...results.map(r => r.internship_id)]));
-      const firstActiveTrack = activeIds.length > 0 ? internships.find(i => i.id === activeIds[0]) : null;
-      const activeTrackTitle = firstActiveTrack?.title || "Web Development";
-      const activeTrackId = firstActiveTrack?.id || "web-dev";
-
-      const resObj = {
-        id: "placeholder-utility",
-        student_id: user?.id || "",
-        internship_id: activeTrackId,
-        internship_title: activeTrackTitle,
-        score: 0,
-        total_questions: 5,
-        percentage: 0,
-        passed: false,
-        completed_at: new Date().toISOString(),
-        reference_number: `SI-UTIL-${activeTrackId.replace("int-", "").substring(0, 4).toUpperCase()}`
-      } as TestResult;
-
-      const tpl = templates.find((t) => t.code === code);
-      if (!tpl) {
-        alert(`Document template for ${title} not found in database.`);
-        return;
-      }
-
-      const rendered = renderDocument(tpl.html_content, profile, resObj.internship_title || "Internship Program", resObj, code, payments);
-      setPreviewHtml(rendered);
-      setPreviewTitle(tpl.name);
-      setShowPreviewModal(true);
+    } catch (err) {
+      console.error("Failed to load document preview:", err);
+      alert("Failed to load document preview. Please try again.");
     }
   };
 
@@ -554,7 +597,7 @@ export default function StudentDashboard() {
     activitiesList.push(
       { title: "Completed: Components & Props", time: "2h ago", icon: CheckCircle, color: "text-[#5B5FF7] bg-[#5B5FF7]/10" },
       { title: "Assessment Submitted", time: "1d ago", icon: Clipboard, color: "text-[#5B5FF7] bg-[#5B5FF7]/10" },
-      { title: "Certificate Earned: HTML Basics", time: "3d ago", icon: Award, color: "text-amber-500 bg-amber-500/10" },
+      { title: "Evaluation Cleared: HTML Basics", time: "3d ago", icon: CheckCircle, color: "text-emerald-500 bg-emerald-500/10" },
       { title: "Track Progress Updated", time: "3d ago", icon: RefreshCw, color: "text-sky-500 bg-sky-500/10" }
     );
   }
@@ -608,7 +651,7 @@ export default function StudentDashboard() {
         >
           <Bell className="h-4 w-4" />
           <span>View Announcements</span>
-          {announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length > 0 && (
+          {!dataLoading && announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length > 0 && (
             <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-extrabold text-white animate-bounce shadow-md border border-white">
               {announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length}
             </span>
@@ -617,118 +660,153 @@ export default function StudentDashboard() {
       </section>
 
       {/* Bento Statistics Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         
         {/* Card 1: Active Track */}
-        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px] group cursor-pointer" onClick={() => {
-          const el = document.getElementById("progress");
-          if (el) el.scrollIntoView({ behavior: "smooth" });
-        }}>
-          <div className="flex items-center justify-between">
-            <div className="h-12 w-12 rounded-2xl bg-[#5B5FF7]/10 flex items-center justify-center text-[#5B5FF7] shrink-0">
-              <BookOpen className="h-6 w-6" />
+        {dataLoading ? (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs flex flex-col justify-between h-[180px] animate-pulse">
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-zinc-100 shrink-0" />
+              <div className="text-zinc-400 text-xs font-semibold uppercase tracking-wider w-20 h-4 bg-zinc-100 rounded" />
             </div>
-            <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Active Track</span>
+            <div className="mt-4 text-left space-y-2.5">
+              <div className="h-5 bg-zinc-200 rounded w-2/3" />
+              <div className="w-full bg-zinc-100 h-2 rounded-full mt-2" />
+            </div>
           </div>
-          <div className="mt-4 text-left">
-            <div className="flex items-center gap-1 text-[#5B5FF7] group-hover:translate-x-0.5 transition-transform">
-              <strong className="text-base font-extrabold text-zinc-900 truncate max-w-[160px]">
-                {activeTrackDetails[0]?.trackTitle || "No Active Track"}
-              </strong>
-              <ChevronRight className="h-4 w-4 stroke-[3]" />
-            </div>
-            {activeTrackDetails[0] && (
-              <div className="mt-3">
-                <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-[#5B5FF7] h-full rounded-full transition-all duration-500" 
-                    style={{ width: `${activeTrackDetails[0].passed ? 100 : Math.max(30, activeTrackDetails[0].percentage)}%` }}
-                  />
-                </div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1.5 block">
-                  {activeTrackDetails[0].passed ? "100%" : `${Math.max(30, activeTrackDetails[0].percentage)}%`} Complete
-                </span>
+        ) : (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px] group cursor-pointer" onClick={() => {
+            const el = document.getElementById("progress");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}>
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-[#5B5FF7]/10 flex items-center justify-center text-[#5B5FF7] shrink-0">
+                <BookOpen className="h-6 w-6" />
               </div>
-            )}
+              <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Active Track</span>
+            </div>
+            <div className="mt-4 text-left">
+              <div className="flex items-center gap-1 text-[#5B5FF7] group-hover:translate-x-0.5 transition-transform">
+                <strong className="text-base font-extrabold text-zinc-900 truncate max-w-[160px]">
+                  {activeTrackDetails[0]?.trackTitle || "No Active Track"}
+                </strong>
+                <ChevronRight className="h-4 w-4 stroke-[3]" />
+              </div>
+              {activeTrackDetails[0] && (
+                <div className="mt-3">
+                  <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-[#5B5FF7] h-full rounded-full transition-all duration-500" 
+                      style={{ width: `${activeTrackDetails[0].passed ? 100 : Math.max(30, activeTrackDetails[0].percentage)}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1.5 block">
+                    {activeTrackDetails[0].passed ? "100%" : `${Math.max(30, activeTrackDetails[0].percentage)}%`} Complete
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Card 2: Assessments */}
-        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px] cursor-pointer" onClick={() => {
-          const el = document.getElementById("assessments");
-          if (el) el.scrollIntoView({ behavior: "smooth" });
-        }}>
-          <div className="flex items-center justify-between">
-            <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
-              <Clipboard className="h-6 w-6" />
+        {dataLoading ? (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs flex flex-col justify-between h-[180px] animate-pulse">
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-zinc-100 shrink-0" />
+              <div className="text-zinc-400 text-xs font-semibold uppercase tracking-wider w-20 h-4 bg-zinc-100 rounded" />
             </div>
-            <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Assessments</span>
-          </div>
-          <div className="mt-4 text-left">
-            <h3 className="text-3xl font-extrabold text-zinc-900 leading-none">{results.length}</h3>
-            <p className="text-xs text-zinc-450 font-semibold mt-2">
-              {internships.length - results.length > 0 ? `${internships.length - results.length} Pending` : "All Attempted"}
-            </p>
-          </div>
-        </div>
-
-        {/* Card 3: Certificates */}
-        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px] cursor-pointer" onClick={() => {
-          const el = document.getElementById("certificates");
-          if (el) el.scrollIntoView({ behavior: "smooth" });
-        }}>
-          <div className="flex items-center justify-between">
-            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
-              <Award className="h-6 w-6" />
+            <div className="mt-4 text-left space-y-2">
+              <div className="h-8 bg-zinc-200 rounded w-1/3" />
+              <div className="h-3 bg-zinc-200 rounded w-1/2" />
             </div>
-            <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Certificates</span>
           </div>
-          <div className="mt-4 text-left">
-            <h3 className="text-3xl font-extrabold text-zinc-900 leading-none">{passedTests}</h3>
-            <p className="text-xs text-zinc-450 font-semibold mt-2">{passedTests} Earned</p>
+        ) : (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px] cursor-pointer" onClick={() => {
+            const el = document.getElementById("assessments");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}>
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                <Clipboard className="h-6 w-6" />
+              </div>
+              <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Assessments</span>
+            </div>
+            <div className="mt-4 text-left">
+              <h3 className="text-3xl font-extrabold text-zinc-900 leading-none">{results.length}</h3>
+              <p className="text-xs text-zinc-450 font-semibold mt-2">
+                {internships.length - results.length > 0 ? `${internships.length - results.length} Pending` : "All Attempted"}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Card 4: Total Learning */}
-        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px]">
-          <div className="flex items-center justify-between">
-            <div className="h-12 w-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 shrink-0">
-              <Clock className="h-6 w-6" />
+        {dataLoading ? (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs flex flex-col justify-between h-[180px] animate-pulse">
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-zinc-100 shrink-0" />
+              <div className="text-zinc-400 text-xs font-semibold uppercase tracking-wider w-20 h-4 bg-zinc-100 rounded" />
             </div>
-            <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Total Learning</span>
+            <div className="mt-4 text-left space-y-2">
+              <div className="h-8 bg-zinc-200 rounded w-1/3" />
+              <div className="h-3 bg-zinc-200 rounded w-1/2" />
+            </div>
           </div>
-          <div className="mt-4 text-left">
-            <h3 className="text-3xl font-extrabold text-zinc-900 leading-none">
-              {activeTrackIds.length > 0 ? `${activeTrackIds.length * 120} hrs` : "120 hrs"}
-            </h3>
-            <p className="text-xs text-zinc-450 font-semibold mt-2">Time Spent</p>
+        ) : (
+          <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-[180px]">
+            <div className="flex items-center justify-between">
+              <div className="h-12 w-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 shrink-0">
+                <Clock className="h-6 w-6" />
+              </div>
+              <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Total Learning</span>
+            </div>
+            <div className="mt-4 text-left">
+              <h3 className="text-3xl font-extrabold text-zinc-900 leading-none">
+                {activeTrackIds.length > 0 ? `${activeTrackIds.length * 120} hrs` : "120 hrs"}
+              </h3>
+              <p className="text-xs text-zinc-450 font-semibold mt-2">Time Spent</p>
+            </div>
           </div>
-        </div>
+        )}
 
       </section>
 
       {/* Progress Trophy Banner Card */}
-      <section className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-sm transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex items-center gap-4 text-left">
-          <div className="h-14 w-14 rounded-full bg-[#5B5FF7]/10 text-[#5B5FF7] flex items-center justify-center shrink-0">
-            <Award className="h-7 w-7" />
+      {dataLoading ? (
+        <section className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6 animate-pulse">
+          <div className="flex items-center gap-4 text-left flex-grow">
+            <div className="h-14 w-14 rounded-full bg-zinc-100 shrink-0" />
+            <div className="space-y-2 flex-grow">
+              <div className="h-5 bg-zinc-200 rounded w-1/3" />
+              <div className="h-3.5 bg-zinc-200 rounded w-2/3" />
+            </div>
           </div>
-          <div>
-            <h4 className="text-zinc-900 font-extrabold text-base flex items-center gap-1.5">
-              Great Progress, {profile?.full_name || user?.full_name || "Student"}! 🚀
-            </h4>
-            <p className="text-zinc-500 text-xs mt-1.5 font-light leading-relaxed max-w-xl">
-              You are doing great in your {activeTrackDetails[0]?.trackTitle || "IQ Intern"} track. Keep going and complete your next assessment.
-            </p>
+          <div className="h-12 bg-zinc-200 rounded-xl w-36 shrink-0" />
+        </section>
+      ) : (
+        <section className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-sm transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex items-center gap-4 text-left">
+            <div className="h-14 w-14 rounded-full bg-[#5B5FF7]/10 text-[#5B5FF7] flex items-center justify-center shrink-0">
+              <Award className="h-7 w-7" />
+            </div>
+            <div>
+              <h4 className="text-zinc-900 font-extrabold text-base flex items-center gap-1.5">
+                Great Progress, {profile?.full_name || user?.full_name || "Student"}! 🚀
+              </h4>
+              <p className="text-zinc-500 text-xs mt-1.5 font-light leading-relaxed max-w-xl">
+                You are doing great in your {activeTrackDetails[0]?.trackTitle || "IQ Intern"} track. Keep going and complete your next assessment.
+              </p>
+            </div>
           </div>
-        </div>
-        <Link
-          href="/student/internships"
-          className="bg-[#5B5FF7] hover:bg-[#4A4EE6] text-white text-xs font-bold px-6 py-3.5 rounded-xl shadow-md shadow-[#5B5FF7]/15 hover:shadow-lg transition-all shrink-0 cursor-pointer w-full md:w-auto text-center"
-        >
-          Continue Learning
-        </Link>
-      </section>
+          <Link
+            href="/student/internships"
+            className="bg-[#5B5FF7] hover:bg-[#4A4EE6] text-white text-xs font-bold px-6 py-3.5 rounded-xl shadow-md shadow-[#5B5FF7]/15 hover:shadow-lg transition-all shrink-0 cursor-pointer w-full md:w-auto text-center"
+          >
+            Continue Learning
+          </Link>
+        </section>
+      )}
 
       {/* Two Column Layout: Recent Activity & Upcoming Tasks */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -739,77 +817,73 @@ export default function StudentDashboard() {
             <h3 className="text-base font-extrabold text-zinc-900">Recent Activity</h3>
             <button className="text-xs text-[#5B5FF7] hover:text-[#4A4EE6] font-bold">View All</button>
           </div>
-          <div className="space-y-5">
-            {activitiesList.map((act, idx) => (
-              <div key={idx} className="flex justify-between items-center gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`h-8 w-8 rounded-lg ${act.color} flex items-center justify-center shrink-0`}>
-                    <act.icon className="h-4.5 w-4.5" />
+          {dataLoading ? (
+            <div className="space-y-5 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="h-8 w-8 rounded-lg bg-zinc-100 shrink-0" />
+                    <div className="h-4 bg-zinc-200 rounded w-2/3" />
                   </div>
-                  <span className="text-xs font-semibold text-zinc-700 truncate">{act.title}</span>
+                  <div className="h-3 bg-zinc-200 rounded w-10 shrink-0" />
                 </div>
-                <span className="text-[10px] text-zinc-400 font-bold shrink-0">{act.time}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {activitiesList.map((act, idx) => (
+                <div key={idx} className="flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`h-8 w-8 rounded-lg ${act.color} flex items-center justify-center shrink-0`}>
+                      <act.icon className="h-4.5 w-4.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-zinc-700 truncate">{act.title}</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-400 font-bold shrink-0">{act.time}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Column: Upcoming Tasks */}
         <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs text-left">
           <h3 className="text-base font-extrabold text-zinc-900 mb-6">Upcoming Tasks</h3>
-          <div className="space-y-4">
-            {upcomingTasksList.map((task, idx) => (
-              <div key={idx} className="flex justify-between items-center gap-4 py-2 border-b border-zinc-100 last:border-0 pb-3 last:pb-0">
-                <div>
-                  <h4 className="text-xs font-bold text-zinc-800">{task.title}</h4>
-                  <span className="text-[10px] text-zinc-400 font-medium block mt-0.5">{task.due}</span>
+          {dataLoading ? (
+            <div className="space-y-4 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex justify-between items-center gap-4 py-2 border-b border-zinc-100 last:border-0 pb-3 last:pb-0">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-4 bg-zinc-200 rounded w-1/2" />
+                    <div className="h-3 bg-zinc-200 rounded w-1/3" />
+                  </div>
+                  <div className="h-8 bg-zinc-200 rounded-lg w-14 shrink-0" />
                 </div>
-                <Link
-                  href={task.link}
-                  className="bg-white border border-zinc-200 hover:border-[#5B5FF7] hover:bg-[#5B5FF7]/5 text-zinc-700 hover:text-[#5B5FF7] text-[10px] font-extrabold px-3 py-1.5 rounded-lg shadow-xs transition-all cursor-pointer"
-                >
-                  Start
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </section>
-
-      {/* Verification Status Card */}
-      <section className="bg-emerald-500/5 border border-emerald-500/20 rounded-[20px] p-5 shadow-xs flex justify-between items-center text-left">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
-            <ShieldCheck className="h-5.5 w-5.5" />
-          </div>
-          <div>
-            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Verification Status</span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <strong className="text-sm font-mono text-zinc-850 tracking-tight">
-                {results.find(r => r.passed)?.reference_number || (payments.length > 0 ? `SI-2026-${payments[0].internship_id.replace("int-", "").substring(0, 4).toUpperCase()}` : "SI-2026-REACT")}
-              </strong>
-              <span className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md border border-emerald-250">
-                Verified
-              </span>
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              {upcomingTasksList.map((task, idx) => (
+                <div key={idx} className="flex justify-between items-center gap-4 py-2 border-b border-zinc-100 last:border-0 pb-3 last:pb-0">
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-800">{task.title}</h4>
+                    <span className="text-[10px] text-zinc-400 font-medium block mt-0.5">{task.due}</span>
+                  </div>
+                  <Link
+                    href={task.link}
+                    className="bg-white border border-zinc-200 hover:border-[#5B5FF7] hover:bg-[#5B5FF7]/5 text-zinc-700 hover:text-[#5B5FF7] text-[10px] font-extrabold px-3 py-1.5 rounded-lg shadow-xs transition-all cursor-pointer"
+                  >
+                    Start
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <button
-          onClick={() => {
-            const passedRes = results.find(r => r.passed) || results[0];
-            if (passedRes) {
-              handleViewDocument("certificate", passedRes);
-            } else {
-              window.location.href = "/student/certificates";
-            }
-          }}
-          className="text-xs text-[#5B5FF7] hover:text-[#4A4EE6] font-bold flex items-center gap-1 transition-colors cursor-pointer"
-        >
-          <span>View Details</span>
-          <ChevronRight className="h-3.5 w-3.5 stroke-[3]" />
-        </button>
+
       </section>
+
+
 
 
       {/* DOCUMENT PREVIEW MODAL */}

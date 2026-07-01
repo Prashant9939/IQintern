@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { loginUser } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { 
-  Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff, 
-  GraduationCap, ShieldCheck, Building2, Globe, Check 
+import {
+  Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff,
+  GraduationCap, ShieldCheck, Building2, Globe, Check
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -54,18 +54,24 @@ export default function Login() {
     setError("");
     setSuccess("");
 
+    console.log("[INSTRUMENTATION] Login button clicked. Timing started...");
+    const loginStart = performance.now();
+
     try {
+      const apiStart = performance.now();
       const res = await loginUser(email, password);
+      console.log(`[INSTRUMENTATION] loginUser request finished in ${(performance.now() - apiStart).toFixed(1)}ms`);
+      
       setSuccess("Logged in successfully! Redirecting...");
 
-      setTimeout(() => {
-        if (res.user.role === "admin") {
-          window.location.href = "/admin/dashboard";
-        } else {
-          window.location.href = "/student/dashboard";
-        }
-      }, 1000);
+      console.log(`[INSTRUMENTATION] Redirecting user immediately: role=${res.user.role}`);
+      if (res.user.role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/student/dashboard";
+      }
     } catch (err: any) {
+      console.error("[INSTRUMENTATION] Login request failed:", err);
       setError(err.message || "An error occurred during sign in.");
     } finally {
       setLoading(false);
@@ -80,22 +86,22 @@ export default function Login() {
 
   return (
     <div className="min-h-screen md:h-screen md:overflow-hidden flex flex-col md:flex-row bg-[#F8FAFC]">
-      
+
       {/* LEFT SECTION (Branding - 40%) */}
       <div className="hidden md:flex md:w-2/5 md:h-full relative bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] text-white overflow-hidden flex-col justify-between p-8 lg:p-10 shrink-0 select-none">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
-        
+
         {/* Ambient Gradient Blobs */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: "2s" }}></div>
-        
+
         {/* Header Branding Box */}
         <div className="relative z-10 w-full max-w-sm shrink-0">
           <div className="bg-slate-950/25 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-xl">
             <Link href="/" className="flex items-center gap-2 font-bold text-white mb-1.5">
-              <img 
-                src="/white-logo.png" 
-                className="h-14 w-auto object-contain" 
+              <img
+                src="/white-logo.png"
+                className="h-14 w-auto object-contain"
               />
             </Link>
             <p className="text-indigo-100/90 font-medium text-[11px] tracking-wide">Empowering Students, Shaping Future</p>
@@ -105,20 +111,20 @@ export default function Login() {
         {/* Central Illustration and Floating Cards */}
         <div className="relative z-10 my-auto flex flex-col items-center justify-center w-full py-4">
           <div className="relative w-full h-64 flex items-center justify-center">
-            
+
             {/* Center Illustration */}
             <div className="relative w-52 h-52 z-10">
-              <Image 
-                src="/student_internship_branding.png" 
-                alt="Students" 
+              <Image
+                src="/student_internship_branding.png"
+                alt="Students"
                 fill
                 priority
                 className="object-contain drop-shadow-2xl"
               />
             </div>
-            
-            {/* Floating Certificate Card */}
-            <motion.div 
+
+            {/* Floating Evaluation Card */}
+            <motion.div
               className="absolute top-0 left-4 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 w-44"
               animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
@@ -127,13 +133,13 @@ export default function Login() {
                 <GraduationCap className="h-4.5 w-4.5 text-amber-300" />
               </div>
               <div className="text-left">
-                <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Certified Intern</div>
+                <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Evaluated Intern</div>
                 <div className="text-[11px] font-extrabold text-white">Placement Ready</div>
               </div>
             </motion.div>
 
             {/* Floating Offer Letter Preview Card */}
-            <motion.div 
+            <motion.div
               className="absolute bottom-0 right-4 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 w-48"
               animate={{ y: [0, 6, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
@@ -151,14 +157,14 @@ export default function Login() {
             </motion.div>
 
             {/* Interactive Sparks */}
-            <motion.div 
+            <motion.div
               className="absolute top-10 right-16 z-20"
               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             >
               <div className="h-6 w-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-300 text-xs shadow-md">✦</div>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="absolute bottom-10 left-16 z-20"
               animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: 1.5 }}
@@ -171,7 +177,7 @@ export default function Login() {
         {/* Feature & Three Stats Cards */}
         <div className="relative z-10 w-full mt-auto shrink-0">
           <div className="space-y-2 mb-6 hidden lg:block">
-            {["Industry-recognized Certificates", "Real Project Experience", "Placement Assistance", "24×7 Student Support"].map((feature, idx) => (
+            {["Industry-aligned Evaluations", "Real Project Experience", "Placement Assistance", "24×7 Student Support"].map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2.5 text-indigo-50 font-medium text-xs">
                 <div className="h-4.5 w-4.5 rounded-full bg-emerald-400/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
                   <Check className="h-2.5 w-2.5 text-emerald-300 stroke-[3]" />
@@ -186,21 +192,21 @@ export default function Login() {
               <div className="h-7 w-7 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center mb-1.5">
                 <GraduationCap className="h-3.5 w-3.5 text-indigo-300" />
               </div>
-              <div className="text-base font-black text-white">5000+</div>
+              <div className="text-base font-black text-white">24000+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Students</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex flex-col items-center text-center">
               <div className="h-7 w-7 rounded-full bg-purple-500/20 border border-purple-400/40 flex items-center justify-center mb-1.5">
                 <Building2 className="h-3.5 w-3.5 text-purple-300" />
               </div>
-              <div className="text-base font-black text-white">100+</div>
+              <div className="text-base font-black text-white">48+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Colleges</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex flex-col items-center text-center">
               <div className="h-7 w-7 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mb-1.5">
                 <Globe className="h-3.5 w-3.5 text-emerald-300" />
               </div>
-              <div className="text-base font-black text-white">50+</div>
+              <div className="text-base font-black text-white">25+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Domains</div>
             </div>
           </div>
@@ -211,10 +217,10 @@ export default function Login() {
       <div className="w-full md:w-3/5 md:h-full flex flex-col overflow-y-auto md:overflow-hidden min-h-screen md:min-h-0 bg-[#F8FAFC]">
         {/* Mobile Header */}
         <div className="md:hidden flex items-center justify-between p-5 bg-white border-b border-zinc-200 shrink-0">
-           <Link href="/" className="flex items-center gap-2 font-bold text-zinc-900">
-            <img 
-              src="/logo-icon.png" 
-              className="h-10 w-auto object-contain" 
+          <Link href="/" className="flex items-center gap-2 font-bold text-zinc-900">
+            <img
+              src="/logo-icon.png"
+              className="h-10 w-auto object-contain"
             />
           </Link>
           <Link href="/auth/register" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
@@ -224,20 +230,20 @@ export default function Login() {
 
         {/* Desktop Header */}
         <div className="hidden md:flex justify-end p-4 shrink-0">
-           <span className="text-xs font-medium text-zinc-500 mr-2">New to IQ Intern?</span>
-           <Link href="/auth/register" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-             Create an Account here →
-           </Link>
+          <span className="text-xs font-medium text-zinc-500 mr-2">New to IQ Intern?</span>
+          <Link href="/auth/register" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
+            Create an Account here →
+          </Link>
         </div>
 
         {/* Form Container */}
         <div className="flex-grow flex items-center justify-center py-4 px-4 sm:px-8 md:overflow-hidden relative">
           <div className="w-full max-w-[460px] flex flex-col shrink-0">
-            
+
             {/* Card */}
             <div className="bg-white border border-zinc-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[24px] p-6 sm:p-8 flex flex-col w-full relative">
               <form onSubmit={handleLogin} className="flex flex-col space-y-4">
-                
+
                 {/* Form Title */}
                 <div className="pb-4 border-b border-zinc-100 mb-2 shrink-0 text-left">
                   <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">
@@ -247,7 +253,7 @@ export default function Login() {
                     Enter credentials to access your dashboard
                   </p>
                 </div>
- 
+
                 {/* Mock Mode Development Helper Banner */}
                 {isMockMode && (
                   <div className="mb-2 flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 text-xs text-amber-800 font-medium shrink-0">
@@ -294,14 +300,14 @@ export default function Login() {
                     <label htmlFor="email" className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Email Address or Phone Number *</label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
-                      <input 
+                      <input
                         id="email"
-                        type="text" 
-                        required 
-                        value={email} 
-                        onChange={e => setEmail(e.target.value)} 
-                        className="w-full pl-11 pr-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 focus-visible:ring-indigo-500" 
-                        placeholder="Enter email address or phone number" 
+                        type="text"
+                        required
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        className="w-full pl-11 pr-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 focus-visible:ring-indigo-500"
+                        placeholder="Enter email address or phone number"
                       />
                     </div>
                   </div>
@@ -315,14 +321,14 @@ export default function Login() {
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
-                      <input 
+                      <input
                         id="password"
-                        type={showPassword ? "text" : "password"} 
-                        required 
-                        value={password} 
-                        onChange={e => setPassword(e.target.value)} 
-                        className="w-full pl-11 pr-11 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 focus-visible:ring-indigo-500" 
-                        placeholder="••••••••" 
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        className="w-full pl-11 pr-11 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 focus-visible:ring-indigo-500"
+                        placeholder="••••••••"
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 transition-colors cursor-pointer focus:outline-none focus-visible:text-indigo-600">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

@@ -121,7 +121,7 @@ export default function PaymentPage() {
 
       // 2. Open Real Razorpay modal
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SvZr486cWgXNIQ",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_T89UGIfJWMXNih",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "IQ Intern",
@@ -280,7 +280,7 @@ export default function PaymentPage() {
               </div>
               <div className="flex gap-2.5 items-start">
                 <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span>Verified <strong>Certificates, Project Reports & Marksheets</strong> on passing</span>
+                <span>Verified <strong>Evaluation Scorecards</strong> on passing</span>
               </div>
             </div>
 

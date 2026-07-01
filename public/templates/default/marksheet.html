@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Evaluation Marksheet</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; background-color: #ffffff; margin: 0; }
+    .card { background: white; padding: 40px; max-width: 700px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    h1 { color: #4f46e5; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 22px; text-align: center; }
+    .meta { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #faf5ff; border-radius: 8px; border: 1px solid #e9d5ff; }
+    .meta div { font-size: 13px; }
+    .score-box { text-align: center; margin: 30px 0; padding: 25px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .score { font-size: 48px; font-weight: 800; color: #4f46e5; }
+    .grade { font-size: 15px; font-weight: bold; color: #475569; margin-top: 8px; }
+    .passed-badge { display: inline-block; font-size: 12px; color: #059669; font-weight: bold; background: #d1fae5; border-radius: 6px; padding: 4px 10px; margin-top: 8px; }
+    .footer { text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>EVALUATION MARKSHEET</h1>
+    <div class="meta">
+      <div><strong>Student Name:</strong> {{studentName}}</div>
+      <div><strong>College Name:</strong> {{collegeName}}</div>
+      <div><strong>Internship Track:</strong> {{internshipName}}</div>
+      <div><strong>Verification ID:</strong> {{verificationId}}</div>
+      <div><strong>Date:</strong> {{issueDate}}</div>
+    </div>
+    <div class="score-box">
+      <div class="score">{{score}}</div>
+      <div class="grade">Final Grade: {{grade}}</div>
+      <div class="passed-badge">ASSESSMENT RESULT: PASSED</div>
+    </div>
+    <p style="font-size: 12px; text-align: center; color: #64748b;">This marksheet details the candidate's core competency score on the IQ Intern MCQ Assessment Engine.</p>
+    <div class="footer">
+      <p>Digitally audited and signed on {{issueDate}}</p>
+    </div>
+  </div>
+</body>
+</html>

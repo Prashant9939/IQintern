@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import DateOfBirthSelector from "@/components/DateOfBirthSelector";
 
 export default function Register() {
   const [step, setStep] = useState(1);
@@ -106,6 +107,37 @@ export default function Register() {
       setError("Password must be at least 7 characters long.");
       return false;
     }
+
+    // DOB age validation
+    const birthDate = new Date(formData.dateOfBirth);
+    if (isNaN(birthDate.getTime())) {
+      setError("Please select a valid Date of Birth.");
+      return false;
+    }
+
+    const today = new Date();
+    if (birthDate > today) {
+      setError("Date of Birth cannot be in the future.");
+      return false;
+    }
+
+    // Calculate age precisely
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if (age < 16) {
+      setError("Minimum age requirement is 16 years.");
+      return false;
+    }
+
+    if (age > 80) {
+      setError("Maximum age limit is 80 years.");
+      return false;
+    }
+
     setError("");
     return true;
   };
@@ -272,7 +304,7 @@ export default function Register() {
               />
             </div>
             
-            {/* Floating Certificate Card */}
+            {/* Floating Evaluation Card */}
             <motion.div 
               className="absolute top-0 left-4 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 w-44"
               animate={{ y: [0, -6, 0] }}
@@ -282,7 +314,7 @@ export default function Register() {
                 <GraduationCap className="h-4.5 w-4.5 text-amber-300" />
               </div>
               <div className="text-left">
-                <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Certified Intern</div>
+                <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Evaluated Intern</div>
                 <div className="text-[11px] font-extrabold text-white">Placement Ready</div>
               </div>
             </motion.div>
@@ -326,7 +358,7 @@ export default function Register() {
         {/* Feature & Three Stats Cards */}
         <div className="relative z-10 w-full mt-auto shrink-0">
           <div className="space-y-2 mb-6 hidden lg:block">
-            {["Industry-recognized Certificates", "Real Project Experience", "Placement Assistance", "24×7 Student Support"].map((feature, idx) => (
+            {["Industry-aligned Evaluations", "Real Project Experience", "Placement Assistance", "24×7 Student Support"].map((feature, idx) => (
               <div key={idx} className="flex items-center gap-2.5 text-indigo-50 font-medium text-xs">
                 <div className="h-4.5 w-4.5 rounded-full bg-emerald-400/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
                   <Check className="h-2.5 w-2.5 text-emerald-300 stroke-[3]" />
@@ -529,7 +561,7 @@ export default function Register() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="flex flex-col gap-1">
                             <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Phone Number *</label>
                             <div className="relative">
@@ -541,11 +573,10 @@ export default function Register() {
 
                           <div className="flex flex-col gap-1">
                             <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Date of Birth *</label>
-                            <div className="relative">
-                              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400 animate-pulse" />
-                              <input type="date" required value={formData.dateOfBirth} onChange={e => updateForm('dateOfBirth', e.target.value)} 
-                                className="w-full pl-11 pr-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200" />
-                            </div>
+                            <DateOfBirthSelector
+                              value={formData.dateOfBirth}
+                              onChange={(val) => updateForm('dateOfBirth', val)}
+                            />
                           </div>
                         </div>
 

@@ -38,6 +38,7 @@ create table public.profiles (
 -- Create database unique indexes for email and phone
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_phone_number_idx ON public.profiles (phone_number);
+CREATE INDEX IF NOT EXISTS profiles_role_idx ON public.profiles (role);
 
 -- 2. INTERNSHIPS TABLE
 create table public.internships (

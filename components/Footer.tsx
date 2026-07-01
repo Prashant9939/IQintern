@@ -85,30 +85,35 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Programs Column */}
-          <div className="lg:col-span-2 lg:col-start-6 space-y-4 text-left">
+          {/* Quick Links Column */}
+          <div className="lg:col-span-2 lg:col-start-5 space-y-4 text-left">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Programs
+              Quick Links
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/internships" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Internship Tracks
+                <Link href="/" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/student/dashboard" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Dashboard
+                <Link href="/about" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/internships" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Internships
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Contact
                 </Link>
               </li>
               <li>
                 <Link href="/#verify" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Certificate Verification
-                </Link>
-              </li>
-              <li>
-                <Link href="/#faqs" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  FAQs
+                  Verify Certificate
                 </Link>
               </li>
             </ul>
@@ -121,16 +126,6 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/about" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Contact
-                </Link>
-              </li>
-              <li>
                 <Link href="/privacy-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
                   Privacy Policy
                 </Link>
@@ -140,11 +135,45 @@ export default function Footer() {
                   Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link href="/refund-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/cancellation-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Cancellation Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources Column */}
+          <div className="lg:col-span-2 space-y-4 text-left">
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
+              Resources
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/#faqs" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <span className="text-[15px] font-normal text-slate-400 cursor-not-allowed">
+                  Blogs
+                </span>
+              </li>
             </ul>
           </div>
 
           {/* Contact Column */}
-          <div className="lg:col-span-3 space-y-4 text-left">
+          <div className="lg:col-span-2 space-y-4 text-left">
             <h4 className="text-xs font-bold text-white uppercase tracking-widest">
               Contact
             </h4>
@@ -157,13 +186,13 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4.5 w-4.5 text-sky-200 shrink-0" />
-                <a href="tel:+919939503289" className="hover:text-white transition-colors duration-200">
-                  +91 9939503289
+                <a href={BRANDING.phoneLink} className="hover:text-white transition-colors duration-200">
+                  {BRANDING.phone}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4.5 w-4.5 text-sky-200 shrink-0 mt-0.5" />
-                <span className="text-slate-200">Bhojpur, Bihar, India</span>
+                <span className="text-slate-200">{BRANDING.address}</span>
               </li>
             </ul>
           </div>

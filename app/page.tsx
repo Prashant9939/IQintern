@@ -41,16 +41,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { verifyCertificate } from "@/lib/supabase/db";
 
 export default function Home() {
   // 1. FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // 3. Certificate Search state
-  const [certId, setCertId] = useState("");
-  const [verificationResult, setVerificationResult] = useState<any | null>(null);
-  const [verifying, setVerifying] = useState(false);
+
 
   // 4. Internship Tracks Expand/Collapse state
   const [isExpanded, setIsExpanded] = useState(false);
@@ -60,8 +56,7 @@ export default function Home() {
     Forms: false,
     Letters: false,
     Records: false,
-    Reports: false,
-    Certificates: false
+    Reports: false
   });
 
   // 6. Active track category state
@@ -94,18 +89,16 @@ export default function Home() {
     { num: "03", title: "Internship Selection", desc: "Browse and choose from our 25+ industry-aligned career tracks spanning multiple domains." },
     { num: "04", title: "Learning Access", desc: "Unlock curriculum guidelines, project requirements, and industry-oriented reference checklists." },
     { num: "05", title: "Assessments", desc: "Attempt the rigorous timed MCQ assessments to test and validate your engineering concepts." },
-    { num: "06", title: "Certification", desc: "Pass with a score of 40% or higher to instantly generate your verified digital credentials." },
-    { num: "07", title: "Resume Building", desc: "Integrate your verification ID and performance scorecards directly into your professional CV." },
-    { num: "08", title: "Career Opportunities", desc: "Share your tamper-proof credentials with recruiters to accelerate your placement path." }
+    { num: "06", title: "Evaluation & Grading", desc: "Pass with a score of 40% or higher to successfully clear the track evaluation." },
+    { num: "07", title: "Career Opportunities", desc: "Share your verified performance scorecards and academic documents with recruiters to accelerate your placement path." }
   ];
 
   const faqs = [
     { q: "What is the typical internship duration on IQ Intern?", a: "Most of our standard career tracks are designed to span between 6 to 16 weeks (typically 3 months), requiring approximately 120 hours of curriculum work and project validation." },
-    { q: "How are the certificates verified?", a: "Every certificate issued contains a unique secure Verification ID. Employers can enter this ID on our homepage verification widget, or scan the embedded QR code to retrieve digital verification directly from our secure database." },
     { q: "What is the assessment process?", a: "Assessments consist of timed 5-minute MCQ tests covering core engineering, business, and design concepts. You must score 40% or higher to pass. If you fail, you can review the guidelines and retake the test." },
-    { q: "Can academic institutions partner with IQ Intern?", a: "Yes. Colleges can establish partnership hubs to access bulk student uploads, group metrics, attendance tracking, and consolidated certificate verification templates. Use the 'Contact Team' form to get started." },
-    { q: "What is your refund policy?", a: "Since all certifications and downloadable scorecards are delivered digitally upon passing assessments, please refer to our general terms or contact support for billing clarifications." },
-    { q: "Are the credentials recognized by employers?", a: "Yes. IQ Intern provides tamper-proof, verified digital credentials that detail the student's actual test score and project validations, providing concrete proof of competence that recruiters appreciate." }
+    { q: "Can academic institutions partner with IQ Intern?", a: "Yes. Colleges can establish partnership hubs to access bulk student uploads, group metrics, attendance tracking, and consolidated student reports. Use the 'Contact Team' form to get started." },
+    { q: "What is your refund policy?", a: "Since all downloadable scorecards and forms are delivered digitally upon passing assessments, please refer to our general terms or contact support for billing clarifications." },
+    { q: "Are the evaluation scorecards recognized by employers?", a: "Yes. IQ Intern provides detailed performance scorecards that detail the student's actual test score and project validations, providing concrete proof of competence that recruiters appreciate." }
   ];
 
   const documentItems = [
@@ -127,7 +120,7 @@ export default function Home() {
     },
     {
       title: "Acceptance Letter",
-      description: "Official internship acceptance letter by optimark for your college.",
+      description: "Official internship acceptance letter by IQIntern for your college.",
       icon: Mail,
       fileType: "Official Letter",
       category: "Letters",
@@ -164,64 +157,13 @@ export default function Home() {
       fileType: "DOCX Format",
       category: "Reports",
       status: "Available"
-    },
-    {
-      title: "Marksheet",
-      description: "Assessment scorecard with category scores and grade.",
-      icon: BarChart2,
-      fileType: "Performance Card",
-      category: "Certificates",
-      status: "Locked",
-      lockReason: "Available only after evaluation"
-    },
-    {
-      title: "Certificate",
-      description: "Tamper-proof verified digital completion certificate.",
-      icon: Award,
-      fileType: "Verified Award",
-      category: "Certificates",
-      status: "Locked",
-      lockReason: "Locked until assessment is passed"
     }
   ];
 
-  const handleVerifySearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!certId) return;
-    setVerifying(true);
-    setVerificationResult(null);
-    try {
-      const result = await verifyCertificate(certId);
-      setVerifying(false);
-      if (result) {
-        setVerificationResult({
-          success: true,
-          id: result.reference_number || result.id,
-          name: result.student_name || "Rahul Sharma",
-          track: result.internship_title || "Frontend React Developer",
-          date: result.completed_at
-            ? new Date(result.completed_at).toLocaleDateString("en-US", { year: "numeric", month: "long" })
-            : "May 2026",
-          score: `${result.score}/${result.total_questions} (${result.percentage}%)`,
-          status: result.passed ? "VERIFIED ACTIVE" : "FAILED"
-        });
-      } else {
-        setVerificationResult({
-          success: false,
-          message: `No credential records match this ID "${certId}".`
-        });
-      }
-    } catch (err) {
-      setVerifying(false);
-      setVerificationResult({
-        success: false,
-        message: "Error verifying credential. Please try again."
-      });
-    }
-  };
+
   const renderRelatedTrackRow = (track: any, rIdx: number) => {
     return (
-      <div 
+      <div
         key={track.title}
         className="flex flex-col sm:flex-row sm:items-center justify-between py-3 px-4 hover:bg-zinc-50/80 rounded-xl transition-all duration-200 group border-b border-zinc-100/50 last:border-0 gap-3"
       >
@@ -277,7 +219,7 @@ export default function Home() {
             <div className="flex-grow lg:w-1/2 text-left space-y-6 animate-slide-up">
               <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/50 px-4 py-1.5 text-xs font-bold text-indigo-700 shadow-sm">
                 <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
-                <span>Enterprise Certification Hub</span>
+                <span>Enterprise Evaluation Hub</span>
               </div>
 
               <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-zinc-900 leading-[1.1]">
@@ -285,7 +227,7 @@ export default function Home() {
               </h1>
 
               <p className="text-base sm:text-lg text-zinc-500 font-light leading-relaxed max-w-xl">
-                Bridge the academic-industry gap. Attempt conceptual MCQ evaluations, validate your domain skills, and generate tamper-proof credentials trusted by recruiters.
+                Bridge the academic-industry gap. Attempt conceptual MCQ evaluations, validate your domain skills, and download verified evaluation scorecards.
               </p>
 
               {/* Core Hero Trust Stats */}
@@ -352,8 +294,8 @@ export default function Home() {
                       <span>Tracks</span>
                     </div>
                     <div className="p-2.5 rounded-xl hover:bg-zinc-50 flex items-center gap-1.5 transition-all cursor-pointer">
-                      <Award className="h-3.5 w-3.5 text-zinc-400" />
-                      <span>Certificates</span>
+                      <FileText className="h-3.5 w-3.5 text-zinc-400" />
+                      <span>Documents</span>
                     </div>
                   </div>
 
@@ -376,13 +318,13 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Glowing Credential Badge */}
-                    <div className="p-3 border border-emerald-200 bg-emerald-50/50 rounded-2xl flex items-center justify-between shadow-xs">
+                    {/* Glowing Enrollment Badge */}
+                    <div className="p-3 border border-indigo-200 bg-indigo-50/50 rounded-2xl flex items-center justify-between shadow-xs">
                       <div className="space-y-0.5">
-                        <p className="text-[8px] font-bold text-emerald-600 uppercase">Verification Status</p>
-                        <p className="text-[10px] font-extrabold text-zinc-800 font-mono">SI-2026-REACT</p>
+                        <p className="text-[8px] font-bold text-indigo-650 uppercase">Enrolled Track</p>
+                        <p className="text-[10px] font-extrabold text-zinc-850 font-mono">SI-2026-REACT</p>
                       </div>
-                      <span className="h-6 px-2.5 rounded-lg bg-emerald-100 text-emerald-700 text-[8px] font-bold flex items-center justify-center shrink-0 uppercase">✓ Active</span>
+                      <span className="h-6 px-2.5 rounded-lg bg-indigo-100 text-indigo-750 text-[8px] font-bold flex items-center justify-center shrink-0 uppercase">Verified</span>
                     </div>
                   </div>
                 </div>
@@ -518,9 +460,8 @@ export default function Home() {
               return (
                 <div
                   key={idx}
-                  className={`relative flex flex-col lg:flex-row items-start lg:items-center justify-between w-full ${
-                    isRight ? "lg:flex-row-reverse" : ""
-                  }`}
+                  className={`relative flex flex-col lg:flex-row items-start lg:items-center justify-between w-full ${isRight ? "lg:flex-row-reverse" : ""
+                    }`}
                 >
                   {/* Timeline Connector Node (Middle) */}
                   <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-5 lg:top-auto z-10 flex items-center justify-center">
@@ -538,7 +479,7 @@ export default function Home() {
                         <span className="text-base font-black text-indigo-650 bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl px-2.5 py-0.5 font-mono border border-indigo-150 shadow-sm">{step.num}</span>
                         <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Phase {idx + 1}</span>
                       </div>
-                      
+
                       {/* Card Content */}
                       <div>
                         <h4 className="text-sm font-bold text-zinc-900 mb-1 group-hover:text-indigo-655 transition-colors">{step.title}</h4>
@@ -579,11 +520,10 @@ export default function Home() {
                       setActiveTrackCategory(cat);
                       setIsExpanded(false); // Reset collapse when changing tabs
                     }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer whitespace-nowrap border ${
-                      isActive
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer whitespace-nowrap border ${isActive
                         ? "bg-white text-indigo-750 shadow-sm border-zinc-200/50"
                         : "text-zinc-500 hover:text-zinc-850 hover:bg-white/55 border-transparent"
-                    }`}
+                      }`}
                   >
                     {cat}
                   </button>
@@ -611,7 +551,7 @@ export default function Home() {
                     <div className="group relative rounded-3xl border border-zinc-200 bg-white/70 backdrop-blur-md p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 overflow-hidden">
                       {/* Visual Glassmorphism gradient glow */}
                       <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-500" />
-                      
+
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                         {/* Left content: Title & specs */}
                         <div className="space-y-4 text-left flex-1">
@@ -640,7 +580,7 @@ export default function Home() {
                                 <strong className="text-zinc-700 font-bold">{featuredTrack.duration}</strong>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-2">
                               <div className="h-8 w-8 rounded-lg bg-zinc-50 border border-zinc-150 flex items-center justify-center text-zinc-500 shrink-0">
                                 <GraduationCap className="h-4 w-4 text-violet-500" />
@@ -650,7 +590,7 @@ export default function Home() {
                                 <strong className="text-zinc-700 font-bold">{featuredTrack.level}</strong>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-2">
                               <div className="h-8 w-8 rounded-lg bg-zinc-50 border border-zinc-150 flex items-center justify-center text-zinc-500 shrink-0">
                                 <Sparkles className="h-4 w-4 text-amber-500" />
@@ -689,11 +629,10 @@ export default function Home() {
                     <div className="bg-white/40 backdrop-blur-sm border border-zinc-200/50 rounded-2xl p-2.5 shadow-xs space-y-1 text-left">
                       {/* Always show the first related track, and collapse the rest if relatedTracks.length > 1 */}
                       {relatedTracks.slice(0, 1).map((track, rIdx) => renderRelatedTrackRow(track, rIdx))}
-                      
+
                       {/* Collapsible section for other related tracks */}
-                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        isExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-                      }`}>
+                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+                        }`}>
                         <div className="space-y-1 pt-1 border-t border-zinc-150/40 mt-1">
                           {relatedTracks.slice(1).map((track, rIdx) => renderRelatedTrackRow(track, rIdx + 1))}
                         </div>
@@ -719,91 +658,7 @@ export default function Home() {
           })()}
         </section>
 
-        {/* CERTIFICATE VERIFICATION SHOWCASE (REAL-TIME INPUT MOCKUP) */}
-        <section id="verify" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 relative z-10 border-t border-zinc-200/60 mt-12">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-            <span className="text-xs text-indigo-650 font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Secure trust verification</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              Instant Certificate Verification
-            </h2>
-            <p className="text-zinc-500 text-sm font-light">
-              Employers and institutions can enter a certificate credential ID below to instantly verify candidates.
-            </p>
-          </div>
 
-          <div className="max-w-2xl mx-auto glass-panel bg-white/95 border border-indigo-100/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl shadow-indigo-500/5 relative overflow-hidden">
-            <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-emerald-500/[0.01] blur-2xl pointer-events-none" />
-
-            <form onSubmit={handleVerifySearch} className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-grow">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                <input
-                  type="text"
-                  placeholder="Enter Certificate Verification ID (e.g. SI-2026-REACT)"
-                  value={certId}
-                  onChange={(e) => setCertId(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3.5 text-sm bg-slate-50/50 border border-indigo-100/60 focus:border-indigo-500 rounded-xl outline-none text-zinc-800 transition-all placeholder:text-zinc-400 shadow-inner"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={verifying}
-                className="rounded-xl bg-indigo-600 hover:bg-indigo-755 text-white text-sm font-bold px-6 py-3.5 transition-all cursor-pointer shadow-md shadow-indigo-650/10 shrink-0"
-              >
-                {verifying ? "Searching..." : "Verify Credentials"}
-              </button>
-            </form>
-
-            {/* Results output box */}
-            {verificationResult && (
-              <div className={`rounded-2xl border transition-all animate-fade-in text-left text-xs shadow-sm overflow-hidden ${verificationResult.success
-                ? "border-emerald-200 bg-emerald-50/30 text-emerald-850"
-                : "border-red-200 bg-red-50/30 text-red-800"
-                }`}>
-                {verificationResult.success ? (
-                  <div>
-                    {/* Header Seal */}
-                    <div className="bg-emerald-50 border-b border-emerald-100 px-5 py-3 flex justify-between items-center">
-                      <span className="font-extrabold text-xs uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        ✓ Authenticated Secure Credential Record
-                      </span>
-                      <span className="font-mono text-[9px] font-black bg-emerald-100 text-emerald-700 rounded-md px-2 py-0.5 uppercase tracking-wide">Verified Active</span>
-                    </div>
-                    {/* Details Table */}
-                    <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 pt-4">
-                      <div>
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Candidate Name</span>
-                        <strong className="text-zinc-800 text-sm">{verificationResult.name}</strong>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Verification ID</span>
-                        <strong className="text-zinc-850 font-mono text-sm">{verificationResult.id}</strong>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Internship Track</span>
-                        <strong className="text-zinc-800 text-sm">{verificationResult.track}</strong>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Evaluation Score</span>
-                        <strong className="text-zinc-800 text-sm">{verificationResult.score}</strong>
-                      </div>
-                      <div className="sm:col-span-2 border-t border-zinc-100 pt-3.5 mt-1.5 flex justify-between items-center text-[10px]">
-                        <span className="text-zinc-400">Issue Date: <strong>{verificationResult.date}</strong></span>
-                        <span className="text-indigo-650 font-bold">IQ Intern Verification Engine v2.0</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-5 flex items-center gap-2.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-500 shrink-0" />
-                    <p className="font-bold text-red-700">{verificationResult.message}</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
 
         {/* INTERNSHIP DOCUMENTS LIBRARY SECTION */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 relative z-10 border-t border-zinc-200/60 mt-12">
@@ -820,7 +675,7 @@ export default function Home() {
           {/* Progress Timeline Stepper */}
           <div className="mx-auto max-w-5xl mb-12 bg-white/40 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden">
             <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest text-center mb-6">Internship Progress Journey</h3>
-            
+
             <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-4">
               {/* Desktop Connecting Line */}
               <div className="absolute top-[18px] left-[10%] right-[10%] h-[2px] bg-zinc-200 hidden md:block z-0" />
@@ -861,7 +716,7 @@ export default function Home() {
                       <p className={`text-sm font-bold tracking-tight ${step.status === "locked" ? "text-zinc-400" : "text-zinc-800"}`}>
                         {step.label}
                       </p>
-                  <p className="text-[11px] text-zinc-400 font-light leading-none">{step.desc}</p>
+                      <p className="text-[11px] text-zinc-400 font-light leading-none">{step.desc}</p>
                     </div>
                   </div>
                 );
@@ -871,10 +726,10 @@ export default function Home() {
 
           {/* Notion/Drive collapsible document list */}
           <div className="mx-auto max-w-5xl bg-white/60 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-4 md:p-6 shadow-sm">
-            {["Forms", "Letters", "Records", "Reports", "Certificates"].map((category) => {
+            {["Forms", "Letters", "Records", "Reports"].map((category) => {
               const isCollapsed = collapsedCategories[category];
               const items = documentItems.filter(d => d.category === category);
-              
+
               return (
                 <div key={category} className="border-b border-zinc-150/60 last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
                   {/* Category Header */}
@@ -905,29 +760,27 @@ export default function Home() {
                   </button>
 
                   {/* Rows Container */}
-                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    isCollapsed ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
-                  }`}>
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
+                    }`}>
                     <div className="space-y-1.5 pl-0 md:pl-6 pr-2 py-2">
                       {items.map((doc) => {
                         const Icon = doc.icon;
                         const isLocked = doc.status === "Locked";
                         const isPending = doc.status === "Pending";
-                        
+
                         return (
-                          <div 
-                            key={doc.title} 
+                          <div
+                            key={doc.title}
                             className="flex items-center justify-between py-3 px-3 hover:bg-zinc-50/50 rounded-xl transition-all duration-200 group border-b border-zinc-100/50 last:border-0 gap-3"
                           >
                             {/* Icon & Document Title */}
                             <div className="flex items-center gap-3 min-w-0 flex-1">
-                              <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-200 ${
-                                isLocked 
-                                  ? "bg-zinc-100 text-zinc-450" 
-                                  : isPending 
+                              <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-200 ${isLocked
+                                  ? "bg-zinc-100 text-zinc-450"
+                                  : isPending
                                     ? "bg-amber-50 text-amber-600 group-hover:bg-amber-100"
                                     : "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100"
-                              }`}>
+                                }`}>
                                 <Icon className="h-4.5 w-4.5" />
                               </div>
                               <div className="min-w-0">

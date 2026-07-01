@@ -133,9 +133,9 @@ export default function ResultsPage() {
                 <CheckCircle className="h-5 w-5" />
               </div>
               <div className="space-y-1">
-                <h4 className="text-xs font-bold text-zinc-900">Your Internship Documents Are Ready!</h4>
+                <h4 className="text-xs font-bold text-zinc-900">Your Evaluation is Complete!</h4>
                 <p className="text-zinc-700 text-xs font-semibold leading-relaxed">
-                  All your personalized documents (including your <strong>Offer Letter</strong>, <strong>Internship Certificate</strong>, and <strong>Project Report</strong>) are available for viewing, verification, and printing.
+                  Your assessment has been successfully recorded. You can view your detailed scorecard and track details on your dashboard.
                 </p>
                 <div className="pt-2">
                   <Link

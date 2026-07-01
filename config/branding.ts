@@ -1,5 +1,5 @@
 export const BRANDING = {
-  name: "IQ Intern",
+  name: "IQIntern",
   logoFull: "/logo-full.png",
   logoIcon: "/logo-icon.png",
   favicon: "/logo-icon.png",
@@ -12,16 +12,20 @@ export const BRANDING = {
     textDark: "#1E293B",
   },
   emails: {
-    support: "support@iqintern.com",
-    billing: "billing@iqintern.com",
-    admin: "admin@iqintern.com",
-    fromName: "IQ Intern Team",
-    fromEmail: "support@iqintern.com",
+    support: "support.iqintern@gmail.com",
+    billing: "support.iqintern@gmail.com",
+    admin: "admin@iqintern.in",
+    fromName: "IQIntern Team",
+    fromEmail: "support.iqintern@gmail.com",
   },
+  phone: "+91 9939503289",
+  phoneLink: "tel:+919939503289",
+  address: "Sector 154, Noida, Uttar Pradesh, India",
   legal: {
-    companyName: "IQ Intern Vocational Training Pvt. Ltd.",
+    companyName: "IQIntern Vocational Training Pvt. Ltd.",
   },
-  domain: "iqintern.com",
-  websiteUrl: "https://iqintern.com",
+  domain: "iqintern.in",
+  websiteUrl: "https://iqintern.in",
 };
 export default BRANDING;
+

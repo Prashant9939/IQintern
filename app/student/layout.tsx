@@ -29,16 +29,41 @@ import {
   ChevronDown
 } from "lucide-react";
 
+// Helper to check if credentials & payment status are already warm in sessionStorage
+const isInitialAccessCached = (): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    const userStr = sessionStorage.getItem("verified_user");
+    if (!userStr) return false;
+    const cachedUser = JSON.parse(userStr);
+    const userId = cachedUser?.user?.id;
+    if (!userId) return false;
+
+    const settingsStr = sessionStorage.getItem("db_cache_platform_settings");
+    const paymentsStr = sessionStorage.getItem(`db_cache_student_payments_${userId}`);
+    return !!(settingsStr && paymentsStr);
+  } catch (e) {
+    return false;
+  }
+};
+
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [checkingAccess, setCheckingAccess] = useState(!isInitialAccessCached());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   useEffect(() => {
-    async function loadUser() {
+    console.log("[INSTRUMENTATION] StudentLayout mounted/changed pathname. Loading user validation...");
+    const layoutStart = performance.now();
+    async function loadUserAndAccess() {
+      // 1. Get user session from cache or DB (cached resolves instantly)
+      const userStart = performance.now();
       const u = await getCurrentUser();
+      console.log(`[INSTRUMENTATION] Layout getCurrentUser finished in ${(performance.now() - userStart).toFixed(1)}ms`);
+
       if (!u) {
         window.location.href = "/auth/login";
         return;
@@ -48,41 +73,53 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         return;
       }
       setUser(u);
-      
-      const [pays, settings] = await Promise.all([
-        getStudentPayments(u.id),
-        getPlatformSettings()
-      ]);
+      setLoading(false); // Shell (sidebar/header) is now interactive!
 
-      const hasPaid = !settings.payments_enabled || pays.length > 0;
+      // 2. Perform payments & settings verification in the background
+      try {
+        const dbStart = performance.now();
+        const [pays, settings] = await Promise.all([
+          getStudentPayments(u.id),
+          getPlatformSettings()
+        ]);
+        console.log(`[INSTRUMENTATION] Layout background payments + settings queries finished in ${(performance.now() - dbStart).toFixed(1)}ms`);
 
-      if (!hasPaid) {
-        if (pathname !== "/student/payment") {
-          window.location.href = "/student/payment";
-          return;
+        const hasPaid = !settings.payments_enabled || pays.length > 0;
+
+        if (!hasPaid) {
+          if (pathname !== "/student/payment") {
+            window.location.href = "/student/payment";
+            return;
+          }
+        } else {
+          if (pathname === "/student/payment") {
+            window.location.href = "/student/dashboard";
+            return;
+          }
         }
-      } else {
-        if (pathname === "/student/payment") {
-          window.location.href = "/student/dashboard";
-          return;
+
+        if (hasPaid) {
+          if (!u.profile_completed && pathname !== "/student/complete-profile") {
+            window.location.href = "/student/complete-profile";
+            return;
+          }
+          
+          if (u.profile_completed && pathname === "/student/complete-profile") {
+            window.location.href = "/student/dashboard";
+            return;
+          }
         }
+
+        // Checks completed, authorize page render
+        setCheckingAccess(false);
+      } catch (err) {
+        console.error("Layout background access validation failed:", err);
+        // Fallback to allow rendering or redirect on severe auth failure
+        setCheckingAccess(false);
       }
-
-      if (hasPaid) {
-        if (!u.profile_completed && pathname !== "/student/complete-profile") {
-          window.location.href = "/student/complete-profile";
-          return;
-        }
-        
-        if (u.profile_completed && pathname === "/student/complete-profile") {
-          window.location.href = "/student/dashboard";
-          return;
-        }
-      }
-
-      setLoading(false);
+      console.log(`[INSTRUMENTATION] Layout loading finished. Total time: ${(performance.now() - layoutStart).toFixed(1)}ms`);
     }
-    loadUser();
+    loadUserAndAccess();
   }, [pathname]);
 
   const [isAdminImpersonating, setIsAdminImpersonating] = useState(false);
@@ -102,7 +139,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const navItems = [
     { name: "Overview", href: "/student/dashboard", icon: LayoutDashboard },
     { name: "Tracks", href: "/student/internships", icon: Briefcase },
-    { name: "Certificates", href: "/student/certificates", icon: Award },
+    { name: "Documents", href: "/student/documents", icon: FileText },
     { name: "Assessments", href: "/student/assessments", icon: Clipboard },
     { name: "Progress", href: "/student/progress", icon: LineChart },
     { name: "Settings", href: "/student/profile", icon: Settings },
@@ -350,7 +387,47 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col bg-[#FAFAFC] relative min-w-0 overflow-y-auto">
           <div className="flex-grow p-6 sm:p-8 pb-12 relative z-10">
-            {children}
+            {checkingAccess ? (
+              <div className="space-y-8 animate-pulse text-left">
+                <div className="space-y-3">
+                  <div className="h-3 bg-zinc-200 rounded w-20" />
+                  <div className="h-8 bg-zinc-200 rounded w-1/3" />
+                  <div className="h-4 bg-zinc-200 rounded w-1/2" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="h-[180px] bg-zinc-200/60 rounded-[20px] p-6 flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                      <div className="h-12 w-12 rounded-2xl bg-zinc-200" />
+                      <div className="h-4 w-20 bg-zinc-200 rounded" />
+                    </div>
+                    <div className="h-4 w-24 bg-zinc-200 rounded" />
+                  </div>
+                  <div className="h-[180px] bg-zinc-200/60 rounded-[20px] p-6 flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                      <div className="h-12 w-12 rounded-2xl bg-zinc-200" />
+                      <div className="h-4 w-20 bg-zinc-200 rounded" />
+                    </div>
+                    <div className="h-4 w-12 bg-zinc-200 rounded" />
+                  </div>
+                  <div className="h-[180px] bg-zinc-200/60 rounded-[20px] p-6 flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                      <div className="h-12 w-12 rounded-2xl bg-zinc-200" />
+                      <div className="h-4 w-20 bg-zinc-200 rounded" />
+                    </div>
+                    <div className="h-4 w-16 bg-zinc-200 rounded" />
+                  </div>
+                </div>
+                <div className="h-28 bg-zinc-200/60 rounded-[20px] p-6 flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-full bg-zinc-200 shrink-0" />
+                  <div className="space-y-2 flex-grow">
+                    <div className="h-4 bg-zinc-200 rounded w-1/3" />
+                    <div className="h-3 bg-zinc-200 rounded w-2/3" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              children
+            )}
           </div>
           <Footer />
         </main>

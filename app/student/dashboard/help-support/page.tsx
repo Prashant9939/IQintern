@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUser, UserSession } from "@/lib/supabase/auth";
+import { BRANDING } from "@/config/branding";
 import {
   getSupportTickets,
   createSupportTicket,
@@ -55,16 +56,16 @@ const FAQS = [
     ]
   },
   {
-    category: "Certificate & Reports",
+    category: "Documents & Reports",
     icon: FileText,
     questions: [
       {
-        q: "When will I receive my internship completion certificate?",
-        a: "Certificates are automatically generated upon scoring a passing grade on all mandatory track assessments. You can verify and print your certificates immediately from the 'Certificates' tab."
+        q: "When will I receive my internship offer letter?",
+        a: "Offer letters are automatically generated immediately upon payment. You can access and print your offer letter and other utility templates from the 'Documents' tab."
       },
       {
-        q: "My name on the certificate is spelled incorrectly. How can I fix it?",
-        a: "The certificate uses the full name specified in your profile. Go to the 'Settings' tab to update your profile name, and your certificates will automatically regenerate with the updated spelling."
+        q: "My name on the documents is spelled incorrectly. How can I fix it?",
+        a: "All documents use the full name specified in your profile. Go to the 'Settings' tab to update your profile name, and the templates will automatically regenerate with the updated spelling."
       }
     ]
   }
@@ -195,8 +196,8 @@ export default function HelpSupportPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Email Support</p>
-                  <a href="mailto:support@iqintern.com" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-0.5">
-                    support@iqintern.com
+                  <a href={`mailto:${BRANDING.emails.support}`} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-0.5">
+                    {BRANDING.emails.support}
                   </a>
                 </div>
               </div>
@@ -207,7 +208,9 @@ export default function HelpSupportPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">WhatsApp Support</p>
-                  <p className="text-sm font-bold text-zinc-800">+91 98765 43210</p>
+                  <a href={BRANDING.phoneLink} className="text-sm font-bold text-zinc-850 hover:text-indigo-600 transition-colors">
+                    {BRANDING.phone}
+                  </a>
                 </div>
               </div>
 
@@ -279,7 +282,7 @@ export default function HelpSupportPage() {
                   >
                     <option value="Technical">Technical</option>
                     <option value="Payment">Payment</option>
-                    <option value="Certificate">Certificate</option>
+                    <option value="Documents">Documents</option>
                     <option value="General">General</option>
                   </select>
                 </div>

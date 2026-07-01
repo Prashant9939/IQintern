@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUser, UserSession } from "@/lib/supabase/auth";
+import { BRANDING } from "@/config/branding";
 import { getInternships, getTestResults, getPaidInternshipIds, getStudentPayments, getPlatformSettings, PlatformSettings, Internship, TestResult, Payment } from "@/lib/supabase/db";
 import { 
   Briefcase, 
@@ -125,10 +126,10 @@ export default function AvailableInternships() {
           <div style="font-size: 13px; color: #64748b; margin-top: 5px;">Receipt ID: ${receiptNo}</div>
         </td>
         <td class="company-details">
-          <div class="company-name">IQ Intern</div>
-          <div>IQ Intern Vocational Training Pvt. Ltd.</div>
-          <div>Optimark Tech Hub, Sector 62, Noida, UP</div>
-          <div>Email: billing@iqintern.com</div>
+          <div class="company-name">${BRANDING.name}</div>
+          <div>${BRANDING.legal.companyName}</div>
+          <div>${BRANDING.address}</div>
+          <div>Email: ${BRANDING.emails.support}</div>
           <div>GSTIN: 09AAECS8274M1Z5 (Mock)</div>
         </td>
       </tr>
@@ -218,7 +219,7 @@ export default function AvailableInternships() {
 
       // 2. Open Razorpay modal
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SvZr486cWgXNIQ",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_T89UGIfJWMXNih",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "IQ Intern",
@@ -380,7 +381,7 @@ export default function AvailableInternships() {
           <span className="text-indigo-650 text-xs font-extrabold uppercase tracking-wider block">Career Paths</span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">Available Internships</h1>
           <p className="text-zinc-700 text-xs sm:text-sm font-semibold leading-relaxed max-w-xl">
-            Choose an internship track, review the requirements, and pass the assessment to unlock your official Offer Letter, Project Report, and Certificate.
+            Choose an internship track, review the requirements, and pass the assessment to unlock your official Offer Letter and grading scorecard.
           </p>
         </div>
       </div>
@@ -503,7 +504,7 @@ export default function AvailableInternships() {
                   {passed ? (
                     <div className="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
                       <CheckCircle className="h-4 w-4" />
-                      Certificates Unlocked
+                      Assessment Passed
                     </div>
                   ) : (
                     <div className="text-[10px] text-zinc-700 font-bold">

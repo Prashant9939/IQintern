@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { supabase, isSupabaseConfigured } from './supabase/client';
+import { BRANDING } from '@/config/branding';
 
 export interface EmailOptions {
   to: string;
@@ -24,7 +25,7 @@ export async function sendEmail({ to, subject, html, studentId }: EmailOptions) 
     });
 
     const info = await transporter.sendMail({
-      from: '"IQ Intern Support" <prashantshiwam@gmail.com>',
+      from: `"${BRANDING.name} Support" <${BRANDING.emails.support}>`,
       to,
       subject,
       html,

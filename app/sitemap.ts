@@ -9,7 +9,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.SITE_URL ||
-    "https://iqintern.com";
+    process.env.APP_URL ||
+    "https://iqintern.in";
 
   const now = new Date().toISOString();
 

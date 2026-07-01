@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { BRANDING } from "@/config/branding";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -38,7 +39,7 @@ export default function Contact() {
             How Can We Help You?
           </h1>
           <p className="mt-4 text-zinc-600 font-light">
-            Have questions about certificates, validation checks, or setting up company test portals? Send us a message!
+            Have questions about documents, validation checks, or setting up company test portals? Send us a message!
           </p>
         </div>
 
@@ -51,7 +52,9 @@ export default function Contact() {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-1">Email Support</h4>
-                <p className="text-xs text-zinc-500 hover:text-indigo-600 transition-colors">support@iqintern.com</p>
+                <a href={`mailto:${BRANDING.emails.support}`} className="text-xs text-zinc-500 hover:text-indigo-600 transition-colors">
+                  {BRANDING.emails.support}
+                </a>
               </div>
             </div>
 
@@ -61,7 +64,9 @@ export default function Contact() {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-1">Call Us</h4>
-                <p className="text-xs text-zinc-500 font-medium">+1 (555) 234-5678</p>
+                <a href={BRANDING.phoneLink} className="text-xs text-zinc-500 hover:text-indigo-600 transition-colors font-medium">
+                  {BRANDING.phone}
+                </a>
               </div>
             </div>
 
@@ -72,7 +77,7 @@ export default function Contact() {
               <div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-1">Headquarters</h4>
                 <p className="text-xs text-zinc-500 leading-relaxed font-light">
-                  100 Innovation Way, Suite 400<br />Silicon Valley, CA 94025
+                  {BRANDING.address}
                 </p>
               </div>
             </div>
@@ -131,7 +136,7 @@ export default function Contact() {
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="w-full px-4 py-3 text-sm bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors"
-                      placeholder="Certificate validation issue, etc."
+                      placeholder="Document verification issue, etc."
                     />
                   </div>
 

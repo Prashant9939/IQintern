@@ -83,10 +83,10 @@ export default function About() {
               Students register on our platform by entering their basic academic details. They can search through active, vetted internship tracks listed by companies.
             </p>
             <p>
-              To claim a certification, students must take a proctored, timed multiple-choice questionnaire assessment test. The test evaluates practical code comprehension, design guidelines, and system architectures.
+              To validate their skills, students must take a proctored, timed multiple-choice questionnaire assessment test. The test evaluates practical code comprehension, design guidelines, and system architectures.
             </p>
             <p>
-              On passing (40% score or higher), the platform generates a unique certificate containing the student's name, test date, and unique validation code. A scorecard is also produced containing their detailed test metadata, ready for resume insertion or LinkedIn sharing.
+              On passing (40% score or higher), the platform validates the track completion. A scorecard is produced containing their detailed test metadata, ready for resume insertion or LinkedIn sharing.
             </p>
           </div>
         </div>

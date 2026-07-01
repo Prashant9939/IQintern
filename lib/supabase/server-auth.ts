@@ -151,8 +151,11 @@ export async function serverSignUpUser(
 // -------------------------------------------------------------
 // react-doctor-disable-next-line react-doctor/server-auth-actions
 export async function serverLoginUser(emailOrPhone: string, password: string) {
+  const startTime = Date.now();
   if (!supabase) throw new Error("Supabase is not configured.");
 
+  console.log("[DEBUG AUTH] User lookup started for:", emailOrPhone);
+  const dbStart = Date.now();
   let query = supabase.from("profiles").select("*");
   if (emailOrPhone.includes("@")) {
     query = query.ilike("email", emailOrPhone.trim());
@@ -161,12 +164,31 @@ export async function serverLoginUser(emailOrPhone: string, password: string) {
   }
 
   const { data: user, error: fetchErr } = await query.maybeSingle();
+  console.log(`[DEBUG AUTH] Profiles database query completed in ${Date.now() - dbStart}ms`);
 
-  if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
-  if (!user) throw new Error("Invalid email/phone number or password.");
+  if (fetchErr) {
+    console.error("[DEBUG AUTH] Database lookup error:", fetchErr);
+    throw new Error(`Database error: ${fetchErr.message}`);
+  }
 
+  if (!user) {
+    console.warn("[DEBUG AUTH] User not found for:", emailOrPhone);
+    throw new Error("Invalid email/phone number or password.");
+  }
+
+  console.log("[DEBUG AUTH] User found: ID =", user.id, "Email =", user.email, "Role =", user.role);
+
+  const verifyStart = Date.now();
   const isValid = await verifyPassword(password, user.password_hash);
-  if (!isValid) throw new Error("Invalid email/phone number or password.");
+  console.log(`[DEBUG AUTH] Password hashing verification completed in ${Date.now() - verifyStart}ms`);
+
+  if (!isValid) {
+    console.warn("[DEBUG AUTH] Password verification failed for user ID:", user.id);
+    throw new Error("Invalid email/phone number or password.");
+  }
+
+  console.log("[DEBUG AUTH] Password verified successfully for user ID:", user.id);
+  console.log(`[DEBUG AUTH] Total serverLoginUser execution time: ${Date.now() - startTime}ms`);
 
   // Auto-upgrade legacy hash to bcrypt in the Supabase database
   if (user.password_hash.length === 64 && !user.password_hash.startsWith("$2")) {
