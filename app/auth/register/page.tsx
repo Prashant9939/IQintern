@@ -68,6 +68,51 @@ export default function Register() {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const getProgressPercentage = () => {
+    let filledCount = 0;
+    const totalFields = 18;
+
+    // Step 1: Account
+    if (formData.fullName.trim()) filledCount++;
+    if (formData.phoneNumber.trim()) filledCount++;
+    if (formData.email.trim()) filledCount++;
+    if (formData.password.trim()) filledCount++;
+    if (formData.dateOfBirth.trim()) filledCount++;
+
+    // Step 2: Academic
+    if (formData.university) {
+      if (formData.university === "Other") {
+        if (customUniversity.trim()) filledCount++;
+      } else {
+        filledCount++;
+      }
+    }
+    if (formData.college) {
+      if (formData.college === "Other") {
+        if (customCollege.trim()) filledCount++;
+      } else {
+        filledCount++;
+      }
+    }
+    if (formData.course.trim()) filledCount++;
+    if (formData.departmentStream.trim()) filledCount++;
+    if (formData.semester.trim()) filledCount++;
+    if (formData.batch.trim()) filledCount++;
+    if (formData.rollNumber.trim()) filledCount++;
+    if (formData.registrationNumber.trim()) filledCount++;
+
+    // Step 3: Contact
+    if (formData.address.trim()) filledCount++;
+    if (formData.emergencyContactName.trim()) filledCount++;
+    if (formData.emergencyContactNumber.trim()) filledCount++;
+    if (formData.emergencyContactRelation.trim()) filledCount++;
+    if (formData.agreedTerms) filledCount++;
+
+    return Math.round((filledCount / totalFields) * 100);
+  };
+
+  const progressPercentage = getProgressPercentage();
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -346,7 +391,7 @@ export default function Register() {
               <div className="text-left">
                 <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Verified Offer</div>
                 <div className="text-[11px] font-extrabold text-white flex items-center gap-1">
-                  <span>IQ Intern Ltd.</span>
+                  <span>AVADS Pvt. Ltd.</span>
                   <span className="text-[8px] text-emerald-300 font-bold px-1.5 py-0.5 bg-emerald-500/20 rounded-full">Active</span>
                 </div>
               </div>
@@ -388,21 +433,21 @@ export default function Register() {
               <div className="h-7 w-7 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center mb-1.5">
                 <GraduationCap className="h-3.5 w-3.5 text-indigo-300" />
               </div>
-              <div className="text-base font-black text-white">5000+</div>
+              <div className="text-base font-black text-white">24,000+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Students</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex flex-col items-center text-center">
               <div className="h-7 w-7 rounded-full bg-purple-500/20 border border-purple-400/40 flex items-center justify-center mb-1.5">
                 <Building2 className="h-3.5 w-3.5 text-purple-300" />
               </div>
-              <div className="text-base font-black text-white">100+</div>
+              <div className="text-base font-black text-white">48+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Colleges</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex flex-col items-center text-center">
               <div className="h-7 w-7 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mb-1.5">
                 <Globe className="h-3.5 w-3.5 text-emerald-300" />
               </div>
-              <div className="text-base font-black text-white">50+</div>
+              <div className="text-base font-black text-white">25+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Domains</div>
             </div>
           </div>
@@ -410,7 +455,7 @@ export default function Register() {
       </div>
 
       {/* RIGHT SECTION (Form - 60%) */}
-      <div className="w-full md:w-3/5 md:h-full flex flex-col overflow-y-auto md:overflow-hidden min-h-screen md:min-h-0 bg-[#F8FAFC]">
+      <div className="w-full md:w-3/5 md:h-full flex flex-col overflow-y-auto md:overflow-y-auto min-h-screen md:min-h-0 bg-[#F8FAFC]">
         {/* Mobile Header */}
         <div className="md:hidden flex items-center justify-between p-5 bg-white border-b border-zinc-200 shrink-0">
            <Link href="/" className="flex items-center gap-2 font-bold text-zinc-900">
@@ -433,7 +478,7 @@ export default function Register() {
         </div>
 
         {/* Form Container */}
-        <div className="flex-grow flex items-center justify-center py-2 px-4 sm:px-8 md:overflow-hidden relative">
+        <div className="flex-grow flex items-center justify-center py-4 px-4 sm:px-8 md:overflow-y-auto relative">
           <div className="w-full max-w-[620px] flex flex-col shrink-0">
             
             {/* Card */}
@@ -453,18 +498,18 @@ export default function Register() {
                       </p>
                     </div>
                     <span className="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      {step === 1 ? "33% Complete" : step === 2 ? "66% Complete" : "100% Complete"}
+                      {progressPercentage}% Complete
                     </span>
                   </div>
 
                   {/* Node Progress Bar */}
                   <div className="relative flex items-center justify-between w-full px-6 mt-1">
-                    <div className="absolute left-[36px] right-[36px] top-1/2 -translate-y-1/2 h-1 bg-zinc-100 rounded-full z-0">
+                    <div className="absolute left-[36px] right-[36px] top-1/2 -translate-y-1/2 h-1.5 bg-zinc-200/60 shadow-inner rounded-full z-0">
                       <motion.div 
-                        className="h-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED]"
+                        className="h-full rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED]"
                         initial={{ width: "0%" }}
                         animate={{ 
-                          width: step === 1 ? "0%" : step === 2 ? "50%" : "100%" 
+                          width: `${progressPercentage}%` 
                         }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                       />
@@ -481,7 +526,7 @@ export default function Register() {
                       return (
                         <div key={node.id} className="relative z-10 flex flex-col items-center">
                           <motion.div 
-                            className={`w-5.5 h-5.5 rounded-full flex items-center justify-center border transition-all duration-300 ${
+                            className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
                               isCompleted 
                                 ? "bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] border-transparent text-white shadow-md shadow-indigo-500/10"
                                 : isActive
@@ -489,14 +534,14 @@ export default function Register() {
                                   : "bg-white border-zinc-200 text-zinc-400"
                             }`}
                             animate={{ 
-                              scale: isActive ? 1.1 : 1,
+                              scale: isActive ? 1.15 : 1,
                             }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                           >
                             {isCompleted ? (
-                              <Check className="w-3 h-3 text-white stroke-[3]" />
+                              <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
                             ) : (
-                              <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#7C3AED]' : 'bg-zinc-300'}`} />
+                              <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-[#7C3AED]' : 'bg-zinc-300'}`} />
                             )}
                           </motion.div>
                           <span className={`text-[9px] font-bold mt-1.5 transition-colors duration-300 uppercase tracking-wider ${
@@ -932,20 +977,22 @@ export default function Register() {
                 </div>
 
                 {/* Center-Aligned Trust Elements (static bottom of card) */}
-                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4 pt-3.5 border-t border-zinc-100 text-[10px] text-zinc-500 font-semibold select-none shrink-0">
-                  <div className="flex items-center gap-1">
-                    <span className="text-emerald-600 font-bold text-xs">✓</span>
-                    <span>UGC Compliant</span>
+                {(!formData.password || step !== 1) && (
+                  <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4 pt-3.5 border-t border-zinc-100 text-[10px] text-zinc-500 font-semibold select-none shrink-0">
+                    <div className="flex items-center gap-1">
+                      <span className="text-emerald-600 font-bold text-xs">✓</span>
+                      <span>UGC Compliant</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-emerald-600 font-bold text-xs">✓</span>
+                      <span>Secure Registration</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-emerald-600 font-bold text-xs">✓</span>
+                      <span>24,000+ Students Trusted</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-emerald-600 font-bold text-xs">✓</span>
-                    <span>Secure Registration</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-emerald-600 font-bold text-xs">✓</span>
-                    <span>5000+ Students Trusted</span>
-                  </div>
-                </div>
+                )}
 
               </form>
             </div>

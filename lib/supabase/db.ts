@@ -1142,6 +1142,8 @@ export async function saveTestResult(res: Omit<TestResult, "id">): Promise<TestR
     reference_number
   };
 
+  let savedObj: TestResult;
+
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase
@@ -1151,14 +1153,31 @@ export async function saveTestResult(res: Omit<TestResult, "id">): Promise<TestR
         .single();
       if (error) throw error;
       if (!data) throw new Error("No data returned from database insert");
-      return data;
+      savedObj = data;
     } catch (err) {
       console.warn("saveTestResult to Supabase failed, falling back to mock:", err);
-      return saveTestResultMock(insertData);
+      savedObj = saveTestResultMock(insertData);
     }
   } else {
-    return saveTestResultMock(insertData);
+    savedObj = saveTestResultMock(insertData);
   }
+
+  // Trigger background PDF generation for Certificate, Marksheet, and Project Report if passed
+  if (savedObj && savedObj.passed) {
+    if (typeof window !== "undefined") {
+      fetch(`${window.location.origin}/api/documents/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: savedObj.student_id,
+          internshipId: savedObj.internship_id,
+          templateType: ["certificate", "marksheet", "project_report"]
+        })
+      }).catch((err) => console.error("Failed to trigger background document generation on test completion:", err));
+    }
+  }
+
+  return savedObj;
 }
 
 function saveTestResultMock(res: Omit<TestResult, "id">): TestResult {

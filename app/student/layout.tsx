@@ -86,6 +86,22 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
         const hasPaid = !settings.payments_enabled || pays.length > 0;
 
+        // Trigger background check for missing documents once per student session
+        if (hasPaid && typeof window !== "undefined" && u) {
+          const checkedKey = `checked_docs_${u.id}`;
+          if (!sessionStorage.getItem(checkedKey)) {
+            sessionStorage.setItem(checkedKey, "true");
+            fetch("/api/documents/generate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                studentId: u.id,
+                checkMissing: true
+              })
+            }).catch((err) => console.error("Failed to trigger missing documents check:", err));
+          }
+        }
+
         if (!hasPaid) {
           if (pathname !== "/student/payment") {
             window.location.href = "/student/payment";

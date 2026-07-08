@@ -302,3 +302,32 @@ CREATE INDEX IF NOT EXISTS idx_result_change_history_test_result_id ON public.re
 CREATE INDEX IF NOT EXISTS idx_support_tickets_student_id ON public.support_tickets(student_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles(role);
 
+
+-- 14. STUDENT DOCUMENTS METADATA TABLE
+create table public.student_documents (
+  id uuid default gen_random_uuid() primary key,
+  student_id uuid references public.profiles(id) on delete cascade not null,
+  document_type text not null,
+  internship_id text,
+  version integer not null default 1,
+  storage_url text,
+  file_size integer,
+  generated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  last_downloaded_at timestamp with time zone,
+  last_accessed_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  expiry_date timestamp with time zone,
+  generation_status text not null default 'pending' check (generation_status in ('pending', 'generating', 'completed', 'failed')),
+  hash text,
+  template_version text not null default '1.0',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable Row Level Security (RLS) and create public access policies
+alter table public.student_documents enable row level security;
+create policy "Allow public access" on public.student_documents for all using (true) with check (true);
+
+-- Optimize indices
+CREATE INDEX IF NOT EXISTS idx_student_documents_student_id ON public.student_documents(student_id);
+CREATE INDEX IF NOT EXISTS idx_student_documents_type_student ON public.student_documents(student_id, document_type);
+
+

@@ -150,7 +150,7 @@ export default function Login() {
               <div className="text-left">
                 <div className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">Verified Offer</div>
                 <div className="text-[11px] font-extrabold text-white flex items-center gap-1">
-                  <span>IQ Intern Ltd.</span>
+                  <span>AVADS Pvt. Ltd.</span>
                   <span className="text-[8px] text-emerald-300 font-bold px-1.5 py-0.5 bg-emerald-500/20 rounded-full">Active</span>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export default function Login() {
               <div className="h-7 w-7 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center mb-1.5">
                 <GraduationCap className="h-3.5 w-3.5 text-indigo-300" />
               </div>
-              <div className="text-base font-black text-white">24000+</div>
+              <div className="text-base font-black text-white">24,000+</div>
               <div className="text-[8px] font-bold text-indigo-200 uppercase tracking-wider">Students</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex flex-col items-center text-center">

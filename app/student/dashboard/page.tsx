@@ -66,7 +66,7 @@ function renderDocument(templateHtml: string, profile: any, internshipTitle: str
   else if (pct >= 40) grade = "D";
 
   const scoreFormatted = `${pct}%`;
-  const verificationId = result?.reference_number || "SI-MOCK-ID";
+  const verificationId = result?.reference_number || "IQ-VER-2026-8294";
 
   const payment = payments.find(
     (p) => p.internship_id === result?.internship_id && p.status === "completed"

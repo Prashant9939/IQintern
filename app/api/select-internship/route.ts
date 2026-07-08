@@ -99,6 +99,22 @@ export async function POST(req: Request) {
       }).catch(console.error);
     }
 
+    // Trigger background PDF generation for Offer Letter and Attendance Sheet (fire-and-forget)
+    try {
+      const baseUrl = req.url.substring(0, req.url.indexOf("/api/select-internship"));
+      fetch(`${baseUrl}/api/documents/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId,
+          internshipId,
+          templateType: ["offer_letter", "attendance_sheet"]
+        })
+      }).catch((err) => console.error("Failed to trigger background document generation on selection:", err));
+    } catch (triggerErr) {
+      console.error("Trigger background selection documents error:", triggerErr);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Error in select-internship API:", error);

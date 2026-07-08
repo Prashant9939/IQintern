@@ -114,7 +114,7 @@ export default function DocumentsPage() {
   }, [enrolledTrackIds, selectedTrackId]);
 
   // Handle opening preview page in a new window synchronously to avoid popup blockers
-  const handleDownloadClick = (doc: InternDocument) => {
+  const getApiTemplateType = (docId: string): string => {
     const templateTypeMap: Record<string, string> = {
       offer_letter: 'offer_letter',
       payment_receipt: 'receipt',
@@ -123,13 +123,35 @@ export default function DocumentsPage() {
       internship_report: 'project_report',
       internship_certificate: 'certificate'
     };
-    const apiTemplateType = templateTypeMap[doc.id] || doc.id;
+    return templateTypeMap[docId] || docId;
+  };
+
+  // Direct download PDF
+  const handleDownloadDirect = (doc: InternDocument) => {
+    const apiTemplateType = getApiTemplateType(doc.id);
+    const downloadUrl = `/api/documents/download?templateType=${apiTemplateType}&studentId=${user?.id}&internshipId=${activeTrackId}&format=pdf&disposition=attachment`;
+    
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.setAttribute("download", `${apiTemplateType}_${user?.id}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Preview in new tab
+  const handlePreviewClick = (doc: InternDocument) => {
+    const apiTemplateType = getApiTemplateType(doc.id);
     const previewUrl = `/student/documents/preview?templateType=${apiTemplateType}&studentId=${user?.id}&internshipId=${activeTrackId}`;
     window.open(previewUrl, "_blank");
   };
 
+  const handleDownloadClick = (doc: InternDocument) => {
+    handleDownloadDirect(doc);
+  };
+
   const handleRetryClick = (doc: InternDocument) => {
-    handleDownloadClick(doc);
+    handlePreviewClick(doc);
   };
 
   if (loading) {
@@ -523,15 +545,26 @@ export default function DocumentsPage() {
                 </div>
 
                 {/* Bottom Actions Row */}
-                <div className="mt-6 pt-4 border-t border-zinc-150">
+                <div className="mt-6 pt-4 border-t border-zinc-150 flex gap-3">
                   {isReady && (
-                    <button
-                      onClick={() => handleDownloadClick(doc)}
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 text-xs transition-all active:scale-97 shadow-sm shadow-indigo-600/10 cursor-pointer"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      Download PDF
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleDownloadDirect(doc)}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 text-xs transition-all active:scale-97 shadow-sm shadow-indigo-600/10 cursor-pointer"
+                        title="Download PDF directly"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Download
+                      </button>
+                      <button
+                        onClick={() => handlePreviewClick(doc)}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-bold py-2.5 px-3 text-xs transition-all active:scale-97 cursor-pointer"
+                        title="Preview document in browser"
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                        Preview
+                      </button>
+                    </>
                   )}
                   {isLocked && (
                     <button

@@ -1,0 +1,33 @@
+[
+  {
+    "student_id": "dec479d2-0dbc-4ce4-9410-650742b597b7",
+    "internship_id": "75403542-1ef7-464c-bd14-f88fd5fe2a16",
+    "document_type": "receipt",
+    "version": 2,
+    "generation_status": "completed",
+    "template_version": "1.0",
+    "hash": "69c76b6f3367bb8cc3fb7fc4bd96c077",
+    "expiry_date": "2026-07-28T04:56:26.967Z",
+    "last_accessed_at": "2026-07-08T04:56:36.271Z",
+    "id": "doc-msxzufe72",
+    "generated_at": "2026-07-08T04:56:35.694Z",
+    "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\receipt_dec479d2-0dbc-4ce4-9410-650742b597b7_75403542-1ef7-464c-bd14-f88fd5fe2a16.pdf",
+    "file_size": 108565
+  },
+  {
+    "student_id": "dec479d2-0dbc-4ce4-9410-650742b597b7",
+    "internship_id": "75403542-1ef7-464c-bd14-f88fd5fe2a16",
+    "document_type": "offer_letter",
+    "version": 5,
+    "generation_status": "completed",
+    "template_version": "1.0",
+    "hash": "878aef889e1b21856ed96ad57f68f837",
+    "expiry_date": "2026-07-28T06:46:33.545Z",
+    "last_accessed_at": "2026-07-08T06:46:33.545Z",
+    "id": "doc-xtfyul9un",
+    "generated_at": "2026-07-08T04:56:52.103Z",
+    "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\offer_letter_dec479d2-0dbc-4ce4-9410-650742b597b7_75403542-1ef7-464c-bd14-f88fd5fe2a16.pdf",
+    "file_size": 1361075,
+    "last_downloaded_at": "2026-07-08T06:46:33.545Z"
+  }
+]

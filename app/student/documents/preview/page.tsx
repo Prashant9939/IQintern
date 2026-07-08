@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Info
 } from "lucide-react";
+import { signOut, getStoredSession } from "@/lib/supabase/auth";
 
 const templateTitleMap: Record<string, string> = {
   offer_letter: "Internship Offer Letter",
@@ -23,7 +24,178 @@ const templateTitleMap: Record<string, string> = {
   certificate: "Internship Certificate",
 };
 
+function usePreviewSessionManager(iframeRef: React.RefObject<HTMLIFrameElement | null>) {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+    const HEARTBEAT_KEY = "iqintern_preview_last_heartbeat";
+    const TAB_CLOSED_KEY = "iqintern_preview_tab_closed_at";
+    const OFFLINE_SINCE_KEY = "iqintern_preview_offline_since";
+
+    const handleLogout = async () => {
+      localStorage.removeItem(HEARTBEAT_KEY);
+      localStorage.removeItem(TAB_CLOSED_KEY);
+      localStorage.removeItem(OFFLINE_SINCE_KEY);
+      await signOut();
+      window.location.href = "/auth/login?reason=timeout";
+    };
+
+    // --- 1. Tab/Browser Close Recovery Check on Mount ---
+    const session = getStoredSession();
+    if (session) {
+      const isInternalNavigation = 
+        document.referrer && 
+        document.referrer.startsWith(window.location.origin);
+
+      if (!isInternalNavigation) {
+        const lastHeartbeat = localStorage.getItem(HEARTBEAT_KEY);
+        const lastTabClosed = localStorage.getItem(TAB_CLOSED_KEY);
+        
+        const timestamps = [
+          lastHeartbeat ? parseInt(lastHeartbeat, 10) : 0,
+          lastTabClosed ? parseInt(lastTabClosed, 10) : 0
+        ].filter(t => t > 0);
+
+        if (timestamps.length > 0) {
+          const maxTimestamp = Math.max(...timestamps);
+          if (Date.now() - maxTimestamp > TIMEOUT_MS) {
+            handleLogout();
+            return;
+          }
+        }
+      }
+    }
+
+    // Set initial heartbeat and activity timestamp
+    localStorage.setItem(HEARTBEAT_KEY, Date.now().toString());
+    let lastActivityTime = Date.now();
+
+    // --- 2. Inactivity Monitor ---
+    const resetActivityTimer = () => {
+      lastActivityTime = Date.now();
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    
+    // Attach to parent window
+    events.forEach((event) => {
+      window.addEventListener(event, resetActivityTimer);
+    });
+
+    // Attach to iframe if available
+    const iframe = iframeRef.current;
+    const attachIframeListeners = () => {
+      try {
+        if (iframe && iframe.contentDocument) {
+          events.forEach((event) => {
+            iframe.contentDocument!.addEventListener(event, resetActivityTimer);
+          });
+        }
+      } catch (e) {
+        console.warn("Failed to attach listeners to iframe content:", e);
+      }
+    };
+
+    if (iframe) {
+      iframe.addEventListener("load", attachIframeListeners);
+      attachIframeListeners();
+    }
+
+    // --- 3. Offline Monitor ---
+    let offlineSince: number | null = null;
+    const storedOfflineSince = localStorage.getItem(OFFLINE_SINCE_KEY);
+    
+    if (!navigator.onLine) {
+      if (storedOfflineSince) {
+        offlineSince = parseInt(storedOfflineSince, 10);
+        if (Date.now() - offlineSince > TIMEOUT_MS) {
+          handleLogout();
+          return;
+        }
+      } else {
+        offlineSince = Date.now();
+        localStorage.setItem(OFFLINE_SINCE_KEY, offlineSince.toString());
+      }
+    } else {
+      localStorage.removeItem(OFFLINE_SINCE_KEY);
+    }
+
+    const handleOffline = () => {
+      if (!offlineSince) {
+        offlineSince = Date.now();
+        localStorage.setItem(OFFLINE_SINCE_KEY, offlineSince.toString());
+      }
+    };
+
+    const handleOnline = () => {
+      offlineSince = null;
+      localStorage.removeItem(OFFLINE_SINCE_KEY);
+      lastActivityTime = Date.now();
+    };
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
+    // --- 4. Tab Close Listener ---
+    const handleBeforeUnload = () => {
+      localStorage.setItem(TAB_CLOSED_KEY, Date.now().toString());
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // --- 5. Heartbeat & Check Loop ---
+    const interval = setInterval(async () => {
+      const activeSession = getStoredSession();
+      if (!activeSession) return;
+
+      const now = Date.now();
+
+      // Check Inactivity
+      if (now - lastActivityTime > TIMEOUT_MS) {
+        handleLogout();
+        return;
+      }
+
+      // Check Offline Duration
+      if (!navigator.onLine) {
+        if (offlineSince && now - offlineSince > TIMEOUT_MS) {
+          handleLogout();
+          return;
+        }
+      }
+
+      // Update Heartbeat in localStorage
+      localStorage.setItem(HEARTBEAT_KEY, now.toString());
+    }, 1000);
+
+    return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, resetActivityTimer);
+      });
+      if (iframe) {
+        iframe.removeEventListener("load", attachIframeListeners);
+        try {
+          if (iframe.contentDocument) {
+            events.forEach((event) => {
+              iframe.contentDocument!.removeEventListener(event, resetActivityTimer);
+            });
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearInterval(interval);
+    };
+  }, [iframeRef]);
+}
+
 function PreviewContent() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  usePreviewSessionManager(iframeRef);
+
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -237,6 +409,7 @@ function PreviewContent() {
         {/* HTML Preview Frame Embed */}
         <div className="flex-1 w-full h-[650px] relative bg-zinc-50">
           <iframe
+            ref={iframeRef}
             src={htmlPreviewUrl}
             className="w-full h-full border-0 absolute inset-0 bg-white"
             title={documentName}
