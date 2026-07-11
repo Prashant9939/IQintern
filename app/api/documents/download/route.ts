@@ -31,24 +31,36 @@ export async function GET(req: Request) {
     let payments: any[] = [];
 
     if (isSupabaseAdminConfigured() && supabaseAdmin) {
-      const { data: pData } = await supabaseAdmin.from('profiles').select('*').eq('id', studentId).single();
-      profile = pData;
-
       const isValidUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+      const isUuid = isValidUuid(internshipId);
 
-      if (isValidUuid(internshipId)) {
-        const { data: iData } = await supabaseAdmin.from('internships').select('*').eq('id', internshipId).single();
-        internship = iData;
-
-        const { data: tData } = await supabaseAdmin
-          .from('test_results')
+      const [profileRes, internshipRes, testResultRes, paymentsRes] = await Promise.all([
+        supabaseAdmin.from('profiles').select('*').eq('id', studentId).single(),
+        isUuid 
+          ? supabaseAdmin.from('internships').select('*').eq('id', internshipId).single()
+          : Promise.resolve({ data: null }),
+        isUuid
+          ? supabaseAdmin
+              .from('test_results')
+              .select('*')
+              .eq('student_id', studentId)
+              .eq('internship_id', internshipId)
+              .order('completed_at', { ascending: false })
+              .limit(1)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+        supabaseAdmin
+          .from('payments')
           .select('*')
           .eq('student_id', studentId)
-          .eq('internship_id', internshipId)
-          .order('completed_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        testResult = tData;
+          .eq('status', 'completed')
+      ]);
+
+      profile = profileRes.data;
+
+      if (isUuid) {
+        internship = internshipRes.data;
+        testResult = testResultRes.data;
       } else if (internshipId === 'general_credit_unused') {
         internship = {
           id: 'general_credit_unused',
@@ -57,12 +69,7 @@ export async function GET(req: Request) {
         };
       }
 
-      const { data: payData } = await supabaseAdmin
-        .from('payments')
-        .select('*')
-        .eq('student_id', studentId)
-        .eq('status', 'completed');
-      payments = payData || [];
+      payments = paymentsRes.data || [];
     } else {
       // Mock mode data
       profile = {
