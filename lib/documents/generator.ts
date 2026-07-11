@@ -221,7 +221,7 @@ export async function generateDocument(
           .select('*')
           .eq('student_id', studentId)
           .eq('internship_id', internshipId)
-          .order('created_at', { ascending: false })
+          .order('completed_at', { ascending: false })
           .limit(1)
           .maybeSingle();
         testResult = tData;

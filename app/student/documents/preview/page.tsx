@@ -11,7 +11,8 @@ import {
   CheckCircle, 
   FileText,
   RefreshCw,
-  Info
+  Info,
+  Printer
 } from "lucide-react";
 import { signOut, getStoredSession } from "@/lib/supabase/auth";
 
@@ -275,6 +276,20 @@ function PreviewContent() {
     document.body.removeChild(link);
   };
 
+  const handlePrint = () => {
+    if (iframeRef.current) {
+      try {
+        iframeRef.current.contentWindow?.focus();
+        iframeRef.current.contentWindow?.print();
+      } catch (e) {
+        console.error("Failed to print iframe window:", e);
+        window.print();
+      }
+    } else {
+      window.print();
+    }
+  };
+
   if (!templateType || !studentId || !internshipId) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-16 text-center">
@@ -329,11 +344,11 @@ function PreviewContent() {
           )}
           {pdfStatus === "ready" && (
             <button
-              onClick={handleManualDownload}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 text-xs transition-all active:scale-97 shadow-sm shadow-emerald-600/10 cursor-pointer"
+              onClick={handlePrint}
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 text-xs transition-all active:scale-97 shadow-sm shadow-indigo-600/10 cursor-pointer"
             >
-              <Download className="h-4 w-4" />
-              Download PDF
+              <Printer className="h-4 w-4" />
+              Print Document
             </button>
           )}
           {pdfStatus === "failed" && (

@@ -637,27 +637,57 @@ export default function StudentDashboard() {
     <div className="space-y-10 relative z-10 animate-fade-in text-zinc-800 bg-[#FAFAFC] pb-10">
 
       {/* Welcome Banner Section */}
-      <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left">
-        <div>
-          <span className="text-zinc-400 text-sm font-semibold block">Welcome back,</span>
-          <h2 className="text-3xl font-extrabold text-zinc-900 mt-1 tracking-tight flex items-center gap-2">
-            {profile?.full_name || user?.full_name || "Student"} <span className="animate-pulse">👋</span>
-          </h2>
-          <p className="text-zinc-450 text-sm mt-1.5 font-light">Track your progress and continue your learning journey.</p>
+      <div className="relative overflow-hidden rounded-[28px] border border-zinc-200/80 bg-gradient-to-br from-[#1E293B] to-[#0F172A] p-6 sm:p-8 text-white shadow-xl shadow-zinc-900/10 text-left">
+        <div className="absolute right-[-100px] top-[-50px] h-[300px] w-[300px] rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl pointer-events-none" />
+        
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Student Workspace</span>
+            </div>
+            
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Welcome back, {profile?.full_name || user?.full_name || "Student"} <span className="inline-block animate-pulse">👋</span>
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+              {activeTrackDetails[0] ? (
+                <>
+                  <span className="font-mono text-xs font-extrabold bg-white/10 text-zinc-300 rounded-lg px-2.5 py-1 uppercase tracking-wide">
+                    {activeTrackDetails[0].trackTitle}
+                  </span>
+                  <span className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                    ✓ Enrolled
+                  </span>
+                </>
+              ) : (
+                <span className="bg-zinc-500/15 border border-zinc-500/30 text-zinc-400 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                  No Active Program
+                </span>
+              )}
+            </div>
+            
+            <p className="text-zinc-400 text-xs sm:text-sm font-light max-w-xl leading-relaxed pt-1">
+              Track your progress, view credentials, and continue your vocational learning journey.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 self-stretch md:self-auto justify-end shrink-0">
+            <button
+              onClick={() => setShowAnnouncementDrawer(true)}
+              className="relative flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 hover:border-white/20 text-white bg-white/5 hover:bg-white/10 transition-all font-bold text-xs cursor-pointer shadow-sm active:scale-97"
+            >
+              <Bell className="h-4.5 w-4.5 text-indigo-400 animate-swing" />
+              <span>View Announcements</span>
+              {!dataLoading && announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-extrabold text-white animate-bounce shadow-md border border-white">
+                  {announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setShowAnnouncementDrawer(true)}
-          className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#5B5FF7]/20 text-[#5B5FF7] bg-[#5B5FF7]/5 hover:bg-[#5B5FF7]/10 transition-all font-bold text-xs cursor-pointer shadow-sm shrink-0"
-        >
-          <Bell className="h-4 w-4" />
-          <span>View Announcements</span>
-          {!dataLoading && announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-extrabold text-white animate-bounce shadow-md border border-white">
-              {announcements.filter(a => a.active && !readAnnouncementIds.includes(a.id)).length}
-            </span>
-          )}
-        </button>
-      </section>
+      </div>
 
       {/* Bento Statistics Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">

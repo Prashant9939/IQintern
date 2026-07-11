@@ -6,6 +6,7 @@ import {
   getInternships,
   getTestResults,
   getStudentPayments,
+  getPlatformSettings,
   Internship,
   TestResult,
 } from "@/lib/supabase/db";
@@ -16,7 +17,8 @@ import {
   XCircle,
   Clipboard,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Clock
 } from "lucide-react";
 import Link from "next/link";
 
@@ -26,6 +28,8 @@ export default function AssessmentsPage() {
   const [results, setResults] = useState<TestResult[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState<any>({ assessment_fee: 150, payments_enabled: true, assessment_availability_days: 30 });
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
     async function loadData() {
@@ -33,14 +37,16 @@ export default function AssessmentsPage() {
         const u = await getCurrentUser();
         setUser(u);
         if (u) {
-          const [ints, res, pays] = await Promise.all([
+          const [ints, res, pays, stg] = await Promise.all([
             getInternships(),
             getTestResults(u.id),
-            getStudentPayments(u.id)
+            getStudentPayments(u.id),
+            getPlatformSettings()
           ]);
           setInternships(ints);
           setResults(res);
           setPayments(pays);
+          setSettings(stg);
         }
       } catch (err) {
         console.error("Error loading assessments data", err);
@@ -60,6 +66,41 @@ export default function AssessmentsPage() {
   const selectedTrackIds = Array.from(new Set(payments.filter(p => p.status === "completed").map(p => p.internship_id)));
   const selectedTracks = selectedTrackIds.map(id => internships.find(i => i.id === id)).filter(Boolean);
 
+  // Real-time ticking countdown logic
+  useEffect(() => {
+    if (!payments || !settings) return;
+
+    const payObj = payments.find((p) => p.status === "completed");
+    if (!payObj) return;
+
+    const targetDays = settings.assessment_availability_days ?? 30;
+    const payDate = new Date(payObj.created_at);
+    const targetTime = payDate.getTime() + targetDays * 24 * 60 * 60 * 1000;
+
+    const updateTimer = () => {
+      const diff = targetTime - Date.now();
+      setTimeLeft(diff > 0 ? diff : 0);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, [payments, settings]);
+
+  const formatTimeLeft = (ms: number) => {
+    const totalSecs = Math.floor(ms / 1000);
+    const d = Math.floor(totalSecs / (24 * 3600));
+    const h = Math.floor((totalSecs % (24 * 3600)) / 3600);
+    const m = Math.floor((totalSecs % 3600) / 60);
+    const s = totalSecs % 60;
+
+    if (d > 0) {
+      return `${d}d ${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m`;
+    }
+    return `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+  };
+
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -73,51 +114,118 @@ export default function AssessmentsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in text-zinc-800 pb-10">
-      {/* Page Header */}
-      <section className="text-left flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <span className="text-[#5B5FF7] text-xs font-bold uppercase tracking-wider">Assessment Center</span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight mt-1">Test History & Results</h2>
-          <p className="text-zinc-500 text-sm mt-2 font-light leading-relaxed max-w-2xl">
-            Track your assessment attempts, scores, and results across all enrolled internship tracks.
-          </p>
-        </div>
-      </section>
+      {/* Page Header & Program Info (Merged Dark Banner) */}
+      <div className="relative overflow-hidden rounded-[28px] border border-zinc-200/80 bg-gradient-to-br from-[#1E293B] to-[#0F172A] p-6 sm:p-8 text-white shadow-xl shadow-zinc-900/10 text-left">
+        <div className="absolute right-[-100px] top-[-50px] h-[300px] w-[300px] rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl pointer-events-none" />
+        
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10 w-full">
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-2">
+              <Clipboard className="h-4.5 w-4.5 text-indigo-400" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Assessment Center</span>
+            </div>
+            
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Test History & Results
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+              {selectedTracks.length > 0 ? (
+                <>
+                  <span className="font-mono text-xs font-extrabold bg-white/10 text-zinc-300 rounded-lg px-2.5 py-1 uppercase tracking-wide">
+                    {selectedTracks.map(t => (t as any).title).join(", ")}
+                  </span>
+                  {timeLeft > 0 ? (
+                    <span className="bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Locked
+                    </span>
+                  ) : (
+                    <span className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                      ✓ Eligible
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                  ⚠️ No Active Track
+                </span>
+              )}
+            </div>
+            
+            <p className="text-zinc-400 text-xs sm:text-sm font-light max-w-xl leading-relaxed pt-1">
+              Track your assessment attempts, scores, and results across all enrolled internship tracks.
+            </p>
+          </div>
 
-      {/* Selected Internship Banner */}
-      {selectedTracks.length > 0 ? (
-        <div className="bg-gradient-to-r from-indigo-50 to-violet-50/60 border border-indigo-150 rounded-2xl p-5 text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in shadow-xs">
-          <div className="space-y-1">
-            <span className="text-[10px] text-indigo-650 font-bold uppercase tracking-wider bg-indigo-100/50 border border-indigo-200/50 px-2 py-0.5 rounded">
-              Selected Internship Program
-            </span>
-            <h3 className="text-sm font-extrabold text-zinc-950">
-              {selectedTracks.map(t => (t as any).title).join(", ")}
-            </h3>
-            <p className="text-[11px] text-zinc-500 font-light">
-              You are currently registered and eligible for these internship track assessments.
-            </p>
+          {/* Right Side Stats & CTAs */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 self-stretch md:self-auto justify-end shrink-0">
+            {/* SVG Progress Ring for Average Score */}
+            <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-3.5 self-stretch sm:self-auto justify-center">
+              <div className="relative h-14 w-14 flex items-center justify-center shrink-0">
+                <svg className="h-full w-full -rotate-90">
+                  <circle
+                    cx="28"
+                    cy="28"
+                    r="24"
+                    className="stroke-white/10"
+                    strokeWidth="4"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="28"
+                    cy="28"
+                    r="24"
+                    className="stroke-indigo-400 transition-all duration-700 ease-out"
+                    strokeWidth="4"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 24}
+                    strokeDashoffset={2 * Math.PI * 24 - (averageScore / 100) * (2 * Math.PI * 24)}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute font-mono text-xs font-black text-white">
+                  {averageScore}%
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Average Score</div>
+                <div className="text-xs font-black text-white mt-0.5">
+                  Passed: {passedTests} of {results.length}
+                </div>
+              </div>
+            </div>
+
+            {selectedTracks.length > 0 ? (
+              timeLeft > 0 ? (
+                <Link
+                  href="/student/internships"
+                  className="rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold px-5 py-3 transition-all text-center self-stretch sm:self-auto shrink-0 flex items-center justify-center gap-2 active:scale-97 cursor-pointer"
+                >
+                  <Clock className="h-4 w-4 text-indigo-400 shrink-0" />
+                  <span>Start in {formatTimeLeft(timeLeft)}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-white" />
+                </Link>
+              ) : (
+                <Link
+                  href={`/student/test/${selectedTrackIds[0]}`}
+                  className="rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs font-bold px-5 py-3 shadow-md transition-all text-center self-stretch sm:self-auto shrink-0 flex items-center justify-center gap-1.5 active:scale-97 cursor-pointer"
+                >
+                  <span>Start Assessment</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-zinc-950 stroke-[3]" />
+                </Link>
+              )
+            ) : (
+              <Link
+                href="/student/internships"
+                className="rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold px-5 py-3 transition-all text-center self-stretch sm:self-auto shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Explore Tracks</span>
+                <ChevronRight className="h-3.5 w-3.5 text-white" />
+              </Link>
+            )}
           </div>
-          <Link
-            href="/student/internships"
-            className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 shadow-sm transition-all text-center shrink-0 cursor-pointer"
-          >
-            Start Assessment
-          </Link>
         </div>
-      ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left flex items-start gap-3 animate-fade-in">
-          <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
-            <AlertCircle className="h-4 w-4 text-amber-600" />
-          </div>
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-amber-850">No Internship Track Selected Yet</h4>
-            <p className="text-[11px] text-amber-700 font-light">
-              You haven&apos;t locked any internship track. Please navigate to the <Link href="/student/internships" className="font-bold underline text-indigo-700 hover:text-indigo-900">Internship Tracks</Link> page to register.
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

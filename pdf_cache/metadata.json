@@ -28,5 +28,52 @@
     "generated_at": "2026-07-11T14:08:04.527Z",
     "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\offer_letter_dec479d2-0dbc-4ce4-9410-650742b597b7_75403542-1ef7-464c-bd14-f88fd5fe2a16.pdf",
     "file_size": 1363176
+  },
+  {
+    "student_id": "5213a7da-1481-495c-8237-26a052ec0a37",
+    "internship_id": "general_credit_unused",
+    "document_type": "receipt",
+    "version": 2,
+    "generation_status": "completed",
+    "template_version": "1.0",
+    "hash": "bfc386af74bcc59a1b15a1cd44707d6d",
+    "expiry_date": "2026-07-31T14:52:42.422Z",
+    "last_accessed_at": "2026-07-11T14:52:49.085Z",
+    "id": "doc-wxz1kz4j9",
+    "generated_at": "2026-07-11T14:52:47.603Z",
+    "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\receipt_5213a7da-1481-495c-8237-26a052ec0a37_general_credit_unused.pdf",
+    "file_size": 107442
+  },
+  {
+    "student_id": "5213a7da-1481-495c-8237-26a052ec0a37",
+    "internship_id": "38e3d7a3-f942-428f-b18f-ae4c04ac8d2c",
+    "document_type": "offer_letter",
+    "version": 1,
+    "generation_status": "completed",
+    "template_version": "1.0",
+    "hash": "1eb20d6c16ac5d24beea43c29ba2ba2f",
+    "expiry_date": "2026-07-31T14:53:45.734Z",
+    "last_accessed_at": "2026-07-11T14:53:45.734Z",
+    "id": "doc-gudusv8ar",
+    "generated_at": "2026-07-11T14:53:17.919Z",
+    "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\offer_letter_5213a7da-1481-495c-8237-26a052ec0a37_38e3d7a3-f942-428f-b18f-ae4c04ac8d2c.pdf",
+    "file_size": 1362561,
+    "last_downloaded_at": "2026-07-11T14:53:45.734Z"
+  },
+  {
+    "student_id": "5213a7da-1481-495c-8237-26a052ec0a37",
+    "internship_id": "38e3d7a3-f942-428f-b18f-ae4c04ac8d2c",
+    "document_type": "receipt",
+    "version": 1,
+    "generation_status": "completed",
+    "template_version": "1.0",
+    "hash": "776d4f10ec7a43654af5a737135c5fd9",
+    "expiry_date": "2026-07-31T14:54:28.643Z",
+    "last_accessed_at": "2026-07-11T14:54:28.643Z",
+    "id": "doc-4y584txdm",
+    "generated_at": "2026-07-11T14:54:23.220Z",
+    "storage_url": "C:\\Users\\shiwa\\OneDrive\\Documents\\GitHub\\skillintern\\pdf_cache\\receipt_5213a7da-1481-495c-8237-26a052ec0a37_38e3d7a3-f942-428f-b18f-ae4c04ac8d2c.pdf",
+    "file_size": 107253,
+    "last_downloaded_at": "2026-07-11T14:54:28.643Z"
   }
 ]

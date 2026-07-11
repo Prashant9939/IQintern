@@ -271,3 +271,66 @@ th {
     margin-bottom: 20px !important;
   }
 }
+
+/* Print Button Styling - Matches the premium platform theme */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+
+.print-btn {
+  font-family: 'Rubik', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25), 0 8px 30px rgba(124, 58, 237, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 40px auto;
+  display: block;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.print-btn:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35), 0 12px 40px rgba(124, 58, 237, 0.25);
+}
+
+.print-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+}
+
+.print-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  transition: 0.75s;
+  opacity: 0;
+}
+
+.print-btn:hover::before {
+  left: 125%;
+  opacity: 1;
+}
+
+@media print {
+  .print-btn, button {
+    display: none !important;
+  }
+}
