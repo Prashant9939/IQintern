@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateDocument } from '@/lib/documents/generator';
+import { supabaseAdmin, isSupabaseAdminConfigured } from '@/lib/supabase/admin';
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +14,6 @@ export async function POST(req: Request) {
       // Start background check and generation (non-blocking)
       (async () => {
         try {
-          const { supabaseAdmin, isSupabaseAdminConfigured } = require("@/lib/supabase/admin");
           if (!isSupabaseAdminConfigured() || !supabaseAdmin) return;
 
           // Fetch payments

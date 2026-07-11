@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseAdmin, isSupabaseAdminConfigured } from '@/lib/supabase/admin';
 import { getSlugFromTitle, loadTemplate } from '@/lib/templates/template-loader';
 import { renderTemplate } from '@/lib/templates/template-renderer';
 import { getDocumentMetadata, saveDocumentMetadata, generateDocument, DocumentMetadata } from '@/lib/documents/generator';
@@ -30,7 +30,6 @@ export async function GET(req: Request) {
     let testResult: any = null;
     let payments: any[] = [];
 
-    const { isSupabaseAdminConfigured } = require('@/lib/supabase/admin');
     if (isSupabaseAdminConfigured() && supabaseAdmin) {
       const { data: pData } = await supabaseAdmin.from('profiles').select('*').eq('id', studentId).single();
       profile = pData;

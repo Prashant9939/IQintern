@@ -3,7 +3,7 @@ import path from 'path';
 import crypto from 'crypto';
 import os from 'os';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseAdmin, isSupabaseAdminConfigured } from '@/lib/supabase/admin';
 import { loadTemplate, getSlugFromTitle } from '@/lib/templates/template-loader';
 import { renderTemplate } from '@/lib/templates/template-renderer';
 
@@ -206,7 +206,6 @@ export async function generateDocument(
     let testResult: any = null;
     let payments: any[] = [];
 
-    const { isSupabaseAdminConfigured } = require('@/lib/supabase/admin');
     if (isSupabaseAdminConfigured() && supabaseAdmin) {
       const { data: pData } = await supabaseAdmin.from('profiles').select('*').eq('id', studentId).single();
       profile = pData;
@@ -394,12 +393,12 @@ export async function generateDocument(
     });
 
     // 8. Launch headless browser compilation
-    let browser = null;
+    let browser: any = null;
     let pdfBuffer: Buffer;
     try {
       if (process.env.NODE_ENV === 'production') {
-        const chromium = require('@sparticuz/chromium');
-        const puppeteerCore = require('puppeteer-core');
+        const chromium = (await import('@sparticuz/chromium')) as any;
+        const puppeteerCore = (await import('puppeteer-core')) as any;
         browser = await puppeteerCore.launch({
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
@@ -407,13 +406,13 @@ export async function generateDocument(
           headless: chromium.headless,
         });
       } else {
-        const puppeteerLocal = require('puppeteer');
+        const puppeteerLocal = (await import('puppeteer')) as any;
         browser = await puppeteerLocal.launch({
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
           headless: true,
         });
       }
-      const page = await browser.newPage();
+      const page: any = await browser.newPage();
       await page.setContent(finalHtml, { waitUntil: 'load' });
       await page.evaluate(() => document.fonts.ready);
       
