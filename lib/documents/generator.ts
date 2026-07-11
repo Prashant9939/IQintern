@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import os from 'os';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { loadTemplate, getSlugFromTitle } from '@/lib/templates/template-loader';
@@ -27,7 +28,7 @@ export interface DocumentMetadata {
 
 // Local mock metadata storage helper for server environment
 function getLocalMockMetadata(): DocumentMetadata[] {
-  const cacheDir = path.join(process.cwd(), 'pdf_cache');
+  const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
   const metadataPath = path.join(cacheDir, 'metadata.json');
   try {
     if (!fs.existsSync(cacheDir)) {
@@ -44,7 +45,7 @@ function getLocalMockMetadata(): DocumentMetadata[] {
 }
 
 function saveLocalMockMetadata(list: DocumentMetadata[]) {
-  const cacheDir = path.join(process.cwd(), 'pdf_cache');
+  const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
   const metadataPath = path.join(cacheDir, 'metadata.json');
   try {
     if (!fs.existsSync(cacheDir)) {
@@ -465,7 +466,7 @@ export async function generateDocument(
 
       if (!uploadSuccess) {
         // Local fallback: Write to local folder pdf_cache/
-        const cacheDir = path.join(process.cwd(), 'pdf_cache');
+        const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
         const localFilePath = path.join(cacheDir, `${cleanType}_${studentId}_${internshipId}.pdf`);
         try {
           if (!fs.existsSync(cacheDir)) {
@@ -480,7 +481,7 @@ export async function generateDocument(
       }
     } else {
       // Mock Storage: Write to local folder pdf_cache/
-      const cacheDir = path.join(process.cwd(), 'pdf_cache');
+      const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
       const localFilePath = path.join(cacheDir, `${cleanType}_${studentId}_${internshipId}.pdf`);
       
       try {

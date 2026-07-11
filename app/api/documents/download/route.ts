@@ -6,6 +6,7 @@ import { renderTemplate } from '@/lib/templates/template-renderer';
 import { getDocumentMetadata, saveDocumentMetadata, generateDocument, DocumentMetadata } from '@/lib/documents/generator';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 export async function GET(req: Request) {
   try {
@@ -248,7 +249,7 @@ export async function GET(req: Request) {
 
           const updateLocalMockStats = (id: string | undefined) => {
             if (!id) return;
-            const localDir = path.join(process.cwd(), 'pdf_cache');
+            const localDir = path.join(os.tmpdir(), 'pdf_cache');
             const localMetaPath = path.join(localDir, 'metadata.json');
             if (fs.existsSync(localMetaPath)) {
               try {
@@ -304,7 +305,7 @@ export async function GET(req: Request) {
         if (!downloadSuccess) {
           const fallbackPath = genResult.metadata.storage_url.includes('pdf_cache')
             ? genResult.metadata.storage_url
-            : path.join(process.cwd(), 'pdf_cache', `${cleanType}_${studentId}_${internshipId}.pdf`);
+            : path.join(os.tmpdir(), 'pdf_cache', `${cleanType}_${studentId}_${internshipId}.pdf`);
             
           if (fs.existsSync(fallbackPath)) {
             pdfBuffer = fs.readFileSync(fallbackPath);
