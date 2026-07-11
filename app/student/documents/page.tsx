@@ -35,7 +35,8 @@ import {
   Download,
   Clipboard,
   ChevronDown,
-  RefreshCw
+  RefreshCw,
+  Printer
 } from "lucide-react";
 import { getDocumentStatus, InternDocument, InternshipProgress, DocumentStatus } from "@/lib/utils/documents-gating";
 
@@ -547,24 +548,14 @@ export default function DocumentsPage() {
                 {/* Bottom Actions Row */}
                 <div className="mt-6 pt-4 border-t border-zinc-150 flex gap-3">
                   {isReady && (
-                    <>
-                      <button
-                        onClick={() => handleDownloadDirect(doc)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-3 text-xs transition-all active:scale-97 shadow-sm shadow-indigo-600/10 cursor-pointer"
-                        title="Download PDF directly"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        Download
-                      </button>
-                      <button
-                        onClick={() => handlePreviewClick(doc)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-bold py-2.5 px-3 text-xs transition-all active:scale-97 cursor-pointer"
-                        title="Preview document in browser"
-                      >
-                        <FileText className="h-3.5 w-3.5" />
-                        Preview
-                      </button>
-                    </>
+                    <button
+                      onClick={() => handlePreviewClick(doc)}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 text-xs transition-all active:scale-97 shadow-sm shadow-indigo-600/10 cursor-pointer"
+                      title="Preview and print document"
+                    >
+                      <Printer className="h-3.5 w-3.5" />
+                      Preview & Print
+                    </button>
                   )}
                   {isLocked && (
                     <button
