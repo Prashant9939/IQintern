@@ -205,17 +205,18 @@ export async function generateDocument(
     let testResult: any = null;
     let payments: any[] = [];
 
-    if (isSupabaseConfigured() && supabase) {
-      const { data: pData } = await supabase.from('profiles').select('*').eq('id', studentId).single();
+    const { isSupabaseAdminConfigured } = require('@/lib/supabase/admin');
+    if (isSupabaseAdminConfigured() && supabaseAdmin) {
+      const { data: pData } = await supabaseAdmin.from('profiles').select('*').eq('id', studentId).single();
       profile = pData;
 
       const isValidUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
 
       if (isValidUuid(internshipId)) {
-        const { data: iData } = await supabase.from('internships').select('*').eq('id', internshipId).single();
+        const { data: iData } = await supabaseAdmin.from('internships').select('*').eq('id', internshipId).single();
         internship = iData;
 
-        const { data: tData } = await supabase
+        const { data: tData } = await supabaseAdmin
           .from('test_results')
           .select('*')
           .eq('student_id', studentId)
@@ -232,7 +233,7 @@ export async function generateDocument(
         };
       }
 
-      const { data: payData } = await supabase
+      const { data: payData } = await supabaseAdmin
         .from('payments')
         .select('*')
         .eq('student_id', studentId)

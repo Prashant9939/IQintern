@@ -13,11 +13,11 @@ export async function POST(req: Request) {
       // Start background check and generation (non-blocking)
       (async () => {
         try {
-          const { supabase, isSupabaseConfigured } = require("@/lib/supabase/client");
-          if (!isSupabaseConfigured() || !supabase) return;
+          const { supabaseAdmin, isSupabaseAdminConfigured } = require("@/lib/supabase/admin");
+          if (!isSupabaseAdminConfigured() || !supabaseAdmin) return;
 
           // Fetch payments
-          const { data: payments } = await supabase
+          const { data: payments } = await supabaseAdmin
             .from("payments")
             .select("internship_id, status")
             .eq("student_id", studentId)
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
           if (!payments || payments.length === 0) return;
 
           // Fetch test results
-          const { data: testResults } = await supabase
+          const { data: testResults } = await supabaseAdmin
             .from("test_results")
             .select("internship_id, passed, percentage")
             .eq("student_id", studentId);
