@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import puppeteer from 'puppeteer';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { loadTemplate, getSlugFromTitle } from '@/lib/templates/template-loader';
@@ -396,10 +395,22 @@ export async function generateDocument(
     let browser = null;
     let pdfBuffer: Buffer;
     try {
-      browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        headless: true,
-      });
+      if (process.env.NODE_ENV === 'production') {
+        const chromium = require('@sparticuz/chromium');
+        const puppeteerCore = require('puppeteer-core');
+        browser = await puppeteerCore.launch({
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+        });
+      } else {
+        const puppeteerLocal = require('puppeteer');
+        browser = await puppeteerLocal.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          headless: true,
+        });
+      }
       const page = await browser.newPage();
       await page.setContent(finalHtml, { waitUntil: 'load' });
       await page.evaluate(() => document.fonts.ready);
