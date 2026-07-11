@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Lightweight background check started.' });
     }
 
-    const { studentId, internshipId, templateType } = body;
+    const { studentId, internshipId, templateType, force } = body;
 
     if (!studentId || !internshipId || !templateType) {
       return NextResponse.json({ success: false, error: 'Missing required parameters' }, { status: 400 });
@@ -80,8 +80,8 @@ export async function POST(req: Request) {
     (async () => {
       for (const type of types) {
         try {
-          console.log(`[Background Worker] Triggering PDF generation for: studentId=${studentId}, internshipId=${internshipId}, template=${type}`);
-          const res = await generateDocument(studentId, internshipId, type, false, origin);
+          console.log(`[Background Worker] Triggering PDF generation for: studentId=${studentId}, internshipId=${internshipId}, template=${type}, force=${!!force}`);
+          const res = await generateDocument(studentId, internshipId, type, !!force, origin);
           if (res.success) {
             console.log(`[Background Worker] PDF generated successfully: ${type}`);
           } else {

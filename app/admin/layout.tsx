@@ -23,7 +23,8 @@ import {
   Settings,
   Megaphone,
   BarChart3,
-  MessageSquare
+  MessageSquare,
+  Clock
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -61,6 +62,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Manage Internships", href: "/admin/internships", icon: Briefcase },
     { name: "Manage MCQs", href: "/admin/questions", icon: HelpCircle },
     { name: "Registered Students", href: "/admin/students", icon: Users },
+    { name: "Student Internship Progress", href: "/admin/progress", icon: Clock },
     { name: "Manage Colleges", href: "/admin/colleges", icon: GraduationCap },
     { name: "Document Templates", href: "/admin/templates", icon: Award },
     { name: "Support Tickets", href: "/admin/support", icon: MessageSquare },

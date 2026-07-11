@@ -164,11 +164,18 @@ export async function signUpUser(
 
   if (isSupabaseConfigured() && supabase) {
     try {
-      return await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+      const res = await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+      if (!res.success) {
+        if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
+          return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+        }
+        throw new Error(res.error || "Registration failed.");
+      }
+      return res;
     } catch (err: any) {
       console.warn("Supabase custom signup failed, falling back to mock registration:", err);
       // If table profiles doesn't exist, we fall back to mock signup so the UI works
-      if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
+      if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
         return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
       }
       throw err;
@@ -211,7 +218,14 @@ export async function loginUser(emailOrPhone: string, password: string) {
         await seedAdminAccount();
       }
 
-      const user = await serverLoginUser(sanitizedInput, password);
+      const res = await serverLoginUser(sanitizedInput, password);
+      if (!res.success || !res.user) {
+        if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
+          return loginMockUser(sanitizedInput, password);
+        }
+        throw new Error(res.error || "Wrong credentials");
+      }
+      const user = res.user;
       
       const session: UserSession = {
         id: user.id,
@@ -230,7 +244,7 @@ export async function loginUser(emailOrPhone: string, password: string) {
     } catch (err: any) {
       recordLoginAttempt(sanitizedInput, false);
       console.warn("Supabase custom login failed, checking fallback options:", err);
-      if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
+      if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
         return loginMockUser(sanitizedInput, password);
       }
       throw err;
@@ -260,9 +274,16 @@ export async function verifyEmailAndPhone(email: string, phoneNumber: string) {
 
   if (isSupabaseConfigured() && supabase) {
     try {
-      return await serverVerifyEmailAndPhone(email, phoneNumber);
+      const res = await serverVerifyEmailAndPhone(email, phoneNumber);
+      if (!res.success) {
+        if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
+          return verifyMockEmailAndPhone(email, phoneNumber);
+        }
+        throw new Error(res.error || "Incorrect email or phone number.");
+      }
+      return res;
     } catch (err: any) {
-      if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
+      if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
         return verifyMockEmailAndPhone(email, phoneNumber);
       }
       throw err;
@@ -307,10 +328,16 @@ export async function resetPassword(userId: string, email: string, newPassword: 
   if (isSupabaseConfigured() && supabase) {
     try {
       const res = await serverResetPassword(userId, newPassword);
+      if (!res.success) {
+        if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
+          return resetMockPassword(userId, email, newPassword);
+        }
+        throw new Error(res.error || "Failed to reset password.");
+      }
       console.log(`[EMAIL SEND] To: ${email} | Subject: Password Changed | Message: Your password has successfully changed.`);
       return res;
     } catch (err: any) {
-      if (err.message.includes("does not exist") || err.message.includes("schema cache")) {
+      if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
         return resetMockPassword(userId, email, newPassword);
       }
       throw err;
@@ -357,7 +384,11 @@ export async function createAdminUser(
   departmentStream: string
 ) {
   if (isSupabaseConfigured() && supabase) {
-    return serverCreateAdminUser(callerEmail, newEmail, password, fullName, phoneNumber, departmentStream);
+    const res = await serverCreateAdminUser(callerEmail, newEmail, password, fullName, phoneNumber, departmentStream);
+    if (!res.success) {
+      throw new Error(res.error || "Admin creation failed.");
+    }
+    return res;
   }
   // Mock fallback — only allow if caller is the mock admin
   const session = getStoredSession();
@@ -661,11 +692,11 @@ function loginMockUser(emailOrPhone: string, password: string) {
   }
 
   if (!found) {
-    throw new Error("Invalid email/phone number or password.");
+    throw new Error("Wrong credentials");
   }
 
   if (found.password !== password) {
-    throw new Error("Invalid email/phone number or password.");
+    throw new Error("Wrong credentials");
   }
 
   const session: UserSession = {

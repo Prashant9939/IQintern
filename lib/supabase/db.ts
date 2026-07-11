@@ -489,50 +489,53 @@ function setMockStorage<T>(key: string, data: T) {
 // -------------------------------------------------------------
 // INTERNSHIPS OPERATIONS
 // -------------------------------------------------------------
+function deduplicateInternships(list: Internship[]): Internship[] {
+  const seen = new Set<string>();
+  const result: Internship[] = [];
+  for (const item of list) {
+    if (!item) continue;
+    const titleKey = item.title ? item.title.toLowerCase().trim() : "";
+    if (item.id && !seen.has(item.id) && titleKey && !seen.has(titleKey)) {
+      seen.add(item.id);
+      seen.add(titleKey);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
+// INTERNSHIPS OPERATIONS
+// -------------------------------------------------------------
 export async function getInternships(): Promise<Internship[]> {
   const cacheKey = "internships_all";
   const cached = getCachedData<Internship[]>(cacheKey);
   if (cached) return cached;
+
+  let rawList: Internship[] = [];
 
   if (isSupabaseConfigured() && supabase) {
     try {
       const { data, error } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
       if (error) {
         console.warn("getInternships query failed, falling back to mock data:", error);
-        const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
-        const mapped = list.map(item => ({ ...item, duration: "120 Hrs" }));
-        setCachedData(cacheKey, mapped, CACHE_TTL.long);
-        return mapped;
-      }
-
-      // If on client-side and the loaded list is empty or has fewer tracks than defaults,
-      // trigger the differential synchronizer to seed missing defaults.
-      if (typeof window !== "undefined" && (!data || data.length < DEFAULT_INTERNSHIPS.length)) {
-        console.log("Fewer internships found than defaults. Auto-synchronizing...");
-        await seedDatabase();
-        const { data: updatedData } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
-        if (updatedData && updatedData.length > 0) {
-          const mapped = updatedData.map(item => ({ ...item, duration: "120 Hrs" }));
-          setCachedData(cacheKey, mapped, CACHE_TTL.long);
-          return mapped;
+        rawList = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+      } else {
+        // If on client-side and the loaded list is empty or has fewer tracks than defaults,
+        // trigger the differential synchronizer to seed missing defaults.
+        if (typeof window !== "undefined" && (!data || data.length < DEFAULT_INTERNSHIPS.length)) {
+          console.log("Fewer internships found than defaults. Auto-synchronizing...");
+          await seedDatabase();
+          const { data: updatedData } = await supabase.from("internships").select("*").order("created_at", { ascending: false });
+          rawList = updatedData || [];
+        } else if (!data || data.length === 0) {
+          rawList = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
+        } else {
+          rawList = data;
         }
       }
-
-      if (!data || data.length === 0) {
-        const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
-        const mapped = list.map(item => ({ ...item, duration: "120 Hrs" }));
-        setCachedData(cacheKey, mapped, CACHE_TTL.long);
-        return mapped;
-      }
-      const mapped = data.map(item => ({ ...item, duration: "120 Hrs" }));
-      setCachedData(cacheKey, mapped, CACHE_TTL.long);
-      return mapped;
     } catch (err) {
       console.warn("getInternships failed, falling back to mock data:", err);
-      const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
-      const mapped = list.map(item => ({ ...item, duration: "120 Hrs" }));
-      setCachedData(cacheKey, mapped, CACHE_TTL.long);
-      return mapped;
+      rawList = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
     }
   } else {
     if (typeof window !== "undefined") {
@@ -559,18 +562,19 @@ export async function getInternships(): Promise<Internship[]> {
         const defaults = await seedDefaultTemplatesFromFiles();
         localStorage.setItem("mock_document_templates", JSON.stringify(defaults));
 
-        const mapped = DEFAULT_INTERNSHIPS.map(item => ({ ...item, duration: "120 Hrs" }));
-        setCachedData(cacheKey, mapped, CACHE_TTL.long);
-        return mapped;
+        rawList = DEFAULT_INTERNSHIPS;
+      } else {
+        rawList = list;
       }
-      const mapped = list.map(item => ({ ...item, duration: "120 Hrs" }));
-      setCachedData(cacheKey, mapped, CACHE_TTL.long);
-      return mapped;
+    } else {
+      rawList = DEFAULT_INTERNSHIPS;
     }
-    const mapped = DEFAULT_INTERNSHIPS.map(item => ({ ...item, duration: "120 Hrs" }));
-    setCachedData(cacheKey, mapped, CACHE_TTL.long);
-    return mapped;
   }
+
+  const mapped = rawList.map(item => ({ ...item, duration: "120 Hrs" }));
+  const uniqueMapped = deduplicateInternships(mapped);
+  setCachedData(cacheKey, uniqueMapped, CACHE_TTL.long);
+  return uniqueMapped;
 }
 
 export async function getInternshipById(id: string): Promise<Internship | null> {

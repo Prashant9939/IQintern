@@ -148,14 +148,126 @@ th {
   border: none;
 }
 
-/* Responsive scale transform for screen previews */
-@media screen and (max-width: 220mm) {
+/* Responsive adjustments for mobile screens */
+@media screen and (max-width: 768px) {
   body {
-    overflow-x: hidden;
+    padding: 10px 0 !important;
+    background-color: #FFFFFF !important; /* blend document container with screen bg on phone */
   }
-  .letter-container, .cert-frame, .document-container, .card {
-    transform: scale(calc(100vw / 220mm));
-    transform-origin: top center;
-    margin: 10px auto !important;
+
+  .letter-container, .document-container, .cert-frame, .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 20px 15px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Reduce content padding inside containers */
+  .letter-container > .content, .document-container > .content {
+    padding: 0 !important; /* let outer container padding handle spacing */
+  }
+
+  /* Grid layout collapses on mobile */
+  .info-grid, .meta, .signature-grid, .summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Collapse headers and text layouts on mobile */
+  .header {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 20px 15px !important;
+    gap: 15px !important;
+  }
+
+  .header-meta {
+    text-align: center !important;
+  }
+
+  .content {
+    padding: 20px 0 !important;
+  }
+
+  .letter-title {
+    font-size: 18px !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Form/Section visual adjustments */
+  .acceptance-section {
+    padding: 15px !important;
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .signature-grid {
+    margin-top: 20px !important;
+    padding-top: 20px !important;
+  }
+
+  .sig-line {
+    width: 100% !important;
+    margin: 25px auto 10px !important;
+  }
+
+  .sig-block {
+    margin-bottom: 20px;
+  }
+
+  /* Ensure tables scroll on mobile instead of breaking layout */
+  .table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px !important;
+    border: 1px solid #E2E8F0 !important;
+  }
+
+  table {
+    width: 100% !important;
+    min-width: 500px !important; /* keeps table structured, wrapper scrollable */
+    margin: 0 !important;
+  }
+
+  /* Adjust certificate specific details on mobile */
+  .cert-frame {
+    border: 6px double #4f46e5 !important; /* keep double border but scaled down */
+    padding: 20px 15px !important;
+  }
+
+  .title-heavy, .cert-title {
+    font-size: 22px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .recipient {
+    font-size: 20px !important;
+    margin: 10px 0 !important;
+  }
+
+  .footer-meta {
+    flex-direction: column !important;
+    gap: 20px !important;
+    text-align: center !important;
+    margin-top: 35px !important;
+    padding-top: 15px !important;
+  }
+
+  .sig-line {
+    width: 180px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Marksheet details */
+  .score-number {
+    font-size: 48px !important;
+  }
+  .score-hero {
+    padding: 20px 10px !important;
+    margin-bottom: 20px !important;
   }
 }

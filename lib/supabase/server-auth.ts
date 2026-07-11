@@ -63,87 +63,91 @@ export async function serverSignUpUser(
   agreedUpdates: boolean,
   dateOfBirth: string
 ) {
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) return { success: false, error: "Supabase is not configured." };
 
-  // Enforce password size to minimum 7 characters
-  if (!password || password.length < 7) {
-    throw new Error("Password must be at least 7 characters.");
-  }
+  try {
+    // Enforce password size to minimum 7 characters
+    if (!password || password.length < 7) {
+      return { success: false, error: "Password must be at least 7 characters." };
+    }
 
-  // 1. Block the reserved admin email from public sign-up
-  if (email.toLowerCase() === "admin@iqintern.com") {
-    throw new Error("This email address is reserved. Please use a different email.");
-  }
+    // 1. Block the reserved admin email from public sign-up
+    if (email.toLowerCase() === "admin@iqintern.com") {
+      return { success: false, error: "This email address is reserved. Please use a different email." };
+    }
 
-  // 2. Check if email already exists
-  const { data: existingEmailUser, error: emailCheckErr } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("email", email.trim())
-    .maybeSingle();
+    // 2. Check if email already exists
+    const { data: existingEmailUser, error: emailCheckErr } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("email", email.trim())
+      .maybeSingle();
 
-  if (emailCheckErr) throw new Error(`Database error: ${emailCheckErr.message}`);
+    if (emailCheckErr) return { success: false, error: `Database error: ${emailCheckErr.message}` };
 
-  // 3. Check if phone number already exists
-  const { data: existingPhoneUser, error: phoneCheckErr } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("phone_number", phoneNumber)
-    .maybeSingle();
+    // 3. Check if phone number already exists
+    const { data: existingPhoneUser, error: phoneCheckErr } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("phone_number", phoneNumber)
+      .maybeSingle();
 
-  if (phoneCheckErr) throw new Error(`Database error: ${phoneCheckErr.message}`);
+    if (phoneCheckErr) return { success: false, error: `Database error: ${phoneCheckErr.message}` };
 
-  if (existingEmailUser && existingPhoneUser) {
-    throw new Error("Both your email and phone number already exist in the database.");
-  } else if (existingEmailUser) {
-    throw new Error("Your email already exists in the database.");
-  } else if (existingPhoneUser) {
-    throw new Error("Your phone number already exists in the database.");
-  }
+    if (existingEmailUser && existingPhoneUser) {
+      return { success: false, error: "Both your email and phone number already exist in the database." };
+    } else if (existingEmailUser) {
+      return { success: false, error: "Your email already exists in the database." };
+    } else if (existingPhoneUser) {
+      return { success: false, error: "Your phone number already exists in the database." };
+    }
 
-  // 4. Hash password & insert — role is always 'student'
-  const passwordHash = await hashPassword(password);
-  const { data: newUser, error } = await supabase
-    .from("profiles")
-    .insert({
+    // 4. Hash password & insert — role is always 'student'
+    const passwordHash = await hashPassword(password);
+    const { data: newUser, error } = await supabase
+      .from("profiles")
+      .insert({
+        email,
+        password_hash: passwordHash,
+        full_name: fullName,
+        phone_number: phoneNumber,
+        college_name: college,
+        university_name: university,
+        degree: course,
+        semester: semester,
+        academic_session: batch,
+        department_stream: departmentStream,
+        roll_number: rollNumber,
+        registration_number: registrationNumber,
+        full_address: address,
+        document_id: documentId,
+        emergency_contact_name: emergencyContactName,
+        emergency_contact_number: emergencyContactNumber,
+        emergency_contact_relation: emergencyContactRelation,
+        agreed_terms: agreedTerms,
+        agreed_updates: agreedUpdates,
+        date_of_birth: dateOfBirth,
+        role: "student",
+        profile_completed: true,
+      })
+      .select("id")
+      .single();
+
+    if (error) return { success: false, error: `Registration failed: ${error.message}` };
+
+    // Trigger welcome email in the background (non-blocking)
+    sendWelcomeEmail({
       email,
-      password_hash: passwordHash,
-      full_name: fullName,
-      phone_number: phoneNumber,
-      college_name: college,
-      university_name: university,
-      degree: course,
-      semester: semester,
-      academic_session: batch,
-      department_stream: departmentStream,
-      roll_number: rollNumber,
-      registration_number: registrationNumber,
-      full_address: address,
-      document_id: documentId,
-      emergency_contact_name: emergencyContactName,
-      emergency_contact_number: emergencyContactNumber,
-      emergency_contact_relation: emergencyContactRelation,
-      agreed_terms: agreedTerms,
-      agreed_updates: agreedUpdates,
-      date_of_birth: dateOfBirth,
-      role: "student",
-      profile_completed: true,
-    })
-    .select("id")
-    .single();
+      fullName,
+      userId: newUser?.id
+    }).catch((err) => {
+      console.error("Welcome email background task failed:", err);
+    });
 
-  if (error) throw new Error(`Registration failed: ${error.message}`);
-
-  // Trigger welcome email in the background (non-blocking)
-  sendWelcomeEmail({
-    email,
-    fullName,
-    userId: newUser?.id
-  }).catch((err) => {
-    console.error("Welcome email background task failed:", err);
-  });
-
-  return { success: true };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || "An unexpected error occurred during sign up." };
+  }
 }
 
 // -------------------------------------------------------------
@@ -152,66 +156,73 @@ export async function serverSignUpUser(
 // react-doctor-disable-next-line react-doctor/server-auth-actions
 export async function serverLoginUser(emailOrPhone: string, password: string) {
   const startTime = Date.now();
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) return { success: false, error: "Supabase is not configured." };
 
-  console.log("[DEBUG AUTH] User lookup started for:", emailOrPhone);
-  const dbStart = Date.now();
-  let query = supabase.from("profiles").select("*");
-  if (emailOrPhone.includes("@")) {
-    query = query.ilike("email", emailOrPhone.trim());
-  } else {
-    query = query.eq("phone_number", emailOrPhone.trim());
-  }
-
-  const { data: user, error: fetchErr } = await query.maybeSingle();
-  console.log(`[DEBUG AUTH] Profiles database query completed in ${Date.now() - dbStart}ms`);
-
-  if (fetchErr) {
-    console.error("[DEBUG AUTH] Database lookup error:", fetchErr);
-    throw new Error(`Database error: ${fetchErr.message}`);
-  }
-
-  if (!user) {
-    console.warn("[DEBUG AUTH] User not found for:", emailOrPhone);
-    throw new Error("Invalid email/phone number or password.");
-  }
-
-  console.log("[DEBUG AUTH] User found: ID =", user.id, "Email =", user.email, "Role =", user.role);
-
-  const verifyStart = Date.now();
-  const isValid = await verifyPassword(password, user.password_hash);
-  console.log(`[DEBUG AUTH] Password hashing verification completed in ${Date.now() - verifyStart}ms`);
-
-  if (!isValid) {
-    console.warn("[DEBUG AUTH] Password verification failed for user ID:", user.id);
-    throw new Error("Invalid email/phone number or password.");
-  }
-
-  console.log("[DEBUG AUTH] Password verified successfully for user ID:", user.id);
-  console.log(`[DEBUG AUTH] Total serverLoginUser execution time: ${Date.now() - startTime}ms`);
-
-  // Auto-upgrade legacy hash to bcrypt in the Supabase database
-  if (user.password_hash.length === 64 && !user.password_hash.startsWith("$2")) {
-    try {
-      const bcryptHash = await hashPassword(password);
-      await supabase
-        .from("profiles")
-        .update({ password_hash: bcryptHash })
-        .eq("id", user.id);
-    } catch (upgradeErr) {
-      console.warn("Failed to auto-upgrade legacy password to bcrypt:", upgradeErr);
+  try {
+    console.log("[DEBUG AUTH] User lookup started for:", emailOrPhone);
+    const dbStart = Date.now();
+    let query = supabase.from("profiles").select("*");
+    if (emailOrPhone.includes("@")) {
+      query = query.ilike("email", emailOrPhone.trim());
+    } else {
+      query = query.eq("phone_number", emailOrPhone.trim());
     }
-  }
 
-  return {
-    id: user.id,
-    email: user.email,
-    full_name: user.full_name,
-    phone_number: user.phone_number,
-    department_stream: user.department_stream,
-    role: user.role,
-    profile_completed: user.role === "admin" ? true : !!user.profile_completed,
-  };
+    const { data: user, error: fetchErr } = await query.maybeSingle();
+    console.log(`[DEBUG AUTH] Profiles database query completed in ${Date.now() - dbStart}ms`);
+
+    if (fetchErr) {
+      console.error("[DEBUG AUTH] Database lookup error:", fetchErr);
+      return { success: false, error: `Database error: ${fetchErr.message}` };
+    }
+
+    if (!user) {
+      console.warn("[DEBUG AUTH] User not found for:", emailOrPhone);
+      return { success: false, error: "Wrong credentials" };
+    }
+
+    console.log("[DEBUG AUTH] User found: ID =", user.id, "Email =", user.email, "Role =", user.role);
+
+    const verifyStart = Date.now();
+    const isValid = await verifyPassword(password, user.password_hash);
+    console.log(`[DEBUG AUTH] Password hashing verification completed in ${Date.now() - verifyStart}ms`);
+
+    if (!isValid) {
+      console.warn("[DEBUG AUTH] Password verification failed for user ID:", user.id);
+      return { success: false, error: "Wrong credentials" };
+    }
+
+    console.log("[DEBUG AUTH] Password verified successfully for user ID:", user.id);
+    console.log(`[DEBUG AUTH] Total serverLoginUser execution time: ${Date.now() - startTime}ms`);
+
+    // Auto-upgrade legacy hash to bcrypt in the Supabase database
+    if (user.password_hash.length === 64 && !user.password_hash.startsWith("$2")) {
+      try {
+        const bcryptHash = await hashPassword(password);
+        await supabase
+          .from("profiles")
+          .update({ password_hash: bcryptHash })
+          .eq("id", user.id);
+      } catch (upgradeErr) {
+        console.warn("Failed to auto-upgrade legacy password to bcrypt:", upgradeErr);
+      }
+    }
+
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        phone_number: user.phone_number,
+        department_stream: user.department_stream,
+        role: user.role,
+        profile_completed: user.role === "admin" ? true : !!user.profile_completed,
+      }
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || "An unexpected error occurred during login." };
+  }
 }
 
 // -------------------------------------------------------------
@@ -238,7 +249,7 @@ export async function seedAdminAccount() {
           email: "admin@iqintern.com",
           password_hash: passwordHash,
           full_name: "Super Admin",
-          phone_number: "0000000000",
+          phone_number: "9999999999",
           department_stream: "Platform Administration",
           role: "admin",
           profile_completed: true,
@@ -264,7 +275,7 @@ export async function seedAdminAccount() {
           email: "admin@iqintern.com",
           password_hash: passwordHash,
           full_name: "Super Admin",
-          phone_number: "0000000000",
+          phone_number: "9999999999",
           department_stream: "Platform Administration",
           role: "admin",
           profile_completed: true,
@@ -290,7 +301,7 @@ export async function seedAdminAccount() {
       email: "admin@iqintern.com",
       password_hash: passwordHash,
       full_name: "Super Admin",
-      phone_number: "0000000000",
+      phone_number: "9999999999",
       department_stream: "Platform Administration",
       role: "admin",
       profile_completed: true,
@@ -315,47 +326,51 @@ export async function createAdminUser(
   phoneNumber: string,
   departmentStream: string
 ) {
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) return { success: false, error: "Supabase is not configured." };
 
-  // Enforce password size to minimum 7 characters
-  if (!password || password.length < 7) {
-    throw new Error("Password must be at least 7 characters.");
+  try {
+    // Enforce password size to minimum 7 characters
+    if (!password || password.length < 7) {
+      return { success: false, error: "Password must be at least 7 characters." };
+    }
+
+    // Verify caller is admin via the email param (no cookie dependency)
+    const { data: callerProfile, error: callerErr } = await supabase
+      .from("profiles")
+      .select("role")
+      .ilike("email", callerEmail.trim())
+      .maybeSingle();
+
+    if (callerErr || !callerProfile || callerProfile.role !== "admin") {
+      return { success: false, error: "Unauthorized: Only admins can create admin accounts." };
+    }
+
+    // Check if target email already exists
+    const { data: existing, error: chkErr } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("email", newEmail.trim())
+      .maybeSingle();
+
+    if (chkErr) return { success: false, error: `Database error: ${chkErr.message}` };
+    if (existing) return { success: false, error: "An account with this email already exists." };
+
+    const passwordHash = await hashPassword(password);
+    const { error } = await supabase.from("profiles").insert({
+      email: newEmail,
+      password_hash: passwordHash,
+      full_name: fullName,
+      phone_number: phoneNumber,
+      department_stream: departmentStream,
+      role: "admin",
+      profile_completed: true,
+    });
+
+    if (error) return { success: false, error: `Admin creation failed: ${error.message}` };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || "An unexpected error occurred during admin creation." };
   }
-
-  // Verify caller is admin via the email param (no cookie dependency)
-  const { data: callerProfile, error: callerErr } = await supabase
-    .from("profiles")
-    .select("role")
-    .ilike("email", callerEmail.trim())
-    .maybeSingle();
-
-  if (callerErr || !callerProfile || callerProfile.role !== "admin") {
-    throw new Error("Unauthorized: Only admins can create admin accounts.");
-  }
-
-  // Check if target email already exists
-  const { data: existing, error: chkErr } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("email", newEmail.trim())
-    .maybeSingle();
-
-  if (chkErr) throw new Error(`Database error: ${chkErr.message}`);
-  if (existing) throw new Error("An account with this email already exists.");
-
-  const passwordHash = await hashPassword(password);
-  const { error } = await supabase.from("profiles").insert({
-    email: newEmail,
-    password_hash: passwordHash,
-    full_name: fullName,
-    phone_number: phoneNumber,
-    department_stream: departmentStream,
-    role: "admin",
-    profile_completed: true,
-  });
-
-  if (error) throw new Error(`Admin creation failed: ${error.message}`);
-  return { success: true };
 }
 
 // -------------------------------------------------------------
@@ -363,37 +378,45 @@ export async function createAdminUser(
 // -------------------------------------------------------------
 // react-doctor-disable-next-line react-doctor/server-auth-actions
 export async function serverVerifyEmailAndPhone(email: string, phoneNumber: string) {
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) return { success: false, error: "Supabase is not configured." };
 
-  const { data: user, error: fetchErr } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("email", email.trim())
-    .eq("phone_number", phoneNumber.trim())
-    .maybeSingle();
+  try {
+    const { data: user, error: fetchErr } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("email", email.trim())
+      .eq("phone_number", phoneNumber.trim())
+      .maybeSingle();
 
-  if (fetchErr) throw new Error(`Database error: ${fetchErr.message}`);
-  if (!user) throw new Error("Incorrect email or phone number.");
+    if (fetchErr) return { success: false, error: `Database error: ${fetchErr.message}` };
+    if (!user) return { success: false, error: "Incorrect email or phone number." };
 
-  return { success: true, userId: user.id };
+    return { success: true, userId: user.id };
+  } catch (err: any) {
+    return { success: false, error: err.message || "An unexpected error occurred." };
+  }
 }
 
 // react-doctor-disable-next-line react-doctor/server-auth-actions
 export async function serverResetPassword(userId: string, newPassword: string) {
-  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!supabase) return { success: false, error: "Supabase is not configured." };
 
-  // Enforce password size to minimum 7 characters
-  if (!newPassword || newPassword.length < 7) {
-    throw new Error("Password must be at least 7 characters.");
+  try {
+    // Enforce password size to minimum 7 characters
+    if (!newPassword || newPassword.length < 7) {
+      return { success: false, error: "Password must be at least 7 characters." };
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ password_hash: passwordHash })
+      .eq("id", userId);
+
+    if (error) return { success: false, error: `Failed to reset password: ${error.message}` };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || "An unexpected error occurred." };
   }
-
-  const passwordHash = await hashPassword(newPassword);
-  const { error } = await supabase
-    .from("profiles")
-    .update({ password_hash: passwordHash })
-    .eq("id", userId);
-
-  if (error) throw new Error(`Failed to reset password: ${error.message}`);
-  return { success: true };
 }
 

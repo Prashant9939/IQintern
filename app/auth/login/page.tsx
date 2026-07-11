@@ -61,7 +61,7 @@ export default function Login() {
       const apiStart = performance.now();
       const res = await loginUser(email, password);
       console.log(`[INSTRUMENTATION] loginUser request finished in ${(performance.now() - apiStart).toFixed(1)}ms`);
-      
+
       setSuccess("Logged in successfully! Redirecting...");
 
       console.log(`[INSTRUMENTATION] Redirecting user immediately: role=${res.user.role}`);
@@ -315,9 +315,9 @@ export default function Login() {
                   <div className="flex flex-col gap-1 text-left">
                     <div className="flex justify-between items-center px-1 mb-0.5">
                       <label htmlFor="password" className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider">Password *</label>
-                      <Link href="/auth/forgot-password" className="text-[10px] text-indigo-600 hover:text-indigo-700 font-bold uppercase tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">
+                      {/* <Link href="/auth/forgot-password" className="text-[10px] text-indigo-600 hover:text-indigo-700 font-bold uppercase tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">
                         Forgot Password?
-                      </Link>
+                      </Link> */}
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
@@ -330,6 +330,12 @@ export default function Login() {
                         className="w-full pl-11 pr-11 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 focus-visible:ring-indigo-500"
                         placeholder="••••••••"
                       />
+                      <div className="flex justify-between items-center px-1 mb-0.5">
+                        <label htmlFor="password" className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider">  </label>
+                        <Link href="/auth/forgot-password" className="text-[10px] text-indigo-600 hover:text-indigo-700 font-bold uppercase tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded">
+                          Forgot Password?
+                        </Link>
+                      </div>
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650 transition-colors cursor-pointer focus:outline-none focus-visible:text-indigo-600">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
