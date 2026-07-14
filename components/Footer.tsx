@@ -112,7 +112,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#verify" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                <Link href="/verify" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
                   Verify Certificate
                 </Link>
               </li>

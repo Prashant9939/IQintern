@@ -1,0 +1,34 @@
+[
+  {
+    "student_id": "dec479d2-0dbc-4ce4-9410-650742b597b7",
+    "student_name": "Shiwam Mishra",
+    "registration_id": "67890",
+    "internship_id": "75403542-1ef7-464c-bd14-f88fd5fe2a16",
+    "internship_name": "Digital Marketing",
+    "document_type": "offer_letter",
+    "certificate_number": null,
+    "reference_id": "IQ-REF-0000001",
+    "qr_code_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fiqintern.in%2Fverify%3Freference%3DIQ-REF-0000001",
+    "verification_status": "Valid",
+    "document_version": 1,
+    "document_status": "Active",
+    "id": "reg-pzvhxlae0",
+    "generation_date": "2026-07-14T09:14:14.663Z"
+  },
+  {
+    "student_id": "5213a7da-1481-495c-8237-26a052ec0a37",
+    "student_name": "Super Admin",
+    "registration_id": null,
+    "internship_id": "38e3d7a3-f942-428f-b18f-ae4c04ac8d2c",
+    "internship_name": "Teacher Training",
+    "document_type": "offer_letter",
+    "certificate_number": null,
+    "reference_id": "IQ-REF-NNFTF5X",
+    "qr_code_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fiqintern.in%2Fverify%3Freference%3DIQ-REF-NNFTF5X",
+    "verification_status": "Valid",
+    "document_version": 1,
+    "document_status": "Active",
+    "id": "reg-pdy55l8a1",
+    "generation_date": "2026-07-14T09:31:45.561Z"
+  }
+]

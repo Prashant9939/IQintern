@@ -96,10 +96,15 @@ export default function StudentInternshipProgress() {
       let docs: any[] = [];
       if (isSupabaseConfigured() && supabase) {
         try {
-          const { data } = await supabase.from("student_documents").select("*");
+          let tableName = "student_documents";
+          const testRes = await supabase.from("student_documents").select("id").limit(1);
+          if (testRes.error && (testRes.error.code === 'PGRST205' || testRes.error.message?.includes('student_documents'))) {
+            tableName = "documents";
+          }
+          const { data } = await supabase.from(tableName).select("*");
           docs = data || [];
         } catch (e) {
-          console.warn("Failed to load student_documents metadata from database:", e);
+          console.warn("Failed to load document metadata from database:", e);
         }
       }
 

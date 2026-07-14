@@ -14,5 +14,9 @@ export const isSupabaseConfigured = (): boolean => {
 
 // Create real supabase client if configured, otherwise null
 export const supabase = isSupabaseConfigured()
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
+      },
+    })
   : null;

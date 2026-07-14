@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
@@ -23,12 +24,22 @@ export interface DocumentMetadata {
   expiry_date?: string;
   generation_status: 'pending' | 'generating' | 'completed' | 'failed';
   hash?: string;
+  verification_id?: string;
   template_version: string;
+}
+
+// Helper to get local cache directory path, persistently inside process.cwd() for local dev
+export function getCacheDir(): string {
+  // Use os.tmpdir() only when deployed on Vercel or in standard production build environments
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join(os.tmpdir(), 'pdf_cache');
+  }
+  return path.join(process.cwd(), 'pdf_cache');
 }
 
 // Local mock metadata storage helper for server environment
 function getLocalMockMetadata(): DocumentMetadata[] {
-  const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
+  const cacheDir = getCacheDir();
   const metadataPath = path.join(cacheDir, 'metadata.json');
   try {
     if (!fs.existsSync(cacheDir)) {
@@ -45,7 +56,7 @@ function getLocalMockMetadata(): DocumentMetadata[] {
 }
 
 function saveLocalMockMetadata(list: DocumentMetadata[]) {
-  const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
+  const cacheDir = getCacheDir();
   const metadataPath = path.join(cacheDir, 'metadata.json');
   try {
     if (!fs.existsSync(cacheDir)) {
@@ -95,6 +106,26 @@ function saveLocalMockMetadataUpsert(meta: DocumentMetadata): DocumentMetadata {
   return updated;
 }
 
+let cachedTableName: 'student_documents' | 'documents' | null = null;
+
+export async function getDocumentsTableName(client: any): Promise<'student_documents' | 'documents'> {
+  if (cachedTableName) return cachedTableName;
+  if (!client) return 'student_documents';
+  
+  try {
+    const { error } = await client.from('student_documents').select('id').limit(1);
+    if (error && (error.code === 'PGRST205' || error.message?.includes('student_documents'))) {
+      console.warn('student_documents table missing in schema cache. Using documents table.');
+      cachedTableName = 'documents';
+    } else {
+      cachedTableName = 'student_documents';
+    }
+  } catch (e) {
+    cachedTableName = 'documents';
+  }
+  return cachedTableName;
+}
+
 // Fetch document metadata record
 export async function getDocumentMetadata(
   studentId: string,
@@ -102,11 +133,13 @@ export async function getDocumentMetadata(
   documentType: string
 ): Promise<DocumentMetadata | null> {
   const cleanType = documentType.trim().toLowerCase();
+  const client = supabaseAdmin || supabase;
   
-  if (isSupabaseConfigured() && supabase) {
+  if (isSupabaseConfigured() && client) {
     try {
-      const { data, error } = await supabase
-        .from('student_documents')
+      const tableName = await getDocumentsTableName(client);
+      const { data, error } = await client
+        .from(tableName)
         .select('*')
         .eq('student_id', studentId)
         .eq('internship_id', internshipId)
@@ -114,11 +147,11 @@ export async function getDocumentMetadata(
         .maybeSingle();
         
       if (error) {
-        if (error.code === 'PGRST205' || error.message?.includes('student_documents')) {
-          console.warn('student_documents table missing in Supabase. Falling back to local file metadata.');
+        if (error.code === 'PGRST205' || error.message?.includes(tableName)) {
+          console.warn(`${tableName} table missing in Supabase. Falling back to local file metadata.`);
           return getLocalMockMetadataMatch(studentId, internshipId, cleanType);
         }
-        console.error('Failed to fetch document metadata from Supabase:', error);
+        console.error(`Failed to fetch document metadata from Supabase (${tableName}):`, error);
         return null;
       }
       return data;
@@ -131,10 +164,279 @@ export async function getDocumentMetadata(
   }
 }
 
-// Save or update document metadata record
+export interface DocumentRegistryEntry {
+  id?: string;
+  student_id: string;
+  student_name: string;
+  registration_id?: string | null;
+  internship_id?: string | null;
+  internship_name: string;
+  document_type: string;
+  certificate_number?: string | null;
+  reference_id?: string | null;
+  qr_code_url: string;
+  generated_pdf_path?: string | null;
+  generated_html_path?: string | null;
+  generation_date?: string;
+  last_downloaded_date?: string | null;
+  verification_status: 'Valid' | 'Invalid' | 'Revoked';
+  document_version: number;
+  document_status: 'Active' | 'Revoked';
+}
+
+// Local mock registry storage helper
+function getLocalRegistry(): DocumentRegistryEntry[] {
+  const cacheDir = getCacheDir();
+  const registryPath = path.join(cacheDir, 'document_registry.json');
+  try {
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+    if (fs.existsSync(registryPath)) {
+      const content = fs.readFileSync(registryPath, 'utf8');
+      return JSON.parse(content) || [];
+    }
+  } catch (e) {
+    console.error('Failed to read local mock registry:', e);
+  }
+  return [];
+}
+
+function saveLocalRegistry(list: DocumentRegistryEntry[]) {
+  const cacheDir = getCacheDir();
+  const registryPath = path.join(cacheDir, 'document_registry.json');
+  try {
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+    fs.writeFileSync(registryPath, JSON.stringify(list, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to write local mock registry:', e);
+  }
+}
+
+// Fetch registry entry from DB or local fallback
+export async function getDocumentRegistryEntry(
+  studentId: string,
+  internshipId: string,
+  documentType: string
+): Promise<DocumentRegistryEntry | null> {
+  const cleanType = documentType.trim().toLowerCase();
+  const client = supabaseAdmin || supabase;
+  
+  if (isSupabaseConfigured() && client) {
+    try {
+      const { data, error } = await client
+        .from('document_registry')
+        .select('*')
+        .eq('student_id', studentId)
+        .eq('internship_id', internshipId)
+        .eq('document_type', cleanType)
+        .maybeSingle();
+        
+      if (error) {
+        if (error.code === 'PGRST200' || error.code === 'PGRST205' || error.message?.includes('document_registry')) {
+          return getLocalRegistryMatch(studentId, internshipId, cleanType);
+        }
+        console.error('Failed to fetch registry entry from Supabase:', error);
+        return null;
+      }
+      return data;
+    } catch (e: any) {
+      console.warn('Supabase registry fetch exception, falling back to local file:', e);
+      return getLocalRegistryMatch(studentId, internshipId, cleanType);
+    }
+  } else {
+    return getLocalRegistryMatch(studentId, internshipId, cleanType);
+  }
+}
+
+function getLocalRegistryMatch(studentId: string, internshipId: string, cleanType: string): DocumentRegistryEntry | null {
+  const list = getLocalRegistry();
+  const match = list.find(
+    (doc) =>
+      doc.student_id === studentId &&
+      doc.internship_id === internshipId &&
+      doc.document_type === cleanType
+  );
+  return match || null;
+}
+
+// Find any existing certificate number or reference ID for the student
+export async function getStudentExistingIds(studentId: string): Promise<{ certificate_number: string | null; reference_id: string | null }> {
+  const client = supabaseAdmin || supabase;
+  let certificate_number: string | null = null;
+  let reference_id: string | null = null;
+
+  if (isSupabaseConfigured() && client) {
+    try {
+      const { data, error } = await client
+        .from('document_registry')
+        .select('certificate_number, reference_id')
+        .eq('student_id', studentId);
+
+      if (!error && data && data.length > 0) {
+        for (const row of data) {
+          if (row.certificate_number && !certificate_number) certificate_number = row.certificate_number;
+          if (row.reference_id && !reference_id) reference_id = row.reference_id;
+        }
+      }
+    } catch (_) {}
+  }
+
+  // Fallback check in local registry
+  const localList = getLocalRegistry();
+  for (const doc of localList) {
+    if (doc.student_id === studentId) {
+      if (doc.certificate_number && !certificate_number) certificate_number = doc.certificate_number;
+      if (doc.reference_id && !reference_id) reference_id = doc.reference_id;
+    }
+  }
+
+  return { certificate_number, reference_id };
+}
+
+// Save or update registry entry in DB or local fallback
+export async function saveDocumentRegistryEntry(
+  entry: DocumentRegistryEntry
+): Promise<DocumentRegistryEntry> {
+  const client = supabaseAdmin || supabase;
+  const cleanType = entry.document_type.trim().toLowerCase();
+  
+  const upsertData = {
+    ...entry,
+    document_type: cleanType,
+  };
+  
+  if (isSupabaseConfigured() && client) {
+    try {
+      const existing = await getDocumentRegistryEntry(entry.student_id, entry.internship_id || '', cleanType);
+      
+      let result;
+      if (existing && existing.id) {
+        const { data, error } = await client
+          .from('document_registry')
+          .update(upsertData)
+          .eq('id', existing.id)
+          .select()
+          .single();
+          
+        if (error) throw error;
+        result = data;
+      } else {
+        const { data, error } = await client
+          .from('document_registry')
+          .insert(upsertData)
+          .select()
+          .single();
+          
+        if (error) throw error;
+        result = data;
+      }
+      return result;
+    } catch (err: any) {
+      console.warn('Supabase registry save exception, falling back to local file:', err);
+      return saveLocalRegistryUpsert(entry);
+    }
+  } else {
+    return saveLocalRegistryUpsert(entry);
+  }
+}
+
+function saveLocalRegistryUpsert(entry: DocumentRegistryEntry): DocumentRegistryEntry {
+  const list = getLocalRegistry();
+  const cleanType = entry.document_type.trim().toLowerCase();
+  const idx = list.findIndex(
+    (doc) =>
+      doc.student_id === entry.student_id &&
+      doc.internship_id === entry.internship_id &&
+      doc.document_type === cleanType
+  );
+  
+  const updated = {
+    ...entry,
+    document_type: cleanType,
+    id: idx >= 0 ? list[idx].id : `reg-${Math.random().toString(36).substr(2, 9)}`,
+    generation_date: entry.generation_date || new Date().toISOString(),
+  };
+  
+  if (idx >= 0) {
+    list[idx] = updated;
+  } else {
+    list.push(updated);
+  }
+  saveLocalRegistry(list);
+  return updated;
+}
+
+// Generate a unique alphanumeric ID (e.g. IQ-2026-X8Y9A2F or IQ-REF-M7B2K9P)
+export async function generateNextSequentialId(documentType: string): Promise<string> {
+  const cleanType = documentType.trim().toLowerCase();
+  const isCert = cleanType === 'certificate' || cleanType === 'internship_certificate';
+  const prefix = isCert ? 'IQ-2026-' : 'IQ-REF-';
+  const client = supabaseAdmin || supabase;
+  
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let attempts = 0;
+  
+  while (attempts < 100) {
+    let rand = '';
+    for (let i = 0; i < 7; i++) {
+      rand += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const candidateId = `${prefix}${rand}`;
+    
+    // Check local registry first
+    const localList = getLocalRegistry();
+    const isLocalDuplicate = localList.some(
+      (doc) => doc.certificate_number === candidateId || doc.reference_id === candidateId
+    );
+    
+    if (isLocalDuplicate) {
+      attempts++;
+      continue;
+    }
+    
+    // Check Supabase database
+    if (isSupabaseConfigured() && client) {
+      try {
+        const { count, error } = await client
+          .from('document_registry')
+          .select('*', { count: 'exact', head: true })
+          .or(`certificate_number.eq.${candidateId},reference_id.eq.${candidateId}`);
+          
+        if (!error && (count === null || count === 0)) {
+          return candidateId;
+        }
+      } catch (e) {
+        console.warn('Error checking unique ID in DB, fallback to candidate:', e);
+        return candidateId;
+      }
+    } else {
+      return candidateId;
+    }
+    attempts++;
+  }
+  
+  // Safe fallback if loop hits limit
+  const fallbackRand = Array.from({ length: 7 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  return `${prefix}${fallbackRand}`;
+}
+
+// Generate a unique structured verification/reference ID (Async)
+export async function generateUniqueVerificationId(documentType: string): Promise<string> {
+  return generateNextSequentialId(documentType);
+}
+
+// Save or update document metadata record (Legacy compatibility)
 export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<DocumentMetadata> {
   const client = supabaseAdmin || supabase;
   const cleanType = meta.document_type.trim().toLowerCase();
+  
+  if (!meta.verification_id) {
+    meta.verification_id = await generateUniqueVerificationId(cleanType);
+  }
+
   const upsertData = {
     ...meta,
     document_type: cleanType,
@@ -143,41 +445,64 @@ export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<Docu
 
   if (isSupabaseConfigured() && client) {
     try {
-      // Check if record exists
+      const tableName = await getDocumentsTableName(client);
       const existing = await getDocumentMetadata(meta.student_id, meta.internship_id, cleanType);
       
       let result;
       if (existing && existing.id && !existing.id.startsWith('doc-')) {
-        const { data, error } = await client
-          .from('student_documents')
-          .update(upsertData)
-          .eq('id', existing.id)
-          .select()
-          .single();
-          
-        if (error) {
-          if (error.code === 'PGRST205' || error.message?.includes('student_documents')) {
-            console.warn('student_documents table missing on update. Saving locally.');
-            return saveLocalMockMetadataUpsert(meta);
-          }
-          throw error;
+        if (existing.verification_id) {
+          upsertData.verification_id = existing.verification_id;
         }
-        result = data;
+
+        try {
+          const { data, error } = await client
+            .from(tableName)
+            .update(upsertData)
+            .eq('id', existing.id)
+            .select()
+            .single();
+            
+          if (error) throw error;
+          result = data;
+        } catch (err: any) {
+          if (err.code === '42703' || err.message?.includes('verification_id')) {
+            const { verification_id, ...fallbackUpsert } = upsertData;
+            const { data, error } = await client
+              .from(tableName)
+              .update(fallbackUpsert)
+              .eq('id', existing.id)
+              .select()
+              .single();
+            if (error) throw error;
+            result = data;
+          } else {
+            throw err;
+          }
+        }
       } else {
-        const { data, error } = await client
-          .from('student_documents')
-          .insert(upsertData)
-          .select()
-          .single();
-          
-        if (error) {
-          if (error.code === 'PGRST205' || error.message?.includes('student_documents')) {
-            console.warn('student_documents table missing on insert. Saving locally.');
-            return saveLocalMockMetadataUpsert(meta);
+        try {
+          const { data, error } = await client
+            .from(tableName)
+            .insert(upsertData)
+            .select()
+            .single();
+            
+          if (error) throw error;
+          result = data;
+        } catch (err: any) {
+          if (err.code === '42703' || err.message?.includes('verification_id')) {
+            const { verification_id, ...fallbackUpsert } = upsertData;
+            const { data, error } = await client
+              .from(tableName)
+              .insert(fallbackUpsert)
+              .select()
+              .single();
+            if (error) throw error;
+            result = data;
+          } else {
+            throw err;
           }
-          throw error;
         }
-        result = data;
       }
       return result;
     } catch (err: any) {
@@ -206,17 +531,19 @@ export async function generateDocument(
     let testResult: any = null;
     let payments: any[] = [];
 
-    if (isSupabaseAdminConfigured() && supabaseAdmin) {
+    const dbClient = (isSupabaseAdminConfigured() && supabaseAdmin) ? supabaseAdmin : (isSupabaseConfigured() && supabase ? supabase : null);
+
+    if (dbClient) {
       const isValidUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
       const isUuid = isValidUuid(internshipId);
 
       const [profileRes, internshipRes, testResultRes, paymentsRes] = await Promise.all([
-        supabaseAdmin.from('profiles').select('*').eq('id', studentId).single(),
+        dbClient.from('profiles').select('*').eq('id', studentId).single(),
         isUuid 
-          ? supabaseAdmin.from('internships').select('*').eq('id', internshipId).single()
+          ? dbClient.from('internships').select('*').eq('id', internshipId).single()
           : Promise.resolve({ data: null }),
         isUuid
-          ? supabaseAdmin
+          ? dbClient
               .from('test_results')
               .select('*')
               .eq('student_id', studentId)
@@ -225,7 +552,7 @@ export async function generateDocument(
               .limit(1)
               .maybeSingle()
           : Promise.resolve({ data: null }),
-        supabaseAdmin
+        dbClient
           .from('payments')
           .select('*')
           .eq('student_id', studentId)
@@ -298,8 +625,50 @@ export async function generateDocument(
       throw new Error('Invalid template type');
     }
 
-    // 3. Format Data variables for templates
+    // Fetch cache metadata first to retrieve or generate the unique verification ID
+    const cacheMeta = await getDocumentMetadata(studentId, internshipId, cleanType);
+    
+    // Fetch or create registry entry first
     const internshipTitle = internship.title || 'Internship';
+    let registryEntry = await getDocumentRegistryEntry(studentId, internshipId, cleanType);
+    if (!registryEntry) {
+      const isCert = cleanType === 'certificate' || cleanType === 'internship_certificate';
+      
+      // Look up if user already has a certificate_number or reference_id assigned
+      const existingIds = await getStudentExistingIds(studentId);
+      let newId;
+      if (isCert) {
+        newId = existingIds.certificate_number || await generateNextSequentialId(cleanType);
+      } else {
+        newId = existingIds.reference_id || await generateNextSequentialId(cleanType);
+      }
+
+      const verificationUrl = isCert 
+        ? `https://iqintern.in/verify?certificate=${newId}` 
+        : `https://iqintern.in/verify?reference=${newId}`;
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verificationUrl)}`;
+      
+      registryEntry = {
+        student_id: studentId,
+        student_name: profile.full_name,
+        registration_id: profile.registration_number || null,
+        internship_id: internshipId,
+        internship_name: internshipTitle,
+        document_type: cleanType,
+        certificate_number: isCert ? newId : null,
+        reference_id: isCert ? null : newId,
+        qr_code_url: qrCodeUrl,
+        verification_status: 'Valid',
+        document_version: 1,
+        document_status: 'Active'
+      };
+      registryEntry = await saveDocumentRegistryEntry(registryEntry);
+    }
+    
+    const verificationId = registryEntry.certificate_number || registryEntry.reference_id || '';
+    const qrCodeUrl = registryEntry.qr_code_url;
+
+    // 3. Format Data variables for templates
     const pct = testResult?.percentage || (testResult?.score && testResult?.total_questions ? Math.round((testResult.score / testResult.total_questions) * 100) : 0) || 0;
     
     let grade = 'F';
@@ -311,7 +680,6 @@ export async function generateDocument(
     else if (pct >= 40) grade = 'D';
 
     const scoreFormatted = `${pct}%`;
-    const verificationId = testResult?.reference_number || testResult?.id || 'IQ-VER-2026-8294';
 
     const payment = payments.find(
       (p: any) => p.internship_id === internshipId && p.status === 'completed'
@@ -334,11 +702,18 @@ export async function generateDocument(
 
     const renderData = {
       studentName: profile.full_name,
+      fullName: profile.full_name,
+      full_name: profile.full_name,
       collegeName: profile.college_name || 'N/A',
+      college_name: profile.college_name || 'N/A',
       universityName: profile.university_name || 'N/A',
+      university_name: profile.university_name || 'N/A',
       course: profile.department_stream || profile.degree || 'N/A',
+      department_stream: profile.department_stream || 'N/A',
+      degree: profile.degree || 'N/A',
       semester: profile.semester || 'N/A',
       rollNumber: profile.roll_number || 'N/A',
+      roll_number: profile.roll_number || 'N/A',
       internshipName: internshipTitle,
       internshipTitle: internshipTitle,
       score: scoreFormatted,
@@ -349,6 +724,7 @@ export async function generateDocument(
       completionDate: formattedCompletionDate,
       certificateId: verificationId,
       verificationId: verificationId,
+      qrCodeUrl: qrCodeUrl,
       duration: internship.duration || '120 Hrs',
       issueDate: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
       currentYear: new Date().getFullYear().toString(),
@@ -376,13 +752,13 @@ export async function generateDocument(
     const contentHash = crypto.createHash('md5').update(finalHtml).digest('hex');
 
     // 6. Check cache metadata first
-    const cacheMeta = await getDocumentMetadata(studentId, internshipId, cleanType);
     if (!force && cacheMeta && cacheMeta.generation_status === 'completed' && cacheMeta.hash === contentHash && cacheMeta.template_version === TEMPLATE_VERSION) {
       // Extend expiry date automatically on retrieval
       const newExpiry = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString();
       const updatedMeta = await saveDocumentMetadata({
         ...cacheMeta,
         expiry_date: newExpiry,
+        verification_id: verificationId,
       });
       return { success: true, metadata: updatedMeta, fromCache: true };
     }
@@ -396,6 +772,7 @@ export async function generateDocument(
       generation_status: 'generating',
       template_version: TEMPLATE_VERSION,
       hash: contentHash,
+      verification_id: verificationId,
       expiry_date: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
@@ -472,7 +849,7 @@ export async function generateDocument(
 
       if (!uploadSuccess) {
         // Local fallback: Write to local folder pdf_cache/
-        const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
+        const cacheDir = getCacheDir();
         const localFilePath = path.join(cacheDir, `${cleanType}_${studentId}_${internshipId}.pdf`);
         try {
           if (!fs.existsSync(cacheDir)) {
@@ -487,7 +864,7 @@ export async function generateDocument(
       }
     } else {
       // Mock Storage: Write to local folder pdf_cache/
-      const cacheDir = path.join(os.tmpdir(), 'pdf_cache');
+      const cacheDir = getCacheDir();
       const localFilePath = path.join(cacheDir, `${cleanType}_${studentId}_${internshipId}.pdf`);
       
       try {
@@ -510,6 +887,13 @@ export async function generateDocument(
       file_size: pdfBuffer.length,
       generated_at: new Date().toISOString(),
     });
+
+    if (registryEntry) {
+      registryEntry.generated_pdf_path = storageUrl;
+      registryEntry.document_version = completedMeta.version;
+      registryEntry.generation_date = completedMeta.generated_at || new Date().toISOString();
+      await saveDocumentRegistryEntry(registryEntry);
+    }
 
     return { success: true, metadata: completedMeta, fromCache: false };
   } catch (error: any) {

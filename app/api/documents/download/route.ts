@@ -3,10 +3,13 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { supabaseAdmin, isSupabaseAdminConfigured } from '@/lib/supabase/admin';
 import { getSlugFromTitle, loadTemplate } from '@/lib/templates/template-loader';
 import { renderTemplate } from '@/lib/templates/template-renderer';
-import { getDocumentMetadata, saveDocumentMetadata, generateDocument, DocumentMetadata } from '@/lib/documents/generator';
+import { getDocumentMetadata, saveDocumentMetadata, generateDocument, DocumentMetadata, generateUniqueVerificationId, getDocumentsTableName, getCacheDir, getDocumentRegistryEntry, saveDocumentRegistryEntry, generateNextSequentialId, getStudentExistingIds } from '@/lib/documents/generator';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import crypto from 'crypto';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
@@ -29,18 +32,21 @@ export async function GET(req: Request) {
     let internship: any = null;
     let testResult: any = null;
     let payments: any[] = [];
+    let metadata: DocumentMetadata | null = null;
 
-    if (isSupabaseAdminConfigured() && supabaseAdmin) {
+    const dbClient = (isSupabaseAdminConfigured() && supabaseAdmin) ? supabaseAdmin : (isSupabaseConfigured() && supabase ? supabase : null);
+
+    if (dbClient) {
       const isValidUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
       const isUuid = isValidUuid(internshipId);
 
-      const [profileRes, internshipRes, testResultRes, paymentsRes] = await Promise.all([
-        supabaseAdmin.from('profiles').select('*').eq('id', studentId).single(),
+      const [profileRes, internshipRes, testResultRes, paymentsRes, dbMetadata] = await Promise.all([
+        dbClient.from('profiles').select('*').eq('id', studentId).single(),
         isUuid 
-          ? supabaseAdmin.from('internships').select('*').eq('id', internshipId).single()
+          ? dbClient.from('internships').select('*').eq('id', internshipId).single()
           : Promise.resolve({ data: null }),
         isUuid
-          ? supabaseAdmin
+          ? dbClient
               .from('test_results')
               .select('*')
               .eq('student_id', studentId)
@@ -49,11 +55,12 @@ export async function GET(req: Request) {
               .limit(1)
               .maybeSingle()
           : Promise.resolve({ data: null }),
-        supabaseAdmin
+        dbClient
           .from('payments')
           .select('*')
           .eq('student_id', studentId)
-          .eq('status', 'completed')
+          .eq('status', 'completed'),
+        getDocumentMetadata(studentId, internshipId, cleanType)
       ]);
 
       profile = profileRes.data;
@@ -70,6 +77,7 @@ export async function GET(req: Request) {
       }
 
       payments = paymentsRes.data || [];
+      metadata = dbMetadata;
     } else {
       // Mock mode data
       profile = {
@@ -101,6 +109,7 @@ export async function GET(req: Request) {
           created_at: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
         }
       ];
+      metadata = await getDocumentMetadata(studentId, internshipId, cleanType);
     }
 
     if (!profile) {
@@ -145,7 +154,45 @@ export async function GET(req: Request) {
     else if (pct >= 40) grade = 'D';
 
     const scoreFormatted = `${pct}%`;
-    const verificationId = testResult?.reference_number || testResult?.id || 'IQ-VER-2026-8294';
+    
+    // Fetch or create registry entry first
+    let registryEntry = await getDocumentRegistryEntry(studentId, internshipId, cleanType);
+    if (!registryEntry) {
+      const isCert = cleanType === 'certificate' || cleanType === 'internship_certificate';
+      
+      // Look up if user already has a certificate_number or reference_id assigned
+      const existingIds = await getStudentExistingIds(studentId);
+      let newId;
+      if (isCert) {
+        newId = existingIds.certificate_number || await generateNextSequentialId(cleanType);
+      } else {
+        newId = existingIds.reference_id || await generateNextSequentialId(cleanType);
+      }
+
+      const verificationUrl = isCert 
+        ? `https://iqintern.in/verify?certificate=${newId}` 
+        : `https://iqintern.in/verify?reference=${newId}`;
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verificationUrl)}`;
+      
+      registryEntry = {
+        student_id: studentId,
+        student_name: profile.full_name,
+        registration_id: profile.registration_number || null,
+        internship_id: internshipId,
+        internship_name: internshipTitle,
+        document_type: cleanType,
+        certificate_number: isCert ? newId : null,
+        reference_id: isCert ? null : newId,
+        qr_code_url: qrCodeUrl,
+        verification_status: 'Valid',
+        document_version: 1,
+        document_status: 'Active'
+      };
+      registryEntry = await saveDocumentRegistryEntry(registryEntry);
+    }
+    
+    const verificationId = registryEntry.certificate_number || registryEntry.reference_id || '';
+    const qrCodeUrl = registryEntry.qr_code_url;
 
     const payment = payments.find(
       (p: any) => p.internship_id === internshipId && p.status === 'completed'
@@ -168,11 +215,18 @@ export async function GET(req: Request) {
 
     const renderData = {
       studentName: profile.full_name,
+      fullName: profile.full_name,
+      full_name: profile.full_name,
       collegeName: profile.college_name || 'N/A',
+      college_name: profile.college_name || 'N/A',
       universityName: profile.university_name || 'N/A',
+      university_name: profile.university_name || 'N/A',
       course: profile.department_stream || profile.degree || 'N/A',
+      department_stream: profile.department_stream || 'N/A',
+      degree: profile.degree || 'N/A',
       semester: profile.semester || 'N/A',
       rollNumber: profile.roll_number || 'N/A',
+      roll_number: profile.roll_number || 'N/A',
       internshipName: internshipTitle,
       internshipTitle: internshipTitle,
       score: scoreFormatted,
@@ -183,6 +237,7 @@ export async function GET(req: Request) {
       completionDate: formattedCompletionDate,
       certificateId: verificationId,
       verificationId: verificationId,
+      qrCodeUrl: qrCodeUrl,
       duration: internship.duration || '120 Hrs',
       issueDate: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
       currentYear: new Date().getFullYear().toString(),
@@ -194,6 +249,19 @@ export async function GET(req: Request) {
 
     // --- PIPELINE 1: HTML Preview ---
     if (format === 'html') {
+      // If metadata doesn't exist, pre-create the metadata record as pending so the verification ID is registered
+      if (!metadata) {
+        metadata = await saveDocumentMetadata({
+          student_id: studentId,
+          internship_id: internshipId,
+          document_type: cleanType,
+          version: 1,
+          generation_status: 'pending',
+          template_version: '1.0',
+          verification_id: verificationId,
+        });
+      }
+
       const slug = getSlugFromTitle(internshipTitle);
       const templateHtml = await loadTemplate(cleanType, slug, internshipId);
       let finalHtml = renderTemplate(templateHtml, renderData);
@@ -208,18 +276,35 @@ export async function GET(req: Request) {
       // Return HTML directly WITHOUT Content-Disposition to prevent browser downloading
       return new Response(finalHtml, {
         headers: { 
-          'Content-Type': 'text/html; charset=utf-8' 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         },
       });
     }
 
     // --- PIPELINE 3: PDF Download / Stream ---
     // Check if the metadata table has a completed, cached document
-    const metadata = await getDocumentMetadata(studentId, internshipId, cleanType);
     let pdfBuffer: Buffer | null = null;
     let hitCache = false;
 
-    if (!bypassCache && metadata && metadata.generation_status === 'completed' && metadata.storage_url) {
+    // Load template and render HTML to generate the content hash to verify if user details or template changed
+    const slug = getSlugFromTitle(internshipTitle);
+    const templateHtml = await loadTemplate(cleanType, slug, internshipId);
+    let finalHtml = renderTemplate(templateHtml, renderData);
+
+    // Inject base tag for relative images to match generator.ts hashing
+    if (origin) {
+      if (finalHtml.includes('<head>')) {
+        finalHtml = finalHtml.replace('<head>', `<head><base href="${origin}/" />`);
+      } else {
+        finalHtml = `<base href="${origin}/" />` + finalHtml;
+      }
+    }
+    const contentHash = crypto.createHash('md5').update(finalHtml).digest('hex');
+
+    if (!bypassCache && metadata && metadata.generation_status === 'completed' && metadata.storage_url && metadata.hash === contentHash && metadata.template_version === '1.0') {
       try {
         if (isSupabaseConfigured() && supabaseAdmin) {
           // Stream from Supabase Storage bucket
@@ -253,27 +338,34 @@ export async function GET(req: Request) {
             expiry_date: newExpiry,
           };
 
+          // Update registry entry downloaded date
+          if (registryEntry) {
+            registryEntry.last_downloaded_date = new Date().toISOString();
+            await saveDocumentRegistryEntry(registryEntry);
+          }
+
           const updateLocalMockStats = (id: string | undefined) => {
             if (!id) return;
-            const localDir = path.join(os.tmpdir(), 'pdf_cache');
+            const localDir = getCacheDir();
             const localMetaPath = path.join(localDir, 'metadata.json');
             if (fs.existsSync(localMetaPath)) {
               try {
                 const list: DocumentMetadata[] = JSON.parse(fs.readFileSync(localMetaPath, 'utf8')) || [];
                 const idx = list.findIndex((doc) => doc.id === id);
                 if (idx >= 0) {
-                  list[idx] = { ...list[idx], ...updateData };
-                  fs.writeFileSync(localMetaPath, JSON.stringify(list, null, 2), 'utf8');
+                   list[idx] = { ...list[idx], ...updateData };
+                   fs.writeFileSync(localMetaPath, JSON.stringify(list, null, 2), 'utf8');
                 }
               } catch (_) {}
             }
           };
 
-          if (metadata.id) {
+          if (metadata && metadata.id) {
             if (isSupabaseConfigured() && client) {
               try {
-                const { error: updateErr } = await client.from('student_documents').update(updateData).eq('id', metadata.id);
-                if (updateErr && (updateErr.code === 'PGRST205' || updateErr.message?.includes('student_documents'))) {
+                const tableName = await getDocumentsTableName(client);
+                const { error: updateErr } = await client.from(tableName).update(updateData).eq('id', metadata.id);
+                if (updateErr && (updateErr.code === 'PGRST205' || updateErr.message?.includes(tableName))) {
                   updateLocalMockStats(metadata.id);
                 }
               } catch (_) {
@@ -311,7 +403,7 @@ export async function GET(req: Request) {
         if (!downloadSuccess) {
           const fallbackPath = genResult.metadata.storage_url.includes('pdf_cache')
             ? genResult.metadata.storage_url
-            : path.join(os.tmpdir(), 'pdf_cache', `${cleanType}_${studentId}_${internshipId}.pdf`);
+            : path.join(getCacheDir(), `${cleanType}_${studentId}_${internshipId}.pdf`);
             
           if (fs.existsSync(fallbackPath)) {
             pdfBuffer = fs.readFileSync(fallbackPath);
@@ -331,6 +423,9 @@ export async function GET(req: Request) {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `${disposition}; filename="${cleanType}_${studentId}.pdf"`,
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       },
     });
 

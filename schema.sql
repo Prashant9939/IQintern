@@ -318,6 +318,7 @@ create table public.student_documents (
   expiry_date timestamp with time zone,
   generation_status text not null default 'pending' check (generation_status in ('pending', 'generating', 'completed', 'failed')),
   hash text,
+  verification_id text unique,
   template_version text not null default '1.0',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -329,5 +330,37 @@ create policy "Allow public access" on public.student_documents for all using (t
 -- Optimize indices
 CREATE INDEX IF NOT EXISTS idx_student_documents_student_id ON public.student_documents(student_id);
 CREATE INDEX IF NOT EXISTS idx_student_documents_type_student ON public.student_documents(student_id, document_type);
+
+
+-- 15. DOCUMENT REGISTRY TABLE
+CREATE TABLE public.document_registry (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  student_name TEXT NOT NULL,
+  registration_id TEXT,
+  internship_id TEXT,
+  internship_name TEXT NOT NULL,
+  document_type TEXT NOT NULL,
+  certificate_number TEXT UNIQUE, -- Certificates only
+  reference_id TEXT UNIQUE, -- Other documents
+  qr_code_url TEXT NOT NULL,
+  generated_pdf_path TEXT,
+  generated_html_path TEXT,
+  generation_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  last_downloaded_date TIMESTAMP WITH TIME ZONE,
+  verification_status TEXT NOT NULL DEFAULT 'Valid' CHECK (verification_status IN ('Valid', 'Invalid', 'Revoked')),
+  document_version INTEGER NOT NULL DEFAULT 1,
+  document_status TEXT NOT NULL DEFAULT 'Active' CHECK (document_status IN ('Active', 'Revoked'))
+);
+
+-- Enable RLS and create public policy
+ALTER TABLE public.document_registry ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public access" ON public.document_registry FOR ALL USING (true) WITH CHECK (true);
+
+-- Optimize indices
+CREATE INDEX IF NOT EXISTS idx_document_registry_student_id ON public.document_registry(student_id);
+CREATE INDEX IF NOT EXISTS idx_document_registry_cert_no ON public.document_registry(certificate_number);
+CREATE INDEX IF NOT EXISTS idx_document_registry_ref_id ON public.document_registry(reference_id);
+
 
 
