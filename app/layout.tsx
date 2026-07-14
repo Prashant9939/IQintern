@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import SessionTimeoutHandler from "@/components/SessionTimeoutHandler";
+import WhatsAppPopup from "@/components/WhatsAppPopup";
 import { BRANDING } from "@/config/branding";
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
         {/* End Google Tag Manager (noscript) */}
         <SessionTimeoutHandler />
+        <WhatsAppPopup />
         {children}
       </body>
     </html>

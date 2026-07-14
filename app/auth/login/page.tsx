@@ -65,6 +65,9 @@ export default function Login() {
       setSuccess("Logged in successfully! Redirecting...");
 
       console.log(`[INSTRUMENTATION] Redirecting user immediately: role=${res.user.role}`);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
+      }
       if (res.user.role === "admin") {
         window.location.href = "/admin/dashboard";
       } else {

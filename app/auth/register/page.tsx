@@ -268,6 +268,9 @@ export default function Register() {
 
       // Redirect to payment page
       setTimeout(() => {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
+        }
         window.location.href = "/student/payment";
       }, 1500);
     } catch (err: any) {
