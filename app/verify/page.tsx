@@ -298,7 +298,7 @@ function VerifyContent() {
       {/* Footer */}
       <footer className="w-full py-6 border-t border-slate-200 bg-white text-center text-[10px] sm:text-xs text-slate-400">
         <div className="max-w-4xl mx-auto px-4 space-y-1">
-          <p>© {new Date().getFullYear()} IQ Intern Vocational Training Pvt. Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} AVADS Private Limited. All rights reserved.</p>
           <p className="font-mono text-[9px] opacity-75">Secure Audit Verification Portal | SHA-256 Checksum Secured</p>
         </div>
       </footer>

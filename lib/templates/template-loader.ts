@@ -310,6 +310,7 @@ function getFallbackTemplateHtml(code: string): string {
         <td>
           <div class="invoice-title">Payment Receipt</div>
           <div style="font-size:13px;color:#64748b;margin-top:5px;">Receipt ID: {{verificationId}}</div>
+          <div style="font-size:13px;color:#64748b;margin-top:3px;">Payment ID: {{razorpayPaymentId}}</div>
         </td>
         <td class="company-details">
           <div class="company-name">${BRANDING.name}</div>
@@ -350,18 +351,18 @@ function getFallbackTemplateHtml(code: string): string {
             <span style="font-size:11px;color:#64748b;">Track: {{internshipName}}</span>
           </td>
           <td style="text-align:center;">1</td>
-          <td style="text-align:right;">₹1,999.00</td>
-          <td style="text-align:right;">₹1,999.00</td>
+          <td style="text-align:right;">{{amount}}</td>
+          <td style="text-align:right;">{{amount}}</td>
         </tr>
         <tr class="total-row">
           <td colspan="3" style="text-align:right;">Total Amount Paid:</td>
-          <td style="text-align:right;">₹1,999.00</td>
+          <td style="text-align:right;">{{amount}}</td>
         </tr>
       </tbody>
     </table>
 
     <div class="footer">
-      <p>Computer-generated receipt verified under Razorpay Payment Gateway.</p>
+      <p>Computer-generated receipt verified under Razorpay Payment Gateway. (Payment ID: {{razorpayPaymentId}})</p>
     </div>
   </div>
 </body>

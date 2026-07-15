@@ -1857,7 +1857,7 @@ function getFallbackTemplateHtml(code: string, name: string): string {
       <div><strong>Department/Stream:</strong> {{DEPARTMENT}}</div>
     </div>
     <div class="content">
-      <p>I hereby express my consent to participate in the IQ Intern Vocational Training and Internship program. I agree to abide by the guidelines, schedules, and code of conduct set forth by the platform and the project coordinators.</p>
+      <p>I hereby express my consent to participate in the AVADS Private Limited Vocational Training and Internship program. I agree to abide by the guidelines, schedules, and code of conduct set forth by the platform and the project coordinators.</p>
       <p>I confirm that the details provided in my candidate profile are accurate. I understand that my certification is subject to completing the requirements and achieving a passing grade of 40% or above in the assessment portal.</p>
       <p style="margin-top: 16px;">Date: ________________________</p>
     </div>
@@ -2431,10 +2431,27 @@ export interface PlatformSettings {
   assessment_fee: number;
   payments_enabled: boolean;
   assessment_availability_days?: number;
+  attendance_generation_mode?: 'start_date' | 'completion_date';
+  holidays?: Array<{ date: string; name: string }>;
 }
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
-  const defaultValue: PlatformSettings = { assessment_fee: 150, payments_enabled: true, assessment_availability_days: 30 };
+  const defaultValue: PlatformSettings = { 
+    assessment_fee: 150, 
+    payments_enabled: true, 
+    assessment_availability_days: 30,
+    attendance_generation_mode: 'start_date',
+    holidays: [
+      { date: '2026-01-26', name: 'Republic Day' },
+      { date: '2026-08-15', name: 'Independence Day' },
+      { date: '2026-10-02', name: 'Gandhi Jayanti' },
+      { date: '2026-12-25', name: 'Christmas' },
+      { date: '2026-03-27', name: 'Holi' },
+      { date: '2026-11-08', name: 'Diwali' },
+      { date: '2026-05-25', name: 'Eid' },
+      { date: '2026-03-28', name: 'Ram Navami' },
+    ]
+  };
   const cacheKey = "platform_settings";
   const cached = getCachedData<PlatformSettings>(cacheKey);
   if (cached) return cached;

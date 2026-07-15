@@ -467,8 +467,17 @@
               <th style="text-align: center;">Status</th>
             </tr>
           </thead>
-          <!-- Empty Tbody to be populated by JavaScript -->
-          <tbody id="attendance-body"></tbody>
+          <tbody id="attendance-body">
+            {{#each attendanceDays}}
+            <tr>
+              <td class="date-cell">{{date}}</td>
+              <td class="time-cell">{{loginTime}}</td>
+              <td class="time-cell">{{logoutTime}}</td>
+              <td style="font-weight:600;">5h 00m</td>
+              <td style="text-align: center;"><span class="status-badge status-present">Present</span></td>
+            </tr>
+            {{/each}}
+          </tbody>
         </table>
       </div>
 
@@ -495,61 +504,9 @@
     <div class="footer">
       This attendance sheet is auto-generated based on platform login/logoff timestamps. For disputes, contact <a
         href="mailto:support.iqintern@gmail.com">support.iqintern@gmail.com</a>.<br />
-      © {{currentYear}} IQ Intern Vocational Training Pvt. Ltd. All rights reserved.
+      © {{currentYear}} AVADS Private Limited. All rights reserved.
     </div>
   </div>
-
-  <!-- Script to dynamically generate dates starting from {{startDate}} -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Fetch the start date injected by your backend (Ensure backend sends YYYY-MM-DD or standard format)
-      const startDateStr = "{{startDate}}";
-      const tbody = document.getElementById("attendance-body");
-
-      // Parse the date
-      let currentDate = new Date(startDateStr);
-
-      // Options for formatting the date visually in the table
-      const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
-
-      // Loop exactly 24 times to generate 24 working days (24 * 5 hours = 120 hours)
-      for (let i = 1; i <= 24; i++) {
-
-        // Format the current date
-        const formattedDate = currentDate.toLocaleDateString('en-US', dateOptions);
-
-        // Generate slightly randomized but realistic 5-hour login/logout times
-        const loginHour = 9 + Math.floor(Math.random() * 5); // Random hour between 9 AM and 1 PM
-        const loginMin = Math.floor(Math.random() * 4) * 15;  // Random minute: 00, 15, 30, or 45
-        const logoutHour = loginHour + 5;                      // Add exactly 5 hours
-        const logoutMin = loginMin;
-
-        // Helper function to format 24hr time into 12hr AM/PM format
-        const formatTime = (h, m) => {
-          const ampm = h >= 12 ? 'PM' : 'AM';
-          const hh = h % 12 || 12; // Converts 0 to 12
-          return `${hh.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
-        };
-
-        const loginTimeStr = formatTime(loginHour, loginMin);
-        const logoutTimeStr = formatTime(logoutHour, logoutMin);
-
-        // Create and insert the row
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td class="date-cell">${formattedDate}</td>
-          <td class="time-cell">${loginTimeStr}</td>
-          <td class="time-cell">${logoutTimeStr}</td>
-          <td style="font-weight:600;">5h 00m</td>
-          <td style="text-align: center;"><span class="status-badge status-present">Present</span></td>
-        `;
-        tbody.appendChild(row);
-
-        // Increment the date by 1 day for the next row
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-    });
-  </script>
 
   <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
 </body>

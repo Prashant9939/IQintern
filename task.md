@@ -1,0 +1,7 @@
+- [x] Add the `amount` mapping in `lib/documents/generator.ts` (converting paise from db/mock to formatted Rupees string)
+- [x] Add the `amount` mock value to the mock payments array in `lib/documents/generator.ts`
+- [x] Update fallback receipt template in `lib/templates/template-loader.ts` to use `{{amount}}`
+- [x] Redesign `public/templates/default/receipt.html` with a modern minimal look, a soft Blue-to-White gradient header, Inter font, inline SVGs, and proper single-page A4 print configuration
+- [x] Modernize the inline receipt HTML in `app/student/internships/page.tsx`
+- [x] Modernize the inline receipt HTML in `app/student/dashboard/page.tsx`
+- [x] Build and test changes manually

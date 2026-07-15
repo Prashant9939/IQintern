@@ -4,90 +4,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evaluation Marksheet - IQ Intern</title>
+  <title>Evaluation Marksheet - AVADS</title>
+  <!-- Google Fonts for elite aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+      --accent-gradient: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
       --primary-light: #e0e7ff;
-      --text-dark: #1e293b;
+      --text-dark: #0f172a;
       --text-body: #334155;
       --text-light: #64748b;
       --border: #e2e8f0;
       --bg-light: #f8fafc;
+      --emerald-light: #ecfdf5;
+      --emerald-dark: #047857;
+      --emerald-border: #a7f3d0;
     }
 
     body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       line-height: 1.6;
       color: var(--text-body);
       background: #f1f5f9;
       margin: 0;
       padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
     }
 
     .letter-container {
       max-width: 850px;
       margin: 0 auto;
       background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 15px 20px -20px rgba(15, 23, 42, 0.04);
       overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.05);
     }
 
     .header {
-      background: linear-gradient(135deg, var(--primary) 0%, #3730a3 100%);
+      background: var(--header-gradient);
       color: white;
-      padding: 40px 50px;
+      padding: 45px 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 4px solid var(--primary);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 28px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 30px;
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: -1px;
     }
 
     .brand p {
       margin: 5px 0 0;
       font-size: 13px;
-      opacity: 0.9;
-      font-weight: 400;
+      opacity: 0.85;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .header-meta {
       text-align: right;
       font-size: 13px;
-      opacity: 0.95;
+      opacity: 0.9;
     }
 
     .header-meta strong {
       display: block;
-      font-size: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
       margin-bottom: 4px;
+      letter-spacing: 0.5px;
     }
 
     .content {
-      padding: 50px;
+      padding: 30px 45px;
     }
 
     .letter-title {
       text-align: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-dark);
-      margin-bottom: 35px;
+      margin-bottom: 25px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       position: relative;
     }
 
     .letter-title::after {
       content: '';
       display: block;
-      width: 60px;
+      width: 45px;
       height: 4px;
       background: var(--primary);
       margin: 12px auto 0;
@@ -97,75 +116,107 @@
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 40px;
+      gap: 15px;
+      margin-bottom: 25px;
     }
 
     .info-card {
       background: var(--bg-light);
       border-left: 4px solid var(--primary);
-      padding: 20px;
-      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      border-radius: 0 12px 12px 0;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
     }
 
     .info-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--primary);
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      letter-spacing: 0.75px;
+      margin-bottom: 4px;
     }
 
     .info-value {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text-dark);
     }
 
-    /* Hero Score Section */
+    /* Premium Score Hero Section */
     .score-hero {
-      background: linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%);
-      border: 1px solid #ddd6fe;
-      border-radius: 16px;
-      padding: 40px 20px;
+      background: var(--accent-gradient);
+      border: 1px solid var(--primary-light);
+      border-radius: 20px;
+      padding: 22px 20px;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-hero::before {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%);
+      top: -50px;
+      right: -50px;
+      border-radius: 50%;
     }
 
     .score-number {
-      font-size: 72px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 80px;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
       margin-bottom: 10px;
+      letter-spacing: -2px;
     }
 
     .grade-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-dark);
+      letter-spacing: 0.5px;
+    }
+
+    .grade-text strong {
+      color: var(--primary);
+      font-size: 22px;
+      margin-left: 4px;
     }
 
     .passed-badge {
-      display: inline-block;
-      font-size: 13px;
-      font-weight: 700;
-      color: #065f46;
-      background: #d1fae5;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--emerald-dark);
+      background: var(--emerald-light);
+      border: 1px solid var(--emerald-border);
       border-radius: 50px;
-      padding: 8px 20px;
-      margin-top: 20px;
+      padding: 6px 18px;
+      margin-top: 15px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     /* Breakdown Table */
     .table-wrapper {
-      margin-bottom: 40px;
+      margin-bottom: 25px;
       overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
       border: 1px solid var(--border);
     }
 
@@ -176,18 +227,19 @@
     }
 
     .marks-table th {
-      background: var(--primary);
-      color: white;
+      background: var(--bg-light);
+      color: var(--text-light);
       text-align: left;
-      padding: 15px 20px;
-      font-size: 12px;
+      padding: 14px 20px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.75px;
+      border-bottom: 2px solid var(--border);
     }
 
     .marks-table td {
-      padding: 18px 20px;
+      padding: 14px 20px;
       background: white;
       border-bottom: 1px solid var(--border);
       color: var(--text-body);
@@ -202,19 +254,23 @@
       font-weight: 800;
       color: var(--primary);
       border-top: 2px solid var(--primary-light);
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     .disclaimer {
-      font-size: 13px;
+      font-size: 12px;
       text-align: center;
       color: var(--text-light);
       margin-bottom: 20px;
-      line-height: 1.6;
+      line-height: 1.5;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .footer {
       background: var(--bg-light);
-      padding: 25px 50px;
+      padding: 30px 50px;
       text-align: center;
       font-size: 12px;
       color: var(--text-light);
@@ -225,19 +281,27 @@
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .footer a:hover {
+      opacity: 0.8;
     }
 
     .verification-badge {
-      display: inline-block;
-      background: #dbeafe;
-      color: #1e40af;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--emerald-light);
+      color: var(--emerald-dark);
+      border: 1px solid var(--emerald-border);
       font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
+      font-weight: 800;
+      padding: 6px 16px;
       border-radius: 20px;
       margin-top: 15px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.75px;
     }
 
     @media screen and (max-width: 768px) {
@@ -245,6 +309,7 @@
         flex-direction: column;
         text-align: center;
         gap: 20px;
+        padding: 35px 25px;
       }
 
       .header-meta {
@@ -252,15 +317,16 @@
       }
 
       .content {
-        padding: 30px 25px;
+        padding: 35px 25px;
       }
 
       .info-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
       }
 
       .score-number {
-        font-size: 56px;
+        font-size: 64px;
       }
 
       .table-wrapper {
@@ -269,6 +335,51 @@
 
       .marks-table {
         min-width: 500px;
+      }
+    }
+    @media print {
+      body {
+        padding: 0;
+        background: none;
+      }
+      .letter-container {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        max-width: 100%;
+        margin: 0;
+      }
+      .header {
+        padding: 25px 40px !important;
+      }
+      .content {
+        padding: 25px 40px !important;
+      }
+      .info-grid {
+        margin-bottom: 15px !important;
+        gap: 12px !important;
+      }
+      .info-card {
+        padding: 12px 15px !important;
+      }
+      .score-hero {
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+      }
+      .score-number {
+        font-size: 60px !important;
+      }
+      .table-wrapper {
+        margin-bottom: 15px !important;
+      }
+      .marks-table th, .marks-table td {
+        padding: 10px 15px !important;
+      }
+      .disclaimer {
+        margin-bottom: 10px !important;
+      }
+      .footer {
+        padding: 15px 40px !important;
       }
     }
   </style>
@@ -313,7 +424,7 @@
 
       <!-- Large Score Display -->
       <div class="score-hero">
-        <div class="score-number">{{score}}<span style="font-size: 24px; font-weight: 600; color: #6366f1;">%</span>
+        <div class="score-number">{{percentage}}<span style="font-size: 24px; font-weight: 600; color: #6366f1;">%</span>
         </div>
         <div class="grade-text">Final Grade: <strong>{{grade}}</strong></div>
         <div class="passed-badge">Assessment Result: Passed</div>
@@ -366,8 +477,7 @@
     <div class="footer">
       This is a computer-generated marksheet. Its authenticity can be verified online at <a
         href="https://iqintern.in/verify">iqintern.in/verify</a>.<br />
-      Digitally audited and signed on {{issueDate}} &nbsp;|&nbsp; © {{currentYear}} IQ Intern Vocational Training Pvt.
-      Ltd. All rights reserved.
+      Digitally audited and signed on {{issueDate}} &nbsp;|&nbsp; © {{currentYear}} AVADS Private Limited. All rights reserved.
     </div>
   </div>
 

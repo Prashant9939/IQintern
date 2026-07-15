@@ -165,98 +165,403 @@ export default function AvailableInternships() {
   <meta charset="UTF-8" />
   <title>Payment Receipt</title>
   <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; background-color: #f9f9f9; margin: 0; }
-    .invoice-box { max-width: 800px; margin: auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
-    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-    .header-table td { vertical-align: top; }
-    .company-details { text-align: right; font-size: 13px; color: #64748b; line-height: 1.5; }
-    .company-name { font-size: 20px; font-weight: bold; color: #4f46e5; margin-bottom: 5px; }
-    .invoice-title { font-size: 28px; font-weight: 850; color: #1e293b; text-transform: uppercase; letter-spacing: -0.5px; }
-    .meta-details { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px; }
-    .meta-details td { padding: 10px; border: 1px solid #f1f5f9; }
-    .meta-details td.label { font-weight: bold; background: #f8fafc; color: #475569; width: 150px; }
-    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px; }
-    .items-table th { background: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-align: left; padding: 12px; font-weight: bold; color: #475569; }
-    .items-table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; }
-    .items-table tr.total-row td { font-weight: bold; background: #faf5ff; border-top: 2px solid #ddd6fe; color: #4f46e5; }
-    .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-    .print-btn { display: block; margin: 30px auto 0 auto; padding: 12px 24px; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: all 0.2s; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.15); }
-    .print-btn:hover { background: #4338ca; transform: translateY(-1px); }
-    @media print { .print-btn { display: none; } body { padding: 0; background: none; } .invoice-box { border: none; box-shadow: none; padding: 0; } }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #eff6ff;
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --bg-light: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      color: var(--text-body);
+      background: #f8fafc;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .letter-container {
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.025);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dark);
+      padding: 30px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .header-meta strong {
+      display: block;
+      font-size: 14px;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .letter-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .info-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      padding: 14px 18px;
+      border-radius: 8px;
+    }
+
+    .info-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .table-wrapper {
+      margin-bottom: 30px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    .items-table th {
+      background: var(--bg-light);
+      color: var(--text-light);
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .items-table td {
+      padding: 16px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-body);
+    }
+
+    .items-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .item-desc {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .item-sub {
+      display: block;
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 3px;
+    }
+
+    .items-table .total-row td {
+      background: var(--bg-light);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      border-top: 1px solid var(--border);
+    }
+
+    .success-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: #166534;
+      font-weight: 500;
+      gap: 12px;
+    }
+
+    .success-icon {
+      flex-shrink: 0;
+      display: inline-flex;
+    }
+
+    .footer {
+      background: var(--bg-light);
+      padding: 20px 40px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-light);
+      border-top: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .verification-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .print-btn {
+      display: block;
+      margin: 30px auto 0 auto;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(30, 58, 138, 0.15);
+    }
+
+    .print-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+      .letter-container {
+        border: none;
+        box-shadow: none;
+      }
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+        padding: 24px;
+      }
+      .header-meta {
+        text-align: center;
+      }
+      .content {
+        padding: 24px;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .table-wrapper {
+        overflow-x: auto;
+      }
+      .items-table {
+        min-width: 500px;
+      }
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: none;
+      }
+      .invoice-box {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+      .letter-container {
+        border: none;
+        box-shadow: none;
+        max-width: 100%;
+        width: 100%;
+        border-radius: 0;
+      }
+      .print-btn {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="invoice-box">
-    <table class="header-table">
-      <tr>
-        <td>
-          <div class="invoice-title">Payment Receipt</div>
-          <div style="font-size: 13px; color: #64748b; margin-top: 5px;">Receipt ID: ${receiptNo}</div>
-        </td>
-        <td class="company-details">
-          <div class="company-name">${BRANDING.name}</div>
-          <div>${BRANDING.legal.companyName}</div>
-          <div>${BRANDING.address}</div>
-          <div>Email: ${BRANDING.emails.support}</div>
-          <div>GSTIN: 09AAECS8274M1Z5 (Mock)</div>
-        </td>
-      </tr>
-    </table>
-
-    <table class="meta-details">
-      <tr>
-        <td class="label">Candidate Name</td>
-        <td>${user?.full_name || "N/A"}</td>
-        <td class="label">Date</td>
-        <td>${formattedDate}</td>
-      </tr>
-      <tr>
-        <td class="label">Email</td>
-        <td>${user?.email || "N/A"}</td>
-        <td class="label">Phone</td>
-        <td>${user?.phone_number || "N/A"}</td>
-      </tr>
-      <tr>
-        <td class="label">Razorpay Order</td>
-        <td>${pay.razorpay_order_id || "N/A"}</td>
-        <td class="label">Razorpay Payment</td>
-        <td>${pay.razorpay_payment_id || "N/A"}</td>
-      </tr>
-    </table>
-
-    <table class="items-table">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th style="text-align: center; width: 60px;">Qty</th>
-          <th style="text-align: right; width: 100px;">Rate</th>
-          <th style="text-align: right; width: 100px;">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <strong>IQ Intern Internship Evaluation Assessment Fee</strong><br />
-            <span style="font-size: 11px; color: #64748b;">Track: ${internshipTitle}</span>
-          </td>
-          <td style="text-align: center;">1</td>
-          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
-          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
-        </tr>
-        <tr class="total-row">
-          <td colspan="3" style="text-align: right;">Total Amount Paid:</td>
-          <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="footer">
-      <p>This is a computer-generated transaction receipt verified under the Razorpay Payment Gateway API.</p>
-      <p style="margin-top: 5px; font-weight: 500; color: #4f46e5;">Thank you for using IQ Intern vocational evaluation services!</p>
+  <div class="letter-container">
+    <div class="header">
+      <div class="brand">
+        <h1>${BRANDING.name}</h1>
+        <p>Vocational Training Platform</p>
+      </div>
+      <div class="header-meta">
+        <strong>Official Receipt</strong>
+        Date: ${formattedDate}<br />
+        Receipt ID: ${receiptNo}
+      </div>
     </div>
 
-    <button class="print-btn" onclick="window.print()">Print Receipt</button>
+    <div class="content">
+      <div class="letter-title">Payment Receipt</div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">Candidate Name</div>
+          <div class="info-value">${user?.full_name || "N/A"}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Email Address</div>
+          <div class="info-value">${user?.email || "N/A"}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Phone Number</div>
+          <div class="info-value">${user?.phone_number || "N/A"}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Order Details</div>
+          <div class="info-value" style="font-size: 12px; font-weight: 500; color: #475569; line-height: 1.4;">
+            Order: ${pay.razorpay_order_id || "N/A"}<br/>
+            Payment: ${pay.razorpay_payment_id || "N/A"}
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th style="text-align: center; width: 60px;">Qty</th>
+              <th style="text-align: right; width: 100px;">Rate</th>
+              <th style="text-align: right; width: 100px;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="item-desc">IQ Intern Internship Evaluation Assessment Fee</span><br />
+                <span class="item-sub">Track: ${internshipTitle}</span>
+              </td>
+              <td style="text-align: center; font-weight: 600;">1</td>
+              <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
+              <td style="text-align: right; font-weight: 600;">₹${(pay.amount / 100).toFixed(2)}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3" style="text-align: right;">Total Amount Paid:</td>
+              <td style="text-align: right;">₹${(pay.amount / 100).toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="success-box">
+        <span class="success-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="#166534"/>
+          </svg>
+        </span>
+        <span>This is a computer-generated transaction receipt verified under the Razorpay Payment Gateway API. Thank you for using IQ Intern vocational evaluation services!</span>
+      </div>
+
+      <div style="text-align: center;">
+        <span class="verification-badge">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.5 9L1.5 6L2.5 5L4.5 7L9.5 2L10.5 3L4.5 9Z" fill="#166534" stroke="#166534" stroke-width="0.5"/>
+          </svg>
+          Payment Verified
+        </span>
+      </div>
+    </div>
+
+    <div class="footer">
+      This is a computer-generated receipt and does not require a physical signature. For queries, contact <a
+        href="mailto:${BRANDING.emails.support}">${BRANDING.emails.support}</a>.<br />
+      © ${new Date().getFullYear()} ${BRANDING.legal.companyName}. All rights reserved.
+    </div>
   </div>
+
+  <button class="print-btn" onclick="window.print()">Print Receipt</button>
 </body>
 </html>
     `;

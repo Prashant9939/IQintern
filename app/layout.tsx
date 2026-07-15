@@ -30,6 +30,24 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Auto-Recovery handler for stale bundle chunk errors */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('error', function(e) {
+                var message = e.message || '';
+                if (
+                  message.indexOf('ChunkLoadError') !== -1 || 
+                  message.indexOf('Loading chunk') !== -1 ||
+                  message.indexOf('Failed to fetch dynamically imported module') !== -1
+                ) {
+                  console.warn('[Auto Recovery] Stale chunk error detected. Reloading page...');
+                  window.location.reload();
+                }
+              }, true);
+            `
+          }}
+        />
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"

@@ -24,6 +24,10 @@ export default function AdminSettingsPage() {
   const [assessmentAvailabilityDays, setAssessmentAvailabilityDays] = useState<number>(30);
   const [customDays, setCustomDays] = useState<string>("30");
   const [isCustom, setIsCustom] = useState(false);
+  const [attendanceGenerationMode, setAttendanceGenerationMode] = useState<'start_date' | 'completion_date'>('start_date');
+  const [holidays, setHolidays] = useState<Array<{ date: string; name: string }>>([]);
+  const [newHolidayName, setNewHolidayName] = useState("");
+  const [newHolidayDate, setNewHolidayDate] = useState("");
 
   useEffect(() => {
     async function loadSettings() {
@@ -33,6 +37,8 @@ export default function AdminSettingsPage() {
           payments_enabled: s.payments_enabled ?? true,
           maintenance_mode: false,
         });
+        setAttendanceGenerationMode(s.attendance_generation_mode ?? 'start_date');
+        setHolidays(s.holidays ?? []);
 
         const days = s.assessment_availability_days ?? 30;
         if ([7, 15, 30, 45, 60].includes(days)) {
@@ -59,7 +65,9 @@ export default function AdminSettingsPage() {
       await savePlatformSettings({
         payments_enabled: settings.payments_enabled,
         assessment_fee: 150, // default fee
-        assessment_availability_days: isNaN(daysToSave) || daysToSave <= 0 ? 30 : daysToSave
+        assessment_availability_days: isNaN(daysToSave) || daysToSave <= 0 ? 30 : daysToSave,
+        attendance_generation_mode: attendanceGenerationMode,
+        holidays: holidays
       });
       alert("Settings saved successfully!");
     } catch (err) {
@@ -205,6 +213,101 @@ export default function AdminSettingsPage() {
                   <span className="text-xs text-zinc-500 font-bold">Days</span>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Attendance Settings Card */}
+        <div className="bg-white border border-zinc-150/80 rounded-[20px] p-6 shadow-xs hover:shadow-md transition-all duration-300">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 text-[#5B5FF7] flex items-center justify-center shrink-0">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-sm font-bold text-zinc-900">Attendance Sheet Settings</h3>
+                <p className="text-xs text-zinc-500 font-light mt-0.5 leading-relaxed">
+                  Configure attendance dates generation mode and public holiday exclusions.
+                </p>
+              </div>
+            </div>
+
+            {/* Generation Mode Select */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-zinc-100">
+              <div className="text-left">
+                <span className="text-xs font-bold text-zinc-800">Generation Mode</span>
+                <p className="text-[11px] text-zinc-400 font-light">Determine if attendance log is calculated from start date or completions backward.</p>
+              </div>
+              <select
+                value={attendanceGenerationMode}
+                onChange={(e) => setAttendanceGenerationMode(e.target.value as 'start_date' | 'completion_date')}
+                className="px-3 py-2 text-xs bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors cursor-pointer min-w-[220px]"
+              >
+                <option value="start_date">Start Date Mode (Default)</option>
+                <option value="completion_date">Completion Date Mode (Backdated)</option>
+              </select>
+            </div>
+
+            {/* Holiday Configuration */}
+            <div className="space-y-4 pt-4 border-t border-zinc-100">
+              <div className="text-left">
+                <span className="text-xs font-bold text-zinc-800">Centralized Holiday Exclusions</span>
+                <p className="text-[11px] text-zinc-400 font-light">Sundays are automatically excluded. Configure additional public/festival holidays below.</p>
+              </div>
+
+              {/* Holiday List Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {holidays.map((h, index) => (
+                  <div key={index} className="flex items-center justify-between bg-zinc-50 border border-zinc-150 rounded-xl px-3 py-2 text-xs">
+                    <div className="text-left">
+                      <span className="font-bold text-zinc-800">{h.name}</span>
+                      <span className="block text-[10px] text-zinc-400 mt-0.5">{h.date}</span>
+                    </div>
+                    <button
+                      onClick={() => setHolidays(prev => prev.filter((_, idx) => idx !== index))}
+                      className="text-red-500 hover:text-red-700 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 cursor-pointer text-[10px]"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add Holiday Form */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <input
+                  type="text"
+                  placeholder="Holiday Name (e.g. Diwali)"
+                  value={newHolidayName}
+                  onChange={(e) => setNewHolidayName(e.target.value)}
+                  className="px-3.5 py-2.5 text-xs bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors w-full sm:flex-1"
+                />
+                <input
+                  type="date"
+                  value={newHolidayDate}
+                  onChange={(e) => setNewHolidayDate(e.target.value)}
+                  className="px-3.5 py-2.5 text-xs bg-white border border-zinc-200 focus:border-indigo-500/50 rounded-xl outline-none text-zinc-800 transition-colors w-full sm:w-auto"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!newHolidayName.trim() || !newHolidayDate) {
+                      alert("Please specify both holiday name and date.");
+                      return;
+                    }
+                    if (holidays.some(h => h.date === newHolidayDate)) {
+                      alert("A holiday for this date is already configured.");
+                      return;
+                    }
+                    setHolidays(prev => [...prev, { name: newHolidayName.trim(), date: newHolidayDate }].sort((a, b) => a.date.localeCompare(b.date)));
+                    setNewHolidayName("");
+                    setNewHolidayDate("");
+                  }}
+                  className="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200/50 hover:border-indigo-300 text-xs font-bold rounded-xl transition-all cursor-pointer w-full sm:w-auto text-center"
+                >
+                  + Add Holiday
+                </button>
+              </div>
             </div>
           </div>
         </div>

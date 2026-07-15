@@ -8,6 +8,8 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import crypto from 'crypto';
+import { generateAttendanceDays, getRequiredWorkingDays } from '@/lib/documents/attendance-engine';
+import { getPlatformSettings } from '@/lib/supabase/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,11 +38,13 @@ export async function GET(req: Request) {
 
     const dbClient = (isSupabaseAdminConfigured() && supabaseAdmin) ? supabaseAdmin : (isSupabaseConfigured() && supabase ? supabase : null);
 
+    let platformSettings: any = null;
+
     if (dbClient) {
       const isValidUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
       const isUuid = isValidUuid(internshipId);
 
-      const [profileRes, internshipRes, testResultRes, paymentsRes, dbMetadata] = await Promise.all([
+      const [profileRes, internshipRes, testResultRes, paymentsRes, dbMetadata, platformSettingsRes] = await Promise.all([
         dbClient.from('profiles').select('*').eq('id', studentId).single(),
         isUuid 
           ? dbClient.from('internships').select('*').eq('id', internshipId).single()
@@ -60,7 +64,8 @@ export async function GET(req: Request) {
           .select('*')
           .eq('student_id', studentId)
           .eq('status', 'completed'),
-        getDocumentMetadata(studentId, internshipId, cleanType)
+        getDocumentMetadata(studentId, internshipId, cleanType),
+        getPlatformSettings()
       ]);
 
       profile = profileRes.data;
@@ -78,6 +83,7 @@ export async function GET(req: Request) {
 
       payments = paymentsRes.data || [];
       metadata = dbMetadata;
+      platformSettings = platformSettingsRes;
     } else {
       // Mock mode data
       profile = {
@@ -92,7 +98,7 @@ export async function GET(req: Request) {
       internship = {
         id: internshipId,
         title: internshipId.includes('python') ? 'Python Programming' : internshipId.includes('data') ? 'Data Science' : 'Web Development',
-        duration: '4 Weeks',
+        duration: '120 Hrs',
       };
       testResult = {
         score: 8,
@@ -110,6 +116,7 @@ export async function GET(req: Request) {
         }
       ];
       metadata = await getDocumentMetadata(studentId, internshipId, cleanType);
+      platformSettings = await getPlatformSettings();
     }
 
     if (!profile) {
@@ -198,20 +205,70 @@ export async function GET(req: Request) {
       (p: any) => p.internship_id === internshipId && p.status === 'completed'
     );
 
-    let joiningDate = new Date();
-    if (payment) {
-      joiningDate = new Date(payment.created_at);
-    } else if (testResult?.completed_at) {
-      joiningDate = new Date(testResult.completed_at);
-      joiningDate.setDate(joiningDate.getDate() - 28);
+    const generationMode = platformSettings?.attendance_generation_mode || 'start_date';
+    const holidaysList = (platformSettings?.holidays || []).map((h: any) => h.date);
+    const workingDaysCount = getRequiredWorkingDays(internship.duration || '120 Hrs');
+
+    let baseDate = new Date();
+    if (generationMode === 'start_date') {
+      if (payment) {
+        baseDate = new Date(payment.created_at);
+      } else if (testResult?.completed_at) {
+        baseDate = new Date(testResult.completed_at);
+        baseDate.setDate(baseDate.getDate() - 28);
+      } else {
+        baseDate.setDate(baseDate.getDate() - 28);
+      }
     } else {
-      joiningDate.setDate(joiningDate.getDate() - 28);
+      if (payment) {
+        const payDate = new Date(payment.created_at);
+        baseDate = new Date(payDate.getTime() + 28 * 24 * 60 * 60 * 1000);
+      } else if (testResult?.completed_at) {
+        baseDate = new Date(testResult.completed_at);
+      } else {
+        baseDate.setDate(baseDate.getDate());
+      }
     }
 
-    const completionDate = new Date(joiningDate.getTime() + 28 * 24 * 60 * 60 * 1000);
-    const formattedJoiningDate = joiningDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-    const formattedCompletionDate = completionDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-    const acceptanceDeadline = new Date(joiningDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    const { dates, startDate, endDate } = generateAttendanceDays(baseDate, generationMode, workingDaysCount, holidaysList);
+
+    let amountVal = '₹150.00';
+    if (payment && typeof payment.amount === 'number') {
+      amountVal = `₹${(payment.amount / 100).toFixed(2)}`;
+    }
+
+    let razorpayPaymentIdVal = 'N/A';
+    if (payment && payment.razorpay_payment_id) {
+      razorpayPaymentIdVal = payment.razorpay_payment_id;
+    }
+
+    const formattedJoiningDate = startDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    const formattedCompletionDate = endDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    const acceptanceDeadline = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const startMonth = startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const endMonth = endDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const attendanceMonthVal = startMonth === endMonth ? startMonth : `${startMonth} - ${endMonth}`;
+
+    const attendanceDays = dates.map(d => {
+      const dateNum = d.getTime();
+      const loginHour = 9 + (dateNum % 5);
+      const loginMin = (dateNum % 4) * 15;
+      const logoutHour = loginHour + 5;
+      const logoutMin = loginMin;
+
+      const formatTime = (h: number, m: number) => {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hh = h % 12 || 12;
+        return `${hh.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+      };
+
+      return {
+        date: d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }),
+        loginTime: formatTime(loginHour, loginMin),
+        logoutTime: formatTime(logoutHour, logoutMin)
+      };
+    });
 
     const renderData = {
       studentName: profile.full_name,
@@ -231,6 +288,7 @@ export async function GET(req: Request) {
       internshipTitle: internshipTitle,
       score: scoreFormatted,
       grade: grade,
+      percentage: pct.toString(),
       startDate: formattedJoiningDate,
       joiningDate: formattedJoiningDate,
       endDate: formattedCompletionDate,
@@ -241,6 +299,10 @@ export async function GET(req: Request) {
       duration: internship.duration || '120 Hrs',
       issueDate: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
       currentYear: new Date().getFullYear().toString(),
+      amount: amountVal,
+      razorpayPaymentId: razorpayPaymentIdVal,
+      attendanceMonth: attendanceMonthVal,
+      attendanceDays,
       stipendStatus: 'Unpaid',
       isUnpaid: true,
       acceptanceDeadline,

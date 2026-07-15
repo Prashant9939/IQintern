@@ -81,7 +81,7 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
     );
   } else if (rendered.includes('class="signature-grid"') || rendered.includes("class='signature-grid'")) {
     rendered = rendered.replace(
-      /<div class="signature-grid">[\s\S]*?For IQ Intern Vocational Training Pvt\. Ltd\.<\/div>\s*<div class="sig-sublabel">Date: \{\{issueDate\}\}<\/div>\s*<\/div>\s*<\/div>/,
+      /<div class="signature-grid">[\s\S]*?For (IQ Intern Vocational Training Pvt\. Ltd\.|AVADS Private Limited)<\/div>\s*<div class="sig-sublabel">Date: \{\{issueDate\}\}<\/div>\s*<\/div>\s*<\/div>/,
       `<div class="signature-grid" style="grid-template-columns: 1fr 1fr 1fr; align-items: center; justify-items: center; text-align: center;">
         <div class="sig-block">
           <div class="sig-line" style="margin: 25px auto 12px; width: 140px;"></div>
@@ -98,7 +98,7 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
         <div class="sig-block">
           <div class="sig-label">Authorized Signatory</div>
           <div style="margin: 5px 0;"><img src="/stamp.png" height="75px" width="75px"></div>
-          <div class="sig-sublabel">For IQ Intern Vocational Training Pvt. Ltd.</div>
+          <div class="sig-sublabel">For AVADS Private Limited</div>
           <div class="sig-sublabel">Date: {{issueDate}}</div>
         </div>
       </div>`
@@ -168,7 +168,12 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
     ['issueDate', 'ISSUE_DATE'],
     ['currentYear', 'CURRENT_YEAR'],
     ['acceptanceDeadline', 'ACCEPTANCE_DEADLINE'],
-    ['duration', 'DURATION']
+    ['duration', 'DURATION'],
+    ['amount', 'AMOUNT'],
+    ['razorpayPaymentId', 'RAZORPAY_PAYMENT_ID'],
+    ['score', 'SCORE'],
+    ['grade', 'GRADE'],
+    ['percentage', 'PERCENTAGE']
   ];
 
   keysToSync.forEach(([camel, snake]) => {
