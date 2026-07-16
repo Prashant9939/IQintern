@@ -95,7 +95,21 @@ export async function loadTemplate(
   internshipSlug: string,
   internshipId?: string
 ): Promise<string> {
-  const cleanCode = templateType.trim().toLowerCase();
+  let cleanCode = templateType.trim().toLowerCase();
+
+  // Redirect project/internship reports directly to track-specific templates
+  if (cleanCode === 'project_report' || cleanCode === 'internship_report') {
+    const key = (internshipId || '').toLowerCase().trim();
+    const slugKey = internshipSlug.toLowerCase().replace(/-/g, ' ');
+    let mappedFile = REPORT_TEMPLATE_MAPPING[key] || REPORT_TEMPLATE_MAPPING[slugKey] || REPORT_TEMPLATE_MAPPING[internshipSlug.toLowerCase()];
+
+    if (!mappedFile) {
+      const cleanSlug = internshipSlug.toLowerCase().trim().replace(/-/g, '_');
+      mappedFile = `internship_${cleanSlug}.html`;
+    }
+
+    cleanCode = mappedFile.replace('.html', '');
+  }
 
   // 1. Try to load customized template from Supabase
   if (isSupabaseConfigured() && supabase) {
@@ -134,31 +148,7 @@ export async function loadTemplate(
 
   // 2. Fall back to local filesystem templates
   const rootDir = process.cwd();
-  
-  let targetFile = `${cleanCode}.html`;
-  if (cleanCode === 'project_report' || cleanCode === 'internship_report') {
-    const key = (internshipId || '').toLowerCase().trim();
-    const slugKey = internshipSlug.toLowerCase().replace(/-/g, ' ');
-    const mapped = REPORT_TEMPLATE_MAPPING[key] || REPORT_TEMPLATE_MAPPING[slugKey] || REPORT_TEMPLATE_MAPPING[internshipSlug.toLowerCase()];
-    
-    if (mapped) {
-      const mappedPath = path.join(rootDir, 'public', 'templates', 'default', mapped);
-      if (fs.existsSync(mappedPath)) {
-        targetFile = mapped;
-      } else {
-        const fallbackDefaultPath = path.join(rootDir, 'public', 'templates', 'default', 'internship_default.html');
-        if (fs.existsSync(fallbackDefaultPath)) {
-          targetFile = 'internship_default.html';
-        }
-      }
-    } else {
-      const fallbackDefaultPath = path.join(rootDir, 'public', 'templates', 'default', 'internship_default.html');
-      if (fs.existsSync(fallbackDefaultPath)) {
-        targetFile = 'internship_default.html';
-      }
-    }
-  }
-
+  const targetFile = `${cleanCode}.html`;
   const templatePath = path.join(rootDir, 'public', 'templates', 'internships', internshipSlug, targetFile);
   const defaultPath = path.join(rootDir, 'public', 'templates', 'default', targetFile);
 
@@ -173,9 +163,35 @@ export async function loadTemplate(
   try {
     if (fs.existsSync(defaultPath)) {
       return fs.readFileSync(defaultPath, 'utf8');
+    } else if (cleanCode.startsWith('internship_')) {
+      // If the template file does not exist, let's automatically create it from internship_default.html!
+      const defaultBase = path.join(rootDir, 'public', 'templates', 'default', 'internship_default.html');
+      if (fs.existsSync(defaultBase)) {
+        let baseHtml = fs.readFileSync(defaultBase, 'utf8');
+
+        // Generate clean capitalization for the title
+        const humanTitle = internshipSlug
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+
+        // Replace placeholder markers
+        baseHtml = baseHtml.replace(/INTERNSHIP REPORT - DEFAULT/g, `INTERNSHIP REPORT - ${humanTitle.toUpperCase()}`);
+        baseHtml = baseHtml.replace(/<title>Internship Project & Activity Report<\/title>/g, `<title>${humanTitle} Internship Report - IQ Intern</title>`);
+        baseHtml = baseHtml.replace(/<title>Internship Report<\/title>/g, `<title>${humanTitle} Internship Report - IQ Intern</title>`);
+        baseHtml = baseHtml.replace(/\{\{\s*INTERNSHIP_TITLE\s*\}\}/g, humanTitle);
+        baseHtml = baseHtml.replace(/\{\{\s*internshipTitle\s*\}\}/g, humanTitle);
+        baseHtml = baseHtml.replace(/\{\{\s*internshipName\s*\}\}/g, humanTitle);
+        baseHtml = baseHtml.replace(/\{\{DEPARTMENT\}\} and software engineering/g, `{{DEPARTMENT}} and ${humanTitle}`);
+
+        // Save it on the disk!
+        fs.writeFileSync(defaultPath, baseHtml, 'utf8');
+        console.log(`[Auto-Generate] Created custom report template for track: ${humanTitle} (${targetFile})`);
+        return baseHtml;
+      }
     }
   } catch (e) {
-    console.warn(`Failed to read local default template from ${defaultPath}:`, e);
+    console.warn(`Failed to read or auto-generate local default template from ${defaultPath}:`, e);
   }
 
   // 3. Absolute fallback

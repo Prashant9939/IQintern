@@ -32,24 +32,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const isMock = razorpay_signature === "mock_signature" || (razorpay_order_id && razorpay_order_id.startsWith("order_mock_"));
+    const generatedSignature = crypto
+      .createHmac("sha256", keySecret)
+      .update(text)
+      .digest("hex");
 
-    if (!isMock) {
-      const generatedSignature = crypto
-        .createHmac("sha256", keySecret)
-        .update(text)
-        .digest("hex");
-
-      if (generatedSignature !== razorpay_signature) {
-        console.warn("Razorpay payment signature mismatch:", {
-          generated: generatedSignature,
-          received: razorpay_signature,
-        });
-        return NextResponse.json(
-          { error: "Payment verification failed. Signature mismatch." },
-          { status: 400 }
-        );
-      }
+    if (generatedSignature !== razorpay_signature) {
+      console.warn("Razorpay payment signature mismatch:", {
+        generated: generatedSignature,
+        received: razorpay_signature,
+      });
+      return NextResponse.json(
+        { error: "Payment verification failed. Signature mismatch." },
+        { status: 400 }
+      );
     }
 
     // Mark payment as completed in the database

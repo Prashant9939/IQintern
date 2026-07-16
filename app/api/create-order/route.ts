@@ -60,24 +60,14 @@ export async function POST(request: Request) {
       receipt: `rcpt_${studentId.substring(0, 8)}_${Date.now()}`,
     };
 
-    let order;
-    try {
-      if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-        throw new Error("Razorpay credentials not configured.");
-      }
-      const razorpay = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
-      });
-      order = await razorpay.orders.create(options);
-    } catch (razorError: any) {
-      console.warn("Razorpay API error, falling back to mock order:", razorError);
-      order = {
-        id: "order_mock_" + Math.random().toString(36).substring(7),
-        amount,
-        currency: "INR",
-      };
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error("Razorpay credentials not configured on the server. Please contact the administrator.");
     }
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    const order = await razorpay.orders.create(options);
 
     // Save pending payment record
     try {

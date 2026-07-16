@@ -1,50 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Internship Project & Activity Report</title>
-  <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; background-color: #ffffff; margin: 0; }
-    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-    h1 { color: #059669; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 22px; text-align: center; }
-    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #ecfdf5; border-radius: 8px; border: 1px solid #a7f3d0; }
-    .meta div { font-size: 13px; }
-    .section-title { font-size: 14px; font-weight: bold; color: #059669; margin-top: 25px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    .text-content { font-size: 12.5px; color: #475569; text-align: justify; margin-bottom: 12px; }
-    .footer { text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Digital Marketing Internship Report</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            padding: 30px 0;
+            color: #1e293b
+        }
+
+        .report-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #fff;
+            margin: 0 auto 20px;
+            padding: 25mm 22mm;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            page-break-after: always
+        }
+
+        h1 {
+            font-size: 28px;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 8px
+        }
+
+        p,
+        li,
+        td,
+        th {
+            font-size: 14px;
+            line-height: 1.7
+        }
+
+        ul {
+            margin-left: 20px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px
+        }
+
+        th {
+            background: #0f172a;
+            color: #fff
+        }
+
+        .cover {
+            text-align: center
+        }
+
+        .cover-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 8px
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0
+            }
+
+            .report-page {
+                margin: 0;
+                box-shadow: none
+            }
+
+            .print-btn {
+                display: none
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>INTERNSHIP REPORT - DIGITAL MARKETING</h1>
-    <div class="meta">
-      <div><strong>Student Name:</strong> {{studentName}}</div>
-      <div><strong>College Name:</strong> {{collegeName}}</div>
-      <div><strong>Internship Track:</strong> {{internshipName}}</div>
-      <div><strong>Approval Status:</strong> Approved &amp; Evaluated</div>
+    <div class="report-page cover">
+        <h1 style="border:none;">DIGITAL MARKETING INTERNSHIP REPORT</h1>
+        <p>Issued By: IQ Intern</p>
+        <div class="cover-row"><b>Student Name</b><span>{{STUDENT_NAME}}</span></div>
+        <div class="cover-row"><b>College Name</b><span>{{COLLEGE_NAME}}</span></div>
+        <div class="cover-row"><b>Department</b><span>{{DEPARTMENT}}</span></div>
+        <div class="cover-row"><b>Internship Duration</b><span>{{INTERNSHIP_DURATION}}</span></div>
+        <div class="cover-row"><b>Submission Date</b><span>{{COMPLETION_DATE}}</span></div>
     </div>
-    
-    <div class="section-title">1. Executive Summary</div>
-    <div class="text-content">
-      This report confirms that candidate <strong>{{studentName}}</strong> has successfully completed the curriculum and project validations required for the <strong>{{internshipName}}</strong> track. Over the duration of {{duration}}, the candidate demonstrated competency in industry-aligned challenges.
-    </div>
-
-    <div class="section-title">2. Curriculum Coverage &amp; Assessments</div>
-    <div class="text-content">
-      The candidate reviewed reference guidelines, designed systems, and completed timed MCQ assessments covering core engineering and architecture concepts. The assessments proctored via the IQ Intern platform registered a score of <strong>{{score}}</strong>, equivalent to a Final Grade of <strong>{{grade}}</strong>.
-    </div>
-
-    <div class="section-title">3. Project Submission and Acceptance</div>
-    <div class="text-content">
-      All required deliverables, checklist reviews, and case study submissions associated with this track were submitted by the candidate. The evaluation board verified the submissions for structural compliance, originality, and conceptual completeness.
-    </div>
-
-    <div class="footer">
-      <p>Issued by IQ Intern Board. Reference ID: {{verificationId}}</p>
-    </div>
-  </div>
-
-  <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
+    <script>const sections = [['Certificate of Completion', 'This document certifies successful completion of the Digital Marketing Internship Program.'], ['Declaration', 'I hereby declare that this report is my original work.'], ['Acknowledgement', 'I sincerely thank IQ Intern and my mentors for their support.'], ['Table of Contents', 'This report contains all Digital Marketing internship modules.'], ['Abstract', 'This report presents practical applications of Digital Marketing concepts and tools.'], ['Introduction to Digital Marketing', 'Digital Marketing promotes products and services through online channels.'], ['Objectives of the Internship', 'To develop practical skills in SEO, Google Ads and Analytics.'], ['Overview of Digital Marketing Domains', 'SEO, SEM, Content Marketing and Social Media Marketing are covered.'], ['Search Engine Optimization (SEO)', 'SEO improves website visibility and search rankings.'], ['Social Media Marketing', 'Social media campaigns increase audience engagement.'], ['Content Marketing', 'Content marketing delivers valuable and relevant content.'], ['Email Marketing', 'Email marketing enhances customer communication.'], ['Google Analytics & Traffic Analysis', 'Analytics helps understand website performance and user behaviour.'], ['Google Ads & PPC Campaigns', 'Google Ads enables targeted advertising campaigns.'], ['Digital Marketing Tools Used', 'The internship involved modern Digital Marketing tools.'], ['Weekly Learning Progress', 'Weekly internship activities are summarized below.'], ['Campaign Planning & Strategy', 'Effective campaign planning improves marketing outcomes.'], ['Challenges Faced During the Internship', 'Understanding campaign optimization presented valuable challenges.'], ['Skills Acquired', 'The internship developed practical Digital Marketing skills.'], ['Internship Outcomes', 'The internship enhanced professional competencies.'], ['Future Scope of Digital Marketing', 'AI and automation are shaping the future of marketing.'], ['Results & Discussion', 'Practical exposure improved analytical and marketing skills.'], ['Conclusion', 'The internship strengthened Digital Marketing expertise.'], ['References & Bibliography', 'Various Digital Marketing resources and documentation were referred.']]; const body = document.body; sections.forEach(([title, content]) => { let extra = ''; if (title === 'Digital Marketing Tools Used') { extra = '<ul><li>Google Analytics</li><li>Google Search Console</li><li>Google Ads</li><li>SEMrush</li><li>Canva</li><li>Meta Ads Manager</li><li>Mailchimp</li><li>HubSpot</li><li>Google Trends</li><li>WordPress</li><li>ChatGPT for Content Ideation</li></ul>'; } if (title === 'Weekly Learning Progress') { extra = '<table><tr><th>Week</th><th>Tasks Performed</th></tr><tr><td>1</td><td>Introduction to Digital Marketing & SEO</td></tr><tr><td>2</td><td>Keyword Research & SEO Optimization</td></tr><tr><td>3</td><td>Social Media Campaign Planning</td></tr><tr><td>4</td><td>Google Analytics & Traffic Analysis</td></tr><tr><td>5</td><td>Email Marketing & Content Creation</td></tr><tr><td>6</td><td>Google Ads & PPC Campaigns</td></tr><tr><td>7</td><td>Campaign Performance Analysis</td></tr><tr><td>8</td><td>Final Evaluation & Report Submission</td></tr></table>'; } if (title === 'Skills Acquired') { extra = '<ul><li>SEO</li><li>Keyword Research</li><li>Social Media Marketing</li><li>Content Strategy</li><li>Campaign Management</li><li>Email Marketing</li><li>Analytics Reporting</li><li>Conversion Optimization</li><li>Marketing Funnel Analysis</li><li>Audience Targeting</li></ul>'; } if (title === 'Future Scope of Digital Marketing') { extra = '<ul><li>AI in Digital Marketing</li><li>Marketing Automation</li><li>Performance Marketing</li><li>Data-Driven Marketing Strategies</li><li>Influencer Marketing</li><li>SEO & SEM Trends</li></ul>'; } const page = document.createElement('div'); page.className = 'report-page'; page.innerHTML = `<h1>${title}</h1><p>${content}</p>${extra}<p>This section forms an integral part of the Digital Marketing Internship Report.</p>`; body.appendChild(page); });</script>
+    <button class="print-btn" onclick="window.print()">Print Report</button>
 </body>
+
 </html>

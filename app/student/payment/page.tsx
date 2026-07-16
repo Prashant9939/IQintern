@@ -51,7 +51,7 @@ export default function PaymentPage() {
     checkPaymentStatus();
   }, []);
 
-  const handlePayment = async (isMock: boolean = false) => {
+  const handlePayment = async () => {
     if (!user) return;
     setProcessing(true);
     setError("");
@@ -74,49 +74,9 @@ export default function PaymentPage() {
         throw new Error(orderData.error || "Failed to initiate payment. Please try again.");
       }
 
-      // If mock payment is requested, or if the Razorpay object is missing (offline/dev mode)
-      if (isMock || typeof (window as any).Razorpay === "undefined") {
-        console.warn("Using simulated/mock payment verification...");
-        const mockVerifyRes = await fetch("/api/verify-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: orderData.order_id,
-            razorpay_payment_id: "pay_mock_" + Math.random().toString(36).substring(7),
-            razorpay_signature: "mock_signature",
-          }),
-        });
-
-        const verifyData = await mockVerifyRes.json();
-
-        if (mockVerifyRes.ok && verifyData.success) {
-          const completedPayment: Payment = {
-            id: `pay-${Math.random().toString(36).substr(2, 9)}`,
-            student_id: user.id,
-            internship_id: "general_credit_unused",
-            amount: settings.assessment_fee * 100,
-            status: "completed",
-            razorpay_order_id: orderData.order_id,
-            razorpay_payment_id: "pay_mock_" + Math.random().toString(36).substring(7),
-            razorpay_signature: "mock_signature",
-            created_at: new Date().toISOString(),
-          };
-
-          // Cache in local storage for frontend fallback
-          if (typeof window !== "undefined") {
-            const mockPayments = JSON.parse(localStorage.getItem("mock_payments") || "[]");
-            mockPayments.push(completedPayment);
-            localStorage.setItem("mock_payments", JSON.stringify(mockPayments));
-          }
-
-          setSuccess("Payment successful! Redirecting to select your internship...");
-          setTimeout(() => {
-            window.location.href = "/student/internships";
-          }, 1500);
-        } else {
-          throw new Error(verifyData.error || "Payment verification failed.");
-        }
-        return;
+      // Ensure Razorpay SDK is loaded
+      if (typeof (window as any).Razorpay === "undefined") {
+        throw new Error("Razorpay payment gateway script failed to load. Please disable ad-blockers, check your network connection, and reload the page.");
       }
 
       // 2. Open Real Razorpay modal
@@ -309,21 +269,12 @@ export default function PaymentPage() {
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
               <button
-                onClick={() => handlePayment(false)}
+                onClick={() => handlePayment()}
                 disabled={processing}
                 className="w-full flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 text-sm transition-all shadow-md shadow-indigo-650/10 active:scale-98 disabled:opacity-50 cursor-pointer"
               >
                 {processing ? "Launching Payment Gateway..." : "Pay Securely with Razorpay"}
                 <ArrowRight className="h-4.5 w-4.5" />
-              </button>
-
-              <button
-                onClick={() => handlePayment(true)}
-                disabled={processing}
-                className="w-full flex items-center justify-center gap-1.5 rounded-2xl border border-zinc-250 hover:bg-zinc-50 text-zinc-700 font-bold py-3.5 px-6 text-xs transition-all active:scale-98 disabled:opacity-50 cursor-pointer"
-              >
-                <ShieldCheck className="h-4 w-4 text-indigo-500" />
-                Simulate Mock Payment (Local Testing)
               </button>
             </div>
           </div>

@@ -47,28 +47,26 @@
     }
 
     .header {
-      background: var(--header-gradient);
-      color: white;
-      padding: 45px 50px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      color: var(--text-dark);
+      padding: 24px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 4px solid var(--primary);
+      border-bottom: 2px solid var(--border);
     }
 
-    .brand h1 {
-      margin: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -1px;
+    .header-logo {
+      height: 50px;
+      width: auto;
+      object-fit: contain;
     }
 
     .brand p {
       margin: 5px 0 0;
       font-size: 13px;
-      opacity: 0.85;
-      font-weight: 500;
+      color: var(--text-light);
+      font-weight: 600;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
@@ -76,7 +74,7 @@
     .header-meta {
       text-align: right;
       font-size: 13px;
-      opacity: 0.9;
+      color: var(--text-light);
     }
 
     .header-meta strong {
@@ -84,11 +82,12 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px;
       margin-bottom: 4px;
+      color: var(--text-dark);
       letter-spacing: 0.5px;
     }
 
     .content {
-      padding: 30px 45px;
+      padding: 25px 40px;
     }
 
     .letter-title {
@@ -97,7 +96,7 @@
       font-size: 22px;
       font-weight: 800;
       color: var(--text-dark);
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       position: relative;
@@ -122,11 +121,16 @@
 
     .info-card {
       background: var(--bg-light);
-      border-left: 4px solid var(--primary);
-      padding: 16px 20px;
-      border-radius: 0 12px 12px 0;
       border: 1px solid var(--border);
       border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .info-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
     }
 
     .info-label {
@@ -146,16 +150,16 @@
 
     /* Premium Score Hero Section */
     .score-hero {
-      background: var(--accent-gradient);
-      border: 1px solid var(--primary-light);
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+      border: 1px solid rgba(79, 70, 229, 0.15);
       border-radius: 20px;
-      padding: 22px 20px;
+      padding: 30px 24px;
       text-align: center;
       margin-bottom: 25px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-around;
+      gap: 20px;
       position: relative;
       overflow: hidden;
     }
@@ -169,30 +173,71 @@
       top: -50px;
       right: -50px;
       border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .score-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 8px solid var(--primary-light);
+      border-top-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+      position: relative;
     }
 
     .score-number {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 80px;
+      font-size: 40px;
       font-weight: 800;
-      color: var(--primary);
+      color: var(--text-dark);
       line-height: 1;
-      margin-bottom: 10px;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .score-percent {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-left: 2px;
+    }
+
+    .score-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
     }
 
     .grade-text {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--text-dark);
+      margin-bottom: 8px;
       letter-spacing: 0.5px;
     }
 
     .grade-text strong {
       color: var(--primary);
-      font-size: 22px;
-      margin-left: 4px;
+      font-size: 26px;
+      font-weight: 800;
+      margin-left: 6px;
+      background: rgba(79, 70, 229, 0.08);
+      padding: 2px 12px;
+      border-radius: 8px;
     }
 
     .passed-badge {
@@ -206,9 +251,30 @@
       border: 1px solid var(--emerald-border);
       border-radius: 50px;
       padding: 6px 18px;
-      margin-top: 15px;
       text-transform: uppercase;
       letter-spacing: 1px;
+    }
+
+    .marks-table tbody tr:hover td {
+      background-color: rgba(79, 70, 229, 0.02);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-cleared {
+      background: var(--emerald-light);
+      color: var(--emerald-dark);
+      border: 1px solid var(--emerald-border);
     }
 
     /* Breakdown Table */
@@ -350,36 +416,94 @@
         margin: 0;
       }
       .header {
-        padding: 25px 40px !important;
+        padding: 12px 25px !important;
+      }
+      .header-logo {
+        height: 38px !important;
+      }
+      .brand p {
+        font-size: 11px !important;
+        margin-top: 2px !important;
+      }
+      .header-meta {
+        font-size: 11px !important;
+      }
+      .header-meta strong {
+        font-size: 13px !important;
+        margin-bottom: 2px !important;
       }
       .content {
-        padding: 25px 40px !important;
+        padding: 15px 25px !important;
+      }
+      .letter-title {
+        font-size: 18px !important;
+        margin-bottom: 12px !important;
+      }
+      .letter-title::after {
+        margin: 6px auto 0 !important;
+        height: 3px !important;
       }
       .info-grid {
-        margin-bottom: 15px !important;
-        gap: 12px !important;
+        margin-bottom: 12px !important;
+        gap: 8px !important;
       }
       .info-card {
-        padding: 12px 15px !important;
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+      }
+      .info-label {
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+      }
+      .info-value {
+        font-size: 12px !important;
       }
       .score-hero {
-        padding: 15px !important;
-        margin-bottom: 15px !important;
+        padding: 12px 20px !important;
+        margin-bottom: 12px !important;
+        gap: 10px !important;
+        border-radius: 12px !important;
+      }
+      .score-circle {
+        width: 80px !important;
+        height: 80px !important;
+        border-width: 5px !important;
       }
       .score-number {
-        font-size: 60px !important;
+        font-size: 26px !important;
+      }
+      .score-percent {
+        font-size: 12px !important;
+      }
+      .grade-text {
+        font-size: 15px !important;
+        margin-bottom: 4px !important;
+      }
+      .grade-text strong {
+        font-size: 18px !important;
+        padding: 1px 8px !important;
+        border-radius: 4px !important;
+      }
+      .passed-badge {
+        padding: 4px 12px !important;
+        font-size: 10px !important;
       }
       .table-wrapper {
-        margin-bottom: 15px !important;
+        margin-bottom: 12px !important;
+        border-radius: 8px !important;
       }
       .marks-table th, .marks-table td {
-        padding: 10px 15px !important;
+        padding: 8px 12px !important;
+        font-size: 12px !important;
       }
       .disclaimer {
-        margin-bottom: 10px !important;
+        margin-bottom: 8px !important;
+        font-size: 11px !important;
+        line-height: 1.4 !important;
       }
       .footer {
-        padding: 15px 40px !important;
+        padding: 10px 25px !important;
+        font-size: 10px !important;
       }
     }
   </style>
@@ -389,7 +513,7 @@
   <div class="letter-container">
     <div class="header">
       <div class="brand">
-        <h1>IQ Intern</h1>
+        <img src="/logo-full.png" alt="IQ Intern Logo" class="header-logo">
         <p>Vocational Training Platform</p>
       </div>
       <div class="header-meta">
@@ -422,12 +546,20 @@
         </div>
       </div>
 
-      <!-- Large Score Display -->
+      <!-- Elite Score Hero Widget -->
       <div class="score-hero">
-        <div class="score-number">{{percentage}}<span style="font-size: 24px; font-weight: 600; color: #6366f1;">%</span>
+        <div class="score-container">
+          <div class="score-circle">
+            <div class="score-number">{{percentage}}<span class="score-percent">%</span></div>
+          </div>
         </div>
-        <div class="grade-text">Final Grade: <strong>{{grade}}</strong></div>
-        <div class="passed-badge">Assessment Result: Passed</div>
+        <div class="score-details">
+          <div class="grade-text">Final Grade: <strong>{{grade}}</strong></div>
+          <div class="passed-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Assessment Passed
+          </div>
+        </div>
       </div>
 
       <!-- Detailed Breakdown Table -->
@@ -445,14 +577,11 @@
             <tr>
               <td>
                 <strong>Core Competency MCQ</strong><br />
-                <span style="font-size: 12px; color: var(--text-light);">Evaluated via Proctored Assessment
-                  Engine</span>
+                <span style="font-size: 12px; color: var(--text-light);">Evaluated via Proctored Assessment Engine</span>
               </td>
               <td style="text-align: center; font-weight: 600;">100</td>
               <td style="text-align: center; font-weight: 700; color: var(--primary);">{{score}}</td>
-              <td style="text-align: center;"><span class="status-badge status-present"
-                  style="background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;">CLEARED</span>
-              </td>
+              <td style="text-align: center;"><span class="status-badge status-cleared">CLEARED</span></td>
             </tr>
             <tr class="total-row">
               <td>Total Aggregate Score</td>
@@ -481,7 +610,10 @@
     </div>
   </div>
 
-  <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
+  <button class="print-btn" onclick="window.print()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8" rx="2" ry="2"></rect><path d="M6 9V3a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6"></path></svg>
+    Print Document
+  </button>
 </body>
 
 </html>

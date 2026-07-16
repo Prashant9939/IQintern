@@ -40,8 +40,8 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const templatesToSync = [
   { code: 'offer_letter', file: 'offer_letter.html', name: 'Offer Letter' },
   { code: 'attendance_sheet', file: 'attendance_sheet.html', name: 'Attendance Sheet' },
-  { code: 'internship_report', file: 'project_report.html', name: 'Project Report' },
   { code: 'certificate', file: 'certificate.html', name: 'Internship Certificate' },
+  { code: 'marksheet', file: 'marksheet.html', name: 'Evaluation Marksheet' },
 ];
 
 async function syncTemplates() {

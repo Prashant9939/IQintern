@@ -1,50 +1,560 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Internship Project & Activity Report</title>
-  <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; background-color: #ffffff; margin: 0; }
-    .card { background: white; padding: 40px; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-    h1 { color: #059669; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; font-size: 22px; text-align: center; }
-    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; padding: 16px; background: #ecfdf5; border-radius: 8px; border: 1px solid #a7f3d0; }
-    .meta div { font-size: 13px; }
-    .section-title { font-size: 14px; font-weight: bold; color: #059669; margin-top: 25px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    .text-content { font-size: 12.5px; color: #475569; text-align: justify; margin-bottom: 12px; }
-    .footer { text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artificial Intelligence Internship Report - IQ Intern</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    background:#eef2f7;
+
+    font-family:'Poppins',sans-serif;
+
+    color:#1e293b;
+
+    line-height:1.8;
+
+    padding:40px 0;
+}
+
+/* =====================================================
+   REPORT PAGE
+===================================================== */
+
+.report-page{
+
+    width:210mm;
+
+    min-height:297mm;
+
+    background:#ffffff;
+
+    margin:0 auto 30px auto;
+
+    padding:25mm 22mm;
+
+    box-shadow:0 8px 30px rgba(0,0,0,0.10);
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-start;
+
+    page-break-after:always;
+
+    break-after:page;
+}
+
+/* =====================================================
+   COVER PAGE
+===================================================== */
+
+.cover-page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+}
+
+.cover-title{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:20px;
+}
+
+.cover-subtitle{
+
+    font-size:18px;
+
+    color:#475569;
+
+    margin-bottom:60px;
+}
+
+.cover-info{
+
+    width:100%;
+
+    max-width:500px;
+}
+
+.cover-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #dbe2ea;
+}
+
+.cover-label{
+
+    font-weight:600;
+
+    color:#334155;
+}
+
+.cover-value{
+
+    color:#475569;
+}
+
+/* =====================================================
+   HEADINGS
+===================================================== */
+
+h1{
+
+    font-size:30px;
+
+    color:#0f172a;
+
+    margin-bottom:22px;
+
+    padding-bottom:10px;
+
+    border-bottom:2px solid #0f172a;
+}
+
+h2{
+
+    font-size:22px;
+
+    color:#1e293b;
+
+    margin-top:28px;
+
+    margin-bottom:12px;
+}
+
+/* =====================================================
+   PARAGRAPHS
+===================================================== */
+
+p{
+
+    font-size:14px;
+
+    color:#334155;
+
+    margin-bottom:16px;
+
+    text-align:justify;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+    margin-bottom:20px;
+}
+
+thead{
+
+    background:#0f172a;
+
+    color:#ffffff;
+}
+
+th{
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:13px;
+
+    text-align:left;
+}
+
+td{
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:13px;
+}
+
+/* =====================================================
+   TABLE OF CONTENTS
+===================================================== */
+
+.toc-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px dashed #cbd5e1;
+
+    font-size:14px;
+}
+
+/* =====================================================
+   PRINT SETTINGS
+===================================================== */
+
+@media print{
+
+    @page{
+        size:A4;
+        margin:0;
+    }
+
+    html,
+    body{
+
+        width:210mm;
+
+        background:#ffffff;
+
+        margin:0;
+
+        padding:0;
+    }
+
+    body{
+
+        display:block;
+    }
+
+    .report-page{
+
+        width:210mm;
+
+        min-height:297mm;
+
+        margin:0;
+
+        padding:25mm 22mm;
+
+        box-shadow:none;
+
+        page-break-after:always;
+
+        break-after:page;
+    }
+
+    .print-btn{
+
+        display:none !important;
+    }
+}
+
+/* =====================================================
+   PRINT BUTTON
+===================================================== */
+
+.print-btn{
+
+    position:fixed;
+
+    bottom:25px;
+
+    right:25px;
+
+    background:#0f172a;
+
+    color:#ffffff;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.20);
+}
+
+.print-btn:hover{
+
+    background:#1e293b;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>INTERNSHIP REPORT - ARTIFICIAL INTELLIGENCE</h1>
-    <div class="meta">
-      <div><strong>Student Name:</strong> {{studentName}}</div>
-      <div><strong>College Name:</strong> {{collegeName}}</div>
-      <div><strong>Internship Track:</strong> {{internshipName}}</div>
-      <div><strong>Approval Status:</strong> Approved &amp; Evaluated</div>
-    </div>
-    
-    <div class="section-title">1. Executive Summary</div>
-    <div class="text-content">
-      This report confirms that candidate <strong>{{studentName}}</strong> has successfully completed the curriculum and project validations required for the <strong>{{internshipName}}</strong> track. Over the duration of {{duration}}, the candidate demonstrated competency in industry-aligned challenges.
+
+<!-- =====================================================
+   COVER PAGE
+===================================================== -->
+
+<div class="report-page cover-page">
+
+    <div>
+
+        <div class="cover-title">
+            Internship Report
+        </div>
+
+        <div class="cover-subtitle">
+            Artificial Intelligence Internship Program
+        </div>
+
+        <div class="cover-info">
+
+            <div class="cover-row">
+                <span class="cover-label">Student Name</span>
+                <span class="cover-value">{{STUDENT_NAME}}</span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Institute</span>
+                <span class="cover-value">
+                    {{COLLEGE_NAME}}
+                </span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Department</span>
+                <span class="cover-value">
+                    {{DEPARTMENT}}
+                </span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Submission Date</span>
+                <span class="cover-value">
+                    {{COMPLETION_DATE}}
+                </span>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="section-title">2. Curriculum Coverage &amp; Assessments</div>
-    <div class="text-content">
-      The candidate reviewed reference guidelines, designed systems, and completed timed MCQ assessments covering core engineering and architecture concepts. The assessments proctored via the IQ Intern platform registered a score of <strong>{{score}}</strong>, equivalent to a Final Grade of <strong>{{grade}}</strong>.
+</div>
+
+<!-- =====================================================
+   TABLE OF CONTENTS
+===================================================== -->
+
+<div class="report-page">
+
+    <h1>Table of Contents</h1>
+
+    <div class="toc-item">
+        <span>1. Abstract</span>
+        <span>3</span>
     </div>
 
-    <div class="section-title">3. Project Submission and Acceptance</div>
-    <div class="text-content">
-      All required deliverables, checklist reviews, and case study submissions associated with this track were submitted by the candidate. The evaluation board verified the submissions for structural compliance, originality, and conceptual completeness.
+    <div class="toc-item">
+        <span>2. Acknowledgement</span>
+        <span>4</span>
     </div>
 
-    <div class="footer">
-      <p>Issued by IQ Intern Board. Reference ID: {{verificationId}}</p>
+    <div class="toc-item">
+        <span>3. Introduction</span>
+        <span>5</span>
     </div>
-  </div>
 
-  <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
+    <div class="toc-item">
+        <span>4. Objectives</span>
+        <span>6</span>
+    </div>
+
+    <div class="toc-item">
+        <span>5. Literature Review</span>
+        <span>7</span>
+    </div>
+
+    <div class="toc-item">
+        <span>6. Weekly Progress</span>
+        <span>8</span>
+    </div>
+
+    <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>9</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>10</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>11</span>
+    </div>
+
+    <div class="toc-item">
+        <span>10. Conclusion</span>
+        <span>12</span>
+    </div>
+
+</div>
+
+<script>
+/* =====================================================
+   REPORT SECTIONS
+===================================================== */
+
+const sections = [
+    "Abstract",
+    "Acknowledgement",
+    "Introduction",
+    "Objectives",
+    "Literature Review",
+    "Weekly Progress",
+    "Technologies Used",
+    "Challenges Faced",
+    "Results & Discussion",
+    "Conclusion"
+];
+
+const sectionParagraphs = {
+  "Abstract": "This report details the deep learning model training, computer vision integrations, and neural network setups completed during the Artificial Intelligence internship.",
+  "Acknowledgement": "I express my sincere gratitude to the evaluation board at IQ Intern Vocational Training platform for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.",
+  "Introduction": "Artificial Intelligence systems process sensory inputs to make predictive classifications. The candidate trained deep neural network models, parsed video/image streams, and evaluated neural node weights.",
+  "Objectives": "The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.",
+  "Literature Review": "Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.",
+  "Weekly Progress": "Weekly progress included assembling train/test datasets, configuring convolutional layers, applying data augmentations, and evaluating classification maps.",
+  "Technologies Used": "The tools and runtime environments utilized during the evaluations include: Python, TensorFlow, PyTorch, OpenCV, Jupyter Notebook, Kaggle Datasets.",
+  "Challenges Faced": "High computing times during neural training, adjusting gradient descent weights, and parsing noise from camera frames.",
+  "Results & Discussion": "The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.",
+  "Conclusion": "The candidate demonstrated capability in computer vision parsing, model layer configurations, and neural network performance optimization."
+};
+
+const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+
+const reportContainer = document.body;
+
+/* =====================================================
+   GENERATE SEPARATE A4 PAGES
+===================================================== */
+
+sections.forEach(section => {
+
+    const page = document.createElement('div');
+
+    page.className = 'report-page';
+
+    // Get track specific table rows
+    let tableRows = '';
+    const taskList = [
+      { name: "Layer Configuration", desc: "Configured CNN pooling layers for precise feature map extractions.", status: "Completed" },
+      { name: "OpenCV Parsing", desc: "Wrote image processing filters to isolate and threshold shapes in frames.", status: "Completed" },
+      { name: "Neural Tuning", desc: "Adjusted learning rates to optimize cross-entropy loss metrics.", status: "Completed" }
+    ];
+
+    taskList.forEach(task => {
+      tableRows += `
+        <tr>
+          <td>${task.name}</td>
+          <td>${task.desc}</td>
+          <td>${task.status}</td>
+        </tr>
+      `;
+    });
+
+    page.innerHTML = `
+
+        <h1>${section}</h1>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <h2>${section} Analysis</h2>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Task</th>
+
+                    <th>Description</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+               ${tableRows}
+            </tbody>
+
+        </table>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+    `;
+
+    reportContainer.appendChild(page);
+
+});
+</script>
+
+<!-- =====================================================
+   PRINT BUTTON
+===================================================== -->
+
+<button class="print-btn" onclick="window.print()">
+    Print Report
+</button>
+
 </body>
 </html>
