@@ -1,118 +1,620 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Digital Marketing Internship Report</title>
-    <style>
-        * {
-            box-sizing: border-box
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Marketing Internship Report - IQ Intern</title>
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            padding: 30px 0;
-            color: #1e293b
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .report-page {
-            width: 210mm;
-            min-height: 297mm;
-            background: #fff;
-            margin: 0 auto 20px;
-            padding: 25mm 22mm;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
-            page-break-after: always
-        }
+<style>
 
-        h1 {
-            font-size: 28px;
-            border-bottom: 2px solid #0f172a;
-            padding-bottom: 8px
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        p,
-        li,
-        td,
-        th {
-            font-size: 14px;
-            line-height: 1.7
-        }
+body{
 
-        ul {
-            margin-left: 20px
-        }
+    background:#eef2f7;
 
-        table {
-            width: 100%;
-            border-collapse: collapse
-        }
+    font-family:'Poppins',sans-serif;
 
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 8px
-        }
+    color:#1e293b;
 
-        th {
-            background: #0f172a;
-            color: #fff
-        }
+    line-height:1.8;
 
-        .cover {
-            text-align: center
-        }
+    padding:40px 0;
+}
 
-        .cover-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #ddd;
-            padding: 8px 0
-        }
+/* =====================================================
+   REPORT PAGE
+===================================================== */
 
-        .print-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: #0f172a;
-            color: #fff;
-            border: none;
-            border-radius: 8px
-        }
+.report-page{
 
-        @media print {
-            @page {
-                size: A4;
-                margin: 0
-            }
+    width:210mm;
 
-            .report-page {
-                margin: 0;
-                box-shadow: none
-            }
+    min-height:297mm;
 
-            .print-btn {
-                display: none
-            }
-        }
-    </style>
+    background:#ffffff;
+
+    margin:0 auto 30px auto;
+
+    padding:25mm 22mm;
+
+    box-shadow:0 8px 30px rgba(0,0,0,0.10);
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-start;
+
+    page-break-after:always;
+
+    break-after:page;
+}
+
+/* =====================================================
+   COVER PAGE
+===================================================== */
+
+.cover-page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+}
+
+.cover-title{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:20px;
+}
+
+.cover-subtitle{
+
+    font-size:18px;
+
+    color:#475569;
+
+    margin-bottom:60px;
+}
+
+.cover-info{
+
+    width:100%;
+
+    max-width:500px;
+}
+
+.cover-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #dbe2ea;
+}
+
+.cover-label{
+
+    font-weight:600;
+
+    color:#334155;
+}
+
+.cover-value{
+
+    color:#475569;
+}
+
+/* =====================================================
+   HEADINGS
+===================================================== */
+
+h1{
+
+    font-size:30px;
+
+    color:#0f172a;
+
+    margin-bottom:22px;
+
+    padding-bottom:10px;
+
+    border-bottom:2px solid #0f172a;
+}
+
+h2{
+
+    font-size:22px;
+
+    color:#1e293b;
+
+    margin-top:28px;
+
+    margin-bottom:12px;
+}
+
+/* =====================================================
+   PARAGRAPHS
+===================================================== */
+
+p{
+
+    font-size:14px;
+
+    color:#334155;
+
+    margin-bottom:16px;
+
+    text-align:justify;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+    margin-bottom:20px;
+}
+
+thead{
+
+    background:#0f172a;
+
+    color:#ffffff;
+}
+
+th{
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:13px;
+
+    text-align:left;
+}
+
+td{
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:13px;
+}
+
+/* =====================================================
+   TABLE OF CONTENTS
+===================================================== */
+
+.toc-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px dashed #cbd5e1;
+
+    font-size:14px;
+}
+
+/* =====================================================
+   PRINT SETTINGS
+===================================================== */
+
+@media print{
+
+    @page{
+        size:A4;
+        margin:0;
+    }
+
+    html,
+    body{
+
+        width:210mm;
+
+        background:#ffffff;
+
+        margin:0;
+
+        padding:0;
+    }
+
+    body{
+
+        display:block;
+    }
+
+    .report-page{
+
+        width:210mm;
+
+        min-height:297mm;
+
+        margin:0;
+
+        padding:25mm 22mm;
+
+        box-shadow:none;
+
+        page-break-after:always;
+
+        break-after:page;
+    }
+
+    .print-btn{
+
+        display:none !important;
+    }
+}
+
+/* =====================================================
+   PRINT BUTTON
+===================================================== */
+
+.print-btn{
+
+    position:fixed;
+
+    bottom:25px;
+
+    right:25px;
+
+    background:#0f172a;
+
+    color:#ffffff;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.20);
+}
+
+.print-btn:hover{
+
+    background:#1e293b;
+}
+
+</style>
 </head>
 
 <body>
-    <div class="report-page cover">
-        <h1 style="border:none;">DIGITAL MARKETING INTERNSHIP REPORT</h1>
-        <p>Issued By: IQ Intern</p>
-        <div class="cover-row"><b>Student Name</b><span>{{STUDENT_NAME}}</span></div>
-        <div class="cover-row"><b>College Name</b><span>{{COLLEGE_NAME}}</span></div>
-        <div class="cover-row"><b>Department</b><span>{{DEPARTMENT}}</span></div>
-        <div class="cover-row"><b>Internship Duration</b><span>{{INTERNSHIP_DURATION}}</span></div>
-        <div class="cover-row"><b>Submission Date</b><span>{{COMPLETION_DATE}}</span></div>
-    </div>
-    <script>const sections = [['Certificate of Completion', 'This document certifies successful completion of the Digital Marketing Internship Program.'], ['Declaration', 'I hereby declare that this report is my original work.'], ['Acknowledgement', 'I sincerely thank IQ Intern and my mentors for their support.'], ['Table of Contents', 'This report contains all Digital Marketing internship modules.'], ['Abstract', 'This report presents practical applications of Digital Marketing concepts and tools.'], ['Introduction to Digital Marketing', 'Digital Marketing promotes products and services through online channels.'], ['Objectives of the Internship', 'To develop practical skills in SEO, Google Ads and Analytics.'], ['Overview of Digital Marketing Domains', 'SEO, SEM, Content Marketing and Social Media Marketing are covered.'], ['Search Engine Optimization (SEO)', 'SEO improves website visibility and search rankings.'], ['Social Media Marketing', 'Social media campaigns increase audience engagement.'], ['Content Marketing', 'Content marketing delivers valuable and relevant content.'], ['Email Marketing', 'Email marketing enhances customer communication.'], ['Google Analytics & Traffic Analysis', 'Analytics helps understand website performance and user behaviour.'], ['Google Ads & PPC Campaigns', 'Google Ads enables targeted advertising campaigns.'], ['Digital Marketing Tools Used', 'The internship involved modern Digital Marketing tools.'], ['Weekly Learning Progress', 'Weekly internship activities are summarized below.'], ['Campaign Planning & Strategy', 'Effective campaign planning improves marketing outcomes.'], ['Challenges Faced During the Internship', 'Understanding campaign optimization presented valuable challenges.'], ['Skills Acquired', 'The internship developed practical Digital Marketing skills.'], ['Internship Outcomes', 'The internship enhanced professional competencies.'], ['Future Scope of Digital Marketing', 'AI and automation are shaping the future of marketing.'], ['Results & Discussion', 'Practical exposure improved analytical and marketing skills.'], ['Conclusion', 'The internship strengthened Digital Marketing expertise.'], ['References & Bibliography', 'Various Digital Marketing resources and documentation were referred.']]; const body = document.body; sections.forEach(([title, content]) => { let extra = ''; if (title === 'Digital Marketing Tools Used') { extra = '<ul><li>Google Analytics</li><li>Google Search Console</li><li>Google Ads</li><li>SEMrush</li><li>Canva</li><li>Meta Ads Manager</li><li>Mailchimp</li><li>HubSpot</li><li>Google Trends</li><li>WordPress</li><li>ChatGPT for Content Ideation</li></ul>'; } if (title === 'Weekly Learning Progress') { extra = '<table><tr><th>Week</th><th>Tasks Performed</th></tr><tr><td>1</td><td>Introduction to Digital Marketing & SEO</td></tr><tr><td>2</td><td>Keyword Research & SEO Optimization</td></tr><tr><td>3</td><td>Social Media Campaign Planning</td></tr><tr><td>4</td><td>Google Analytics & Traffic Analysis</td></tr><tr><td>5</td><td>Email Marketing & Content Creation</td></tr><tr><td>6</td><td>Google Ads & PPC Campaigns</td></tr><tr><td>7</td><td>Campaign Performance Analysis</td></tr><tr><td>8</td><td>Final Evaluation & Report Submission</td></tr></table>'; } if (title === 'Skills Acquired') { extra = '<ul><li>SEO</li><li>Keyword Research</li><li>Social Media Marketing</li><li>Content Strategy</li><li>Campaign Management</li><li>Email Marketing</li><li>Analytics Reporting</li><li>Conversion Optimization</li><li>Marketing Funnel Analysis</li><li>Audience Targeting</li></ul>'; } if (title === 'Future Scope of Digital Marketing') { extra = '<ul><li>AI in Digital Marketing</li><li>Marketing Automation</li><li>Performance Marketing</li><li>Data-Driven Marketing Strategies</li><li>Influencer Marketing</li><li>SEO & SEM Trends</li></ul>'; } const page = document.createElement('div'); page.className = 'report-page'; page.innerHTML = `<h1>${title}</h1><p>${content}</p>${extra}<p>This section forms an integral part of the Digital Marketing Internship Report.</p>`; body.appendChild(page); });</script>
-    <button class="print-btn" onclick="window.print()">Print Report</button>
-</body>
 
+<!-- =====================================================
+   COVER PAGE
+===================================================== -->
+
+<div class="report-page cover-page">
+
+    <div>
+
+        <div class="cover-title">
+            Internship Report
+        </div>
+
+        <div class="cover-subtitle">
+            Digital Marketing Internship Program
+        </div>
+
+        <div class="cover-info">
+
+            <div class="cover-row">
+                <span class="cover-label">Student Name</span>
+                <span class="cover-value">{{STUDENT_NAME}}</span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Institute</span>
+                <span class="cover-value">
+                    {{COLLEGE_NAME}}
+                </span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Department</span>
+                <span class="cover-value">
+                    {{DEPARTMENT}}
+                </span>
+            </div>
+
+            <div class="cover-row">
+                <span class="cover-label">Submission Date</span>
+                <span class="cover-value">
+                    {{COMPLETION_DATE}}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+   TABLE OF CONTENTS
+===================================================== -->
+
+<div class="report-page">
+
+    <h1>Table of Contents</h1>
+
+    <div class="toc-item">
+        <span>1. Abstract</span>
+        <span>3</span>
+    </div>
+
+    <div class="toc-item">
+        <span>2. Acknowledgement</span>
+        <span>4</span>
+    </div>
+
+    <div class="toc-item">
+        <span>3. Introduction</span>
+        <span>5</span>
+    </div>
+
+    <div class="toc-item">
+        <span>4. Objectives</span>
+        <span>6</span>
+    </div>
+
+    <div class="toc-item">
+        <span>5. Literature Review</span>
+        <span>7</span>
+    </div>
+
+    <div class="toc-item">
+        <span>6. Weekly Progress</span>
+        <span>8</span>
+    </div>
+
+    <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>9</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>10</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>11</span>
+    </div>
+
+    <div class="toc-item">
+        <span>10. Conclusion</span>
+        <span>12</span>
+    </div>
+
+</div>
+
+<script>
+/* =====================================================
+   REPORT SECTIONS
+===================================================== */
+
+const sections = [
+    "Abstract",
+    "Acknowledgement",
+    "Introduction",
+    "Objectives",
+    "Literature Review",
+    "Weekly Progress",
+    "Technologies Used",
+    "Challenges Faced",
+    "Results & Discussion",
+    "Conclusion"
+];
+
+const sectionParagraphs = {
+  "Abstract": `This comprehensive report documents the extensive digital marketing work completed during the Digital Marketing internship at IQ Intern Vocational Training Platform. The internship focused on developing practical skills in search engine optimization (SEO), paid advertising management, social media marketing, analytics and measurement, and content marketing strategy. Over the course of the program, the candidate progressed from understanding marketing fundamentals to executing integrated digital marketing campaigns that demonstrate data-driven marketing practice.
+
+The core focus of this internship was establishing proficiency in data-driven digital marketing, where marketing decisions are informed by analytics rather than intuition. Digital marketing's advantage over traditional marketing lies in its measurability—every click, view, and conversion can be tracked, enabling precise understanding of what works and what doesn't. The candidate developed skills in setting up analytics tracking, interpreting marketing metrics, conducting experiments to optimize performance, and reporting results to stakeholders.
+
+Search Engine Optimization (SEO) formed a foundational component, with the candidate learning to improve website visibility in organic search results. SEO encompasses technical optimization (ensuring search engines can crawl and index content effectively), on-page optimization (optimizing content and HTML elements for target keywords), and off-page optimization (building authority through backlinks and brand signals). The candidate conducted technical SEO audits, performed keyword research, optimized content for target keywords, and developed link building strategies.
+
+Paid advertising management addressed the ability to reach audiences through paid channels including search ads (Google Ads), social media ads (Meta Ads, LinkedIn Ads), and display advertising. The candidate developed skills in campaign structure, audience targeting, ad copywriting, bid management, and performance optimization. Understanding of key metrics including click-through rate, cost per click, conversion rate, and return on ad spend enabled data-driven campaign optimization.
+
+Analytics and measurement provided the feedback loops essential for digital marketing optimization. The candidate developed proficiency with Google Analytics for website analytics, Google Search Console for search performance data, and advertising platform analytics for campaign performance. Skills included implementing tracking correctly, creating custom reports and dashboards, defining and tracking conversion events, and attributing conversions to marketing channels.
+
+This report provides detailed documentation of each marketing initiative, including strategy rationale, execution details, performance results, and optimization recommendations.`,
+  "Acknowledgement": `I express my sincere gratitude to the evaluation board at IQ Intern Vocational Training platform for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
+  "Introduction": `Digital marketing encompasses all marketing efforts that use electronic devices or the internet, leveraging digital channels such as search engines, social media, email, and websites to connect with current and prospective customers. The digital transformation of marketing has been driven by the shift of consumer attention to digital channels and by digital's inherent measurability, which enables precise optimization impossible in traditional media. This internship focused on developing practical skills in key digital marketing channels and the analytics capabilities that enable data-driven optimization.
+
+Search engine marketing, encompassing both SEO (organic) and paid search advertising, addresses the reality that many consumer journeys begin with a search query. Google processes approximately 8.5 billion searches daily, and appearing prominently in search results—whether through organic ranking or paid placement—captures demand at the moment of intent. SEO builds long-term organic visibility through content and authority development, while paid search provides immediate visibility at a cost per click. This internship developed skills in both approaches, recognizing their complementary roles in search marketing.
+
+Social media marketing leverages platforms including Facebook, Instagram, LinkedIn, Twitter, and TikTok to reach audiences, build brand awareness, and drive engagement. Social platforms offer sophisticated targeting capabilities based on demographics, interests, behaviors, and connections, enabling precise audience reach. Both organic social media presence (building and engaging followers) and paid social advertising (reaching beyond existing followers) play roles in social media marketing strategy. This internship focused primarily on paid social advertising due to its scalability and measurability.
+
+Content marketing focuses on creating and distributing valuable, relevant content to attract and retain a defined audience, ultimately driving profitable customer action. Content marketing differs from advertising in its emphasis on providing value rather than directly promoting products. Blog posts, videos, infographics, podcasts, and ebooks are common content formats. Content marketing supports SEO (by creating indexable content and earning backlinks), social media marketing (by providing shareable content), and email marketing (by providing value that justifies newsletter subscriptions).
+
+Marketing analytics provides the measurement foundation that enables data-driven marketing. The ability to track user behavior from initial touchpoint through conversion—called attribution—enables understanding of which marketing activities drive results. Digital marketing's measurability is a significant advantage over traditional marketing, but realizing this advantage requires correct tracking implementation, appropriate metric selection, and analytical rigor in interpretation. This internship emphasized analytics as a core capability underlying all other marketing activities.`,
+  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
+  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
+  "Weekly Progress": `The internship commenced with an intensive first week focused on marketing fundamentals, analytics setup, and initial SEO analysis. The candidate set up Google Analytics 4 with proper event tracking, Google Search Console for search performance data, and Google Tag Manager for flexible tracking management. Initial SEO audit of a hypothetical e-commerce website identified technical issues including slow page load times (average 4.2 seconds), missing meta descriptions on 30% of pages, duplicate content from URL parameters, and broken links. Keyword research identified 50 target keywords across category, product, and informational intent.
+
+During the second week, the candidate focused on on-page SEO optimization. Title tags and meta descriptions were optimized for the top 20 target keywords, incorporating primary keywords naturally while maintaining click appeal. Content gaps were identified where target keywords lacked dedicated pages, and content briefs were created for new page development. Internal linking structure was analyzed and improved to ensure important pages received appropriate link equity. Header tag hierarchy was corrected to ensure proper H1-H6 usage across the site.
+
+Weeks three and four concentrated on paid search advertising using Google Ads. Campaign structure was designed following best practices: campaigns by product category, ad groups by keyword theme, and ads with relevant messaging for each ad group. Keyword research expanded beyond SEO keywords to include transactional and commercial investigation intents appropriate for paid search. Ad copy was written incorporating keywords, value propositions, and calls to action. Landing pages were reviewed for relevance to ad messaging and conversion optimization. Campaigns were launched with initial bids and budgets.
+
+The fifth and sixth weeks addressed social media advertising using Meta Ads Manager. Campaign objective was set to conversions (purchases) with campaign budget optimization. Audience targeting was configured using demographic targeting (age, location, gender), interest targeting (related product categories, competitor brands), and lookalike audiences based on existing customer lists. Ad creative was developed in multiple formats (single image, carousel, video) for A/B testing. Campaigns were launched with automated placement and budget allocation.
+
+The seventh and eighth weeks focused on analytics analysis, optimization, and reporting. Performance data was analyzed across channels: organic search traffic trends, keyword rankings, paid search KPIs (CTR, CPC, CVR, ROAS), and social ad performance. Optimization actions included adjusting bids based on performance, pausing underperforming keywords and ad variations, reallocating budget from lower-performing to higher-performing channels, and implementing landing page improvements based on behavior data. A comprehensive performance report was created with executive summary, channel-by-channel analysis, key findings, and optimization recommendations for the next period.`,
+  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Digital Marketing internship was selected to provide proficiency in the tools most widely used in professional digital marketing practice.
+
+Google Analytics 4 (GA4) served as the primary website analytics platform. The candidate utilized GA4's event-based data model, configuring events for key user actions (page views, add to cart, purchase, form submissions). Exploration reports were created for custom analysis including funnel exploration for conversion paths and path exploration for user navigation patterns. Audience building capabilities were used to create segments for remarketing. The candidate understood GA4's differences from Universal Analytics, including the shift to event-based data and the machine learning-powered insights.
+
+Google Search Console provided search performance data including impressions, clicks, CTR, and average position for pages and queries. The candidate utilized Search Console for keyword performance analysis, identifying high-impression/low-click opportunities for CTR optimization and tracking ranking changes over time. URL inspection tool was used for debugging indexing issues. Sitemap submission and robots.txt configuration were managed through Search Console.
+
+Google Tag Manager (GTM) served as the tag management platform for flexible tracking implementation. The candidate configured tags, triggers, and variables in GTM, enabling tracking changes without code deployment. GA4 configuration tag, conversion tracking tags, and third-party tracking pixels were implemented through GTM. Debug mode was used to verify tag firing before publishing.
+
+Google Ads served as the paid search advertising platform. The candidate utilized Google Ads' campaign structure (campaigns, ad groups, keywords, ads), targeting options (keywords, audiences, demographics, devices), and bidding strategies (manual CPC, maximize clicks, maximize conversions). Ad extensions (sitelinks, callouts, structured snippets) were configured to enhance ad visibility. Performance reports were analyzed for optimization decisions.
+
+Meta Ads Manager served as the social media advertising platform for Facebook and Instagram campaigns. The candidate utilized Meta's campaign structure (campaign, ad set, ad), targeting options (demographics, interests, behaviors, lookalike audiences, custom audiences), and placement options (automatic, manual). Ad creative was developed using Meta's creative tools. Performance reporting through Ads Manager and Ads Insights provided optimization data.
+
+SEMrush served as the SEO and competitive analysis tool. The candidate utilized SEMrush for keyword research (search volume, keyword difficulty, related keywords), site audit (technical SEO issues), position tracking (keyword ranking monitoring), and competitive analysis (competitor keywords, traffic estimates, ad spending estimates). The tool provided data that supplemented Google Search Console and enabled competitive benchmarking..`,
+  "Challenges Faced": `The Digital Marketing internship presented numerous challenges requiring analytical thinking, experimentation, and iterative optimization to resolve.
+
+Adapting to shifting search keywords and user intent proved challenging as search behavior evolved. Initial keyword targeting based on historical data didn't always reflect current search patterns. Resolution involved regularly refreshing keyword research using multiple data sources (Search Console actual queries, keyword tool suggestions, search trend analysis), monitoring ranking changes to identify emerging opportunities, and creating content that addressed topic clusters rather than individual keywords for resilience to keyword variation.
+
+Managing ad budget allocation across channels with different performance characteristics required balancing exploration (testing new opportunities) with exploitation (focusing on proven performers). Initial budget allocation heavily weighted toward paid search due to higher intent, but social ads showed unexpected performance for brand awareness objectives. Resolution involved establishing allocation frameworks based on funnel position (awareness: social, consideration: content/SEO, conversion: paid search), implementing minimum test budgets for new opportunities, and conducting regular reallocation based on performance data.
+
+Optimizing email open rates and engagement challenged assumptions about email marketing effectiveness. Initial email campaigns achieved 18% open rates, below the 22% industry benchmark. Resolution involved A/B testing subject lines (personalized vs. generic, question vs. statement, length variations), testing send times (day of week, time of day), segmenting lists for more relevant content, and cleaning inactive subscribers that depressed engagement metrics. Open rates improved to 24% through systematic testing.
+
+Attributing conversions to marketing channels accurately proved complex when users interacted with multiple touchpoints before converting. A user might see a social ad, later search for the brand, click an organic result, and finally convert through a retargeting ad. Last-click attribution (crediting the final touchpoint) undervalued upper-funnel activities. Resolution involved understanding different attribution models (last-click, first-click, linear, time-decay, data-driven), analyzing assisted conversions in Google Ads, and recognizing that no attribution model is perfect—different models provide different perspectives on channel contribution.
+
+Creating ad creative that balanced compliance with platform policies while maintaining effectiveness challenged copywriting skills. Meta's advertising policies restrict certain claims, images, and targeting practices that might otherwise be effective. Resolution involved studying platform policies thoroughly, developing creative approaches that achieved marketing objectives within policy boundaries, and maintaining a compliance checklist for ad review before submission. The candidate learned that platform compliance is a constraint that can drive creative solutions rather than just a limitation.`,
+  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
+  "Conclusion": `The Digital Marketing internship successfully achieved its objective of developing data-driven digital marketing capabilities. The candidate demonstrated growth across all program domains, from SEO fundamentals to integrated campaign management.
+
+The technical skills developed represent a strong foundation for digital marketing roles. Proficiency with Google Analytics, Google Ads, Meta Ads, and SEO tools provides capability to execute and optimize campaigns across major digital channels. Understanding of tracking implementation ensures data quality that enables effective optimization.
+
+The analytical skills developed are particularly valuable in digital marketing's data-rich environment. The ability to interpret metrics, identify patterns, conduct A/B tests, and draw actionable insights distinguishes effective digital marketers from those who merely execute tactics. The candidate's performance analysis and optimization recommendations demonstrated analytical thinking beyond surface-level reporting.
+
+The strategic thinking developed enables the candidate to contribute to marketing strategy, not just tactic execution. Understanding of marketing funnels, channel roles, and attribution provides framework for integrated marketing planning. The ability to connect marketing activities to business outcomes enables participation in strategic discussions.
+
+The challenges encountered developed resilience and systematic problem-solving approaches. The experience of adapting to changing search behavior, optimizing under budget constraints, and navigating attribution complexity developed skills that transfer to any digital marketing context.
+
+Looking forward, the candidate is well-prepared for continued digital marketing development. The foundation supports specialization in SEO, paid advertising, marketing analytics, or marketing strategy. The analytical foundation ensures that specialization builds upon data-driven practices.
+
+The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the technical capability, analytical rigor, and strategic thinking expected of a digital marketer completing a rigorous internship program. The candidate is certified as having completed the Digital Marketing internship with distinction.`
+};
+
+const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+
+const reportContainer = document.body;
+
+/* =====================================================
+   GENERATE SEPARATE A4 PAGES
+===================================================== */
+
+sections.forEach(section => {
+
+    const page = document.createElement('div');
+
+    page.className = 'report-page';
+
+    // Get track specific table rows
+    let tableRows = '';
+    const taskList = [
+      { name: "Comprehensive SEO Audit and Optimization", desc: "Conducted technical SEO audit identifying and resolving 80% of issues including page speed, meta tags, and crawlability problems. Optimized 20 pages for target keywords, achieving 23% organic traffic increase and page-one rankings for 12 keywords.", status: "Completed" },
+      { name: "Multi-Channel Paid Advertising Campaigns", desc: "Launched and optimized Google Ads and Meta Ads campaigns achieving 3.2x ROAS on paid search and 2.1x ROAS on social. Implemented proper tracking, A/B testing, and budget allocation based on performance data.", status: "Completed" },
+      { name: "Analytics Implementation and Performance Reporting", desc: "Implemented GA4 tracking with custom events and conversions, configured Google Tag Manager for flexible tracking management. Created comprehensive performance report with cross-channel analysis revealing 2.4x higher conversion rates for multi-channel customers.", status: "Completed" }
+    ];
+
+    taskList.forEach(task => {
+      tableRows += `
+        <tr>
+          <td>${task.name}</td>
+          <td>${task.desc}</td>
+          <td>${task.status}</td>
+        </tr>
+      `;
+    });
+
+    page.innerHTML = `
+
+        <h1>${section}</h1>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <h2>${section} Analysis</h2>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Task</th>
+
+                    <th>Description</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+               ${tableRows}
+            </tbody>
+
+        </table>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+        <p>${sectionParagraphs[section] || sampleParagraph}</p>
+
+    `;
+
+    reportContainer.appendChild(page);
+
+});
+</script>
+
+<!-- =====================================================
+   PRINT BUTTON
+===================================================== -->
+
+<button class="print-btn" onclick="window.print()">
+    Print Report
+</button>
+
+</body>
 </html>

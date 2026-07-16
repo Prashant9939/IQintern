@@ -196,6 +196,80 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
     templateData.isUnpaid = !status || status.includes('unpaid') || status.includes('non') || status.includes('no');
   }
 
+  // Inject branding and certificate details mapping for premium certificate.html
+  const companyName = "IQIntern Vocational Training Pvt. Ltd.";
+  const companyTagline = "Empowering Students, Building Careers";
+  const domain = "iqintern.in";
+  const websiteUrl = "https://iqintern.in";
+  const address = "Sector 154, Noida, Uttar Pradesh, India";
+
+  const track = templateData.internshipTitle || templateData.internshipName || "Vocational Internship";
+  
+  // Track-specific mentors and departments
+  let mentorName = "Dr. Anand K. Verma";
+  let mentorSig = "Anand K. Verma";
+  let department = "Technology & Engineering";
+  
+  const trackLower = track.toLowerCase();
+  if (trackLower.includes("data science") || trackLower.includes("datasci")) {
+    mentorName = "Dr. Amit Verma";
+    mentorSig = "Amit Verma";
+    department = "Data & AI Department";
+  } else if (trackLower.includes("web") || trackLower.includes("python") || trackLower.includes("java") || trackLower.includes("programming") || trackLower.includes("development")) {
+    mentorName = "Er. Shiwam Pandey";
+    mentorSig = "Shiwam Pandey";
+    department = "Engineering & Development";
+  } else if (trackLower.includes("marketing") || trackLower.includes("business") || trackLower.includes("finance") || trackLower.includes("account")) {
+    mentorName = "Prof. Sneha Kapoor";
+    mentorSig = "Sneha Kapoor";
+    department = "Business & Commerce Studies";
+  } else if (trackLower.includes("security") || trackLower.includes("cyber")) {
+    mentorName = "Er. Rohan Joshi";
+    mentorSig = "Rohan Joshi";
+    department = "Information Security Dept.";
+  } else if (trackLower.includes("ui") || trackLower.includes("ux") || trackLower.includes("design")) {
+    mentorName = "Er. Neha Gupta";
+    mentorSig = "Neha Gupta";
+    department = "Product & UI/UX Design";
+  } else if (trackLower.includes("cloud") || trackLower.includes("devops")) {
+    mentorName = "Er. Vikram Malhotra";
+    mentorSig = "Vikram Malhotra";
+    department = "Cloud Architecture Dept.";
+  }
+
+  const verId = templateData.verificationId || templateData.certificateId || "IQ-VER-2026";
+  const verificationUrl = `https://iqintern.in/verify?certificate=${verId}`;
+
+  const customFields: Record<string, string> = {
+    INTERN_NAME: templateData.studentName || templateData.fullName || "Intern Candidate",
+    COMPANY_NAME: companyName,
+    COMPANY_TAGLINE: companyTagline,
+    DEPARTMENT: department,
+    ROLE_TITLE: `${track} Intern`,
+    START_DATE: templateData.startDate || templateData.joiningDate || "N/A",
+    END_DATE: templateData.endDate || templateData.completionDate || "N/A",
+    MENTOR_NAME: mentorName,
+    LOCATION: "Delhi NCR, India (Virtual)",
+    ENGAGEMENT_TYPE: "Vocational Simulated Internship",
+    MENTOR_SIGNATURE_NAME: mentorSig,
+    DIRECTOR_SIGNATURE_NAME: "Prashant Kumar",
+    DIRECTOR_NAME: "Mr. Prashant Kumar",
+    DIRECTOR_TITLE: "Program Director",
+    CERTIFICATE_NUMBER: verId,
+    ISSUE_DATE: templateData.issueDate || new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+    VERIFICATION_CODE: verId,
+    VERIFICATION_URL: verificationUrl,
+    VERIFICATION_DOMAIN: domain,
+    COMPANY_ADDRESS: address,
+    COMPANY_WEBSITE: websiteUrl
+  };
+
+  Object.entries(customFields).forEach(([key, val]) => {
+    if (templateData[key] === undefined) {
+      templateData[key] = val;
+    }
+  });
+
   // 4. Compile template with Handlebars
   try {
     const template = Handlebars.compile(rendered);

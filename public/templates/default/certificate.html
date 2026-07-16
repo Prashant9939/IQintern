@@ -1,45 +1,930 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Internship Certificate</title>
+  <title>Certificate of Internship — {{INTERN_NAME}}</title>
+
+  <!-- ============================================================
+     PREMIUM TYPOGRAPHY IMPORTS
+     Playfair Display  -> ceremonial display serif (titles)
+     Cormorant Garamond -> secondary display serif (name, accents)
+     EB Garamond        -> body serif (paragraph copy)
+     Jost                -> utility sans (labels, data, mono-ish caps)
+============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #0f172a; line-height: 1.6; background-color: #ffffff; margin: 0; }
-    .cert-frame { max-width: 850px; margin: auto; padding: 50px; border: 15px double #4f46e5; border-radius: 8px; background: #fff; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,.05); position: relative; }
-    .cert-title { font-size: 26px; font-weight: 850; color: #4f46e5; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
-    .sub { font-size: 16px; font-style: italic; color: #64748b; margin-bottom: 30px; }
-    .recipient { font-size: 26px; font-weight: bold; color: #0f172a; margin: 20px 0; border-bottom: 2px solid #4f46e5; display: inline-block; padding-bottom: 5px; }
-    .body { font-size: 14.5px; color: #334155; margin: 20px auto; max-width: 600px; text-align: center; }
-    .grade-text { font-weight: bold; color: #4f46e5; }
-    .footer-meta { display: flex; justify-content: space-between; margin-top: 70px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-    .sig-line { width: 180px; text-align: center; font-weight: bold; color: #0f172a; }
+    /* ============================================================
+   0. DESIGN TOKENS
+============================================================ */
+    :root {
+      --ink: #1b2a2f;
+      --paper: #faf6ec;
+      --paper-shadow: #eee6d3;
+      --deep-teal: #0e3b3a;
+      --deep-teal-2: #14524f;
+      --brass: #a9812f;
+      --brass-light: #d4af5a;
+      --brass-pale: #f1e2ba;
+      --burgundy: #6e1f2c;
+      --line: rgba(14, 59, 58, 0.35);
+      --shadow: 0 25px 60px -20px rgba(14, 59, 58, 0.35);
+
+      --font-display: 'Playfair Display', 'Times New Roman', serif;
+      --font-name: 'Cormorant Garamond', 'Times New Roman', serif;
+      --font-body: 'EB Garamond', Georgia, serif;
+      --font-utility: 'Jost', Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #dcd3bd;
+      color: var(--ink);
+      font-family: var(--font-body);
+    }
+
+    /* ============================================================
+   1. PAGE / A4 STAGE
+============================================================ */
+    .stage {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 80px;
+    }
+
+    .certificate {
+      position: relative;
+      width: 297mm;
+      min-height: 210mm;
+      max-width: 1200px;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(169, 129, 47, 0.05), transparent 60%),
+        var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 14mm;
+      isolation: isolate;
+    }
+
+    /* ============================================================
+   2. MULTI-LAYER CORPORATE BORDER SYSTEM
+============================================================ */
+    .border-outer {
+      position: absolute;
+      inset: 6mm;
+      border: 1.5px solid var(--brass);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .border-outer::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px solid var(--brass);
+    }
+
+    .border-mid {
+      position: absolute;
+      inset: 9.5mm;
+      border: 2.5px double var(--deep-teal);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .border-inner {
+      position: absolute;
+      inset: 12.5mm;
+      border: 1px solid var(--brass);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .border-hair {
+      position: absolute;
+      inset: 13.5mm;
+      border: 0.5px solid rgba(110, 31, 44, 0.35);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ============================================================
+   3. DECORATIVE SVG CORNER ORNAMENTS
+============================================================ */
+    .corner {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .corner svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .corner.tl {
+      top: 6mm;
+      left: 6mm;
+    }
+
+    .corner.tr {
+      top: 6mm;
+      right: 6mm;
+      transform: scaleX(-1);
+    }
+
+    .corner.bl {
+      bottom: 6mm;
+      left: 6mm;
+      transform: scaleY(-1);
+    }
+
+    .corner.br {
+      bottom: 6mm;
+      right: 6mm;
+      transform: scale(-1, -1);
+    }
+
+    /* ============================================================
+   4. WATERMARK
+============================================================ */
+    .watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+      opacity: 0.055;
+      pointer-events: none;
+    }
+
+    .watermark svg {
+      width: 420px;
+      height: 420px;
+    }
+
+    .watermark-text {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      transform: rotate(-32deg);
+      opacity: 0.04;
+    }
+
+    .watermark-text span {
+      font-family: var(--font-display);
+      font-size: 90px;
+      letter-spacing: 14px;
+      white-space: nowrap;
+      color: var(--deep-teal);
+      font-weight: 800;
+    }
+
+    /* background scattered dot / diamond texture */
+    .bg-deco {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(169, 129, 47, 0.12) 1px, transparent 1.4px);
+      background-size: 26px 26px;
+      opacity: 0.5;
+      -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, black 0%, transparent 75%);
+      mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, black 0%, transparent 75%);
+    }
+
+    /* ============================================================
+   5. CONTENT SHELL
+============================================================ */
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 6mm 16mm 2mm;
+    }
+
+    /* ---- header / brand ---- */
+    .header {
+      text-align: center;
+      padding-top: 6mm;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      flex: none;
+    }
+
+    .brand-name {
+      font-family: var(--font-utility);
+      font-size: 13px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--deep-teal);
+      font-weight: 600;
+    }
+
+    .brand-sub {
+      font-family: var(--font-utility);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-top: 2px;
+    }
+
+    .title-rule {
+      width: 120px;
+      height: 1px;
+      margin: 14px auto 12px;
+      background: linear-gradient(90deg, transparent, var(--brass), transparent);
+    }
+
+    .cert-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 38px;
+      letter-spacing: 2px;
+      color: var(--deep-teal);
+      margin: 0;
+    }
+
+    .cert-subtitle {
+      font-family: var(--font-utility);
+      font-size: 13px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-top: 6px;
+    }
+
+    /* ---- presented-to block ---- */
+    .presented {
+      text-align: center;
+      margin-top: 22px;
+    }
+
+    .presented-label {
+      font-family: var(--font-utility);
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ink);
+      opacity: 0.65;
+    }
+
+    .recipient-name {
+      font-family: var(--font-name);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 52px;
+      color: var(--burgundy);
+      margin: 10px 0 6px;
+      line-height: 1.1;
+    }
+
+    .recipient-underline {
+      width: 340px;
+      max-width: 70%;
+      height: 1px;
+      margin: 0 auto;
+      background: var(--brass);
+      position: relative;
+    }
+
+    .recipient-underline::before,
+    .recipient-underline::after {
+      content: "◆";
+      position: absolute;
+      top: -6px;
+      color: var(--brass);
+      font-size: 10px;
+    }
+
+    .recipient-underline::before {
+      left: -16px;
+    }
+
+    .recipient-underline::after {
+      right: -16px;
+    }
+
+    /* ---- narrative paragraph ---- */
+    .narrative {
+      max-width: 640px;
+      margin: 20px auto 0;
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 16.5px;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+
+    .narrative strong {
+      font-weight: 500;
+      color: var(--deep-teal-2);
+    }
+
+    /* ---- internship details card ---- */
+    .details-card {
+      margin: 26px auto 0;
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(180deg, #ffffff, var(--paper-shadow));
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 18px 26px;
+      position: relative;
+    }
+
+    .details-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 3px;
+      background: var(--brass);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px 30px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .detail-label {
+      font-family: var(--font-utility);
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--brass);
+      font-weight: 600;
+    }
+
+    .detail-value {
+      font-family: var(--font-body);
+      font-size: 15.5px;
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* ---- footer row: signatures / seal / verification ---- */
+    .footer-row {
+      margin-top: auto;
+      padding-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 20px;
+    }
+
+    /* signature blocks */
+    .sign-block {
+      text-align: center;
+    }
+
+    .sign-block:first-child {
+      text-align: left;
+    }
+
+    .sign-block:last-child {
+      text-align: right;
+    }
+
+    .signature-line {
+      font-family: var(--font-name);
+      font-style: italic;
+      font-size: 26px;
+      color: var(--deep-teal);
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+      display: inline-block;
+      min-width: 190px;
+    }
+
+    .sign-name {
+      font-family: var(--font-utility);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .sign-role {
+      font-family: var(--font-utility);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-top: 2px;
+    }
+
+    /* seal */
+    .seal-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .seal {
+      width: 108px;
+      height: 108px;
+    }
+
+    .seal-caption {
+      font-family: var(--font-utility);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--brass);
+    }
+
+    /* ---- certificate numbering + QR verification strip ---- */
+    .verify-strip {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .verify-left {
+      display: flex;
+      gap: 26px;
+      flex-wrap: wrap;
+    }
+
+    .verify-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .verify-label {
+      font-family: var(--font-utility);
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--brass);
+    }
+
+    .verify-value {
+      font-family: var(--font-utility);
+      font-size: 13px;
+      color: var(--ink);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .qr-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qr-img {
+      width: 64px;
+      height: 64px;
+      border: 1px solid var(--line);
+      padding: 3px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .qr-text {
+      font-family: var(--font-utility);
+      font-size: 9px;
+      line-height: 1.4;
+      color: var(--ink);
+      opacity: 0.75;
+      max-width: 120px;
+    }
+
+    /* ---- footer legal / org line ---- */
+    .legal-footer {
+      margin-top: 16px;
+      text-align: center;
+      font-family: var(--font-utility);
+      font-size: 9.5px;
+      letter-spacing: 1px;
+      color: var(--ink);
+      opacity: 0.55;
+    }
+
+    /* ============================================================
+   6. PRINT BUTTON (screen only)
+============================================================ */
+    .print-btn {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      z-index: 50;
+      font-family: var(--font-utility);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--deep-teal);
+      border: none;
+      padding: 12px 22px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -8px rgba(14, 59, 58, 0.55);
+      transition: transform .15s ease, background .15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .print-btn:hover {
+      background: var(--deep-teal-2);
+      transform: translateY(-2px);
+    }
+
+    .print-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ============================================================
+   7. RESPONSIVE
+============================================================ */
+    @media (max-width: 1024px) {
+      .certificate {
+        width: 100%;
+        padding: 8mm;
+      }
+
+      .content {
+        padding: 4mm 8mm 2mm;
+      }
+
+      .recipient-name {
+        font-size: 40px;
+      }
+
+      .cert-title {
+        font-size: 30px;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stage {
+        padding: 16px 8px 60px;
+      }
+
+      .certificate {
+        min-height: auto;
+        padding: 5mm;
+      }
+
+      .content {
+        padding: 4mm 4mm 2mm;
+      }
+
+      .brand-name {
+        font-size: 11px;
+        letter-spacing: 3px;
+      }
+
+      .cert-title {
+        font-size: 22px;
+        letter-spacing: 1px;
+      }
+
+      .cert-subtitle {
+        font-size: 10px;
+        letter-spacing: 3px;
+      }
+
+      .recipient-name {
+        font-size: 30px;
+      }
+
+      .narrative {
+        font-size: 14px;
+      }
+
+      .footer-row {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .sign-block,
+      .sign-block:first-child,
+      .sign-block:last-child {
+        text-align: center;
+      }
+
+      .verify-strip {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .corner {
+        width: 44px;
+        height: 44px;
+      }
+
+      .print-btn {
+        top: 10px;
+        right: 10px;
+        padding: 10px 16px;
+        font-size: 11px;
+      }
+    }
+
+    /* ============================================================
+   8. A4 PRINT OPTIMIZATION
+============================================================ */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+
+      html,
+      body {
+        background: #fff;
+      }
+
+      .stage {
+        padding: 0;
+        min-height: auto;
+      }
+
+      .print-btn {
+        display: none;
+      }
+
+      .certificate {
+        box-shadow: none;
+        width: 297mm;
+        height: 210mm;
+        min-height: 210mm;
+        margin: 0;
+        page-break-inside: avoid;
+      }
+    }
   </style>
 </head>
-<body>
-  <div class="cert-frame">
-    <div class="cert-title">Certificate of Completion</div>
-    <div class="sub">This is proudly awarded to</div>
-    <div class="recipient">{{studentName}}</div>
-    <div class="body">
-      for successfully completing the proctored vocational simulated internship program in 
-      <strong>{{internshipName}}</strong>.
-    </div>
-    <div class="body">
-      The candidate participated in active learning tracks, fulfilled the curriculum checks, and cleared the final evaluations on the IQ Intern platform with a passing grade of <span class="grade-text">{{grade}}</span>.
-    </div>
 
-    <div class="footer-meta">
-      <div>
-        <strong>Date of Issue:</strong> {{issueDate}}<br/>
-        <strong>Verification ID:</strong> {{verificationId}}
+<body>
+
+  <!-- ================= PRINT BUTTON ================= -->
+  <button class="print-btn" onclick="window.print()" aria-label="Print certificate">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <rect x="6" y="14" width="12" height="8"></rect>
+    </svg>
+    Print Certificate
+  </button>
+
+  <div class="stage">
+    <div class="certificate" id="certificate">
+
+      <!-- ================= BACKGROUND DECORATIVE LAYERS ================= -->
+      <div class="bg-deco" aria-hidden="true"></div>
+
+      <div class="watermark" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="94" fill="none" stroke="#0e3b3a" stroke-width="1.5" />
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#0e3b3a" stroke-width="1" />
+          <path d="M100 20 L114 78 L172 78 L124 112 L142 170 L100 134 L58 170 L76 112 L28 78 L86 78 Z" fill="#0e3b3a" />
+        </svg>
       </div>
-      <div class="sig-line">
-        IQ Intern Coordinator
+      <div class="watermark-text" aria-hidden="true"><span>{{COMPANY_NAME}}</span></div>
+
+      <!-- ================= MULTI-LAYER BORDERS ================= -->
+      <div class="border-outer"></div>
+      <div class="border-mid"></div>
+      <div class="border-inner"></div>
+      <div class="border-hair"></div>
+
+      <!-- ================= SVG CORNER ORNAMENTS ================= -->
+      <div class="corner tl">
+        <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 40 C2 18 18 2 40 2" stroke="#a9812f" stroke-width="1.4" />
+          <path d="M2 26 C2 12 12 2 26 2" stroke="#0e3b3a" stroke-width="1" />
+          <circle cx="2" cy="2" r="4" fill="#a9812f" />
+          <path d="M2 55 C2 30 30 2 55 2" stroke="#a9812f" stroke-width="0.6" stroke-dasharray="2 3" />
+          <path d="M14 8 Q22 2 30 8 Q22 14 14 8 Z" fill="#d4af5a" />
+        </svg>
+      </div>
+      <div class="corner tr">
+        <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 40 C2 18 18 2 40 2" stroke="#a9812f" stroke-width="1.4" />
+          <path d="M2 26 C2 12 12 2 26 2" stroke="#0e3b3a" stroke-width="1" />
+          <circle cx="2" cy="2" r="4" fill="#a9812f" />
+          <path d="M2 55 C2 30 30 2 55 2" stroke="#a9812f" stroke-width="0.6" stroke-dasharray="2 3" />
+          <path d="M14 8 Q22 2 30 8 Q22 14 14 8 Z" fill="#d4af5a" />
+        </svg>
+      </div>
+      <div class="corner bl">
+        <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 40 C2 18 18 2 40 2" stroke="#a9812f" stroke-width="1.4" />
+          <path d="M2 26 C2 12 12 2 26 2" stroke="#0e3b3a" stroke-width="1" />
+          <circle cx="2" cy="2" r="4" fill="#a9812f" />
+          <path d="M2 55 C2 30 30 2 55 2" stroke="#a9812f" stroke-width="0.6" stroke-dasharray="2 3" />
+          <path d="M14 8 Q22 2 30 8 Q22 14 14 8 Z" fill="#d4af5a" />
+        </svg>
+      </div>
+      <div class="corner br">
+        <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 40 C2 18 18 2 40 2" stroke="#a9812f" stroke-width="1.4" />
+          <path d="M2 26 C2 12 12 2 26 2" stroke="#0e3b3a" stroke-width="1" />
+          <circle cx="2" cy="2" r="4" fill="#a9812f" />
+          <path d="M2 55 C2 30 30 2 55 2" stroke="#a9812f" stroke-width="0.6" stroke-dasharray="2 3" />
+          <path d="M14 8 Q22 2 30 8 Q22 14 14 8 Z" fill="#d4af5a" />
+        </svg>
+      </div>
+
+      <!-- ================= MAIN CONTENT ================= -->
+      <div class="content">
+
+        <!-- ---- header ---- -->
+        <header class="header">
+          <div class="brand-row">
+            <svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" stroke="#0e3b3a" stroke-width="1.5" />
+              <path d="M20 8 L23 17 L32 17 L25 23 L28 32 L20 26 L12 32 L15 23 L8 17 L17 17 Z" fill="#a9812f" />
+            </svg>
+            <div>
+              <div class="brand-name">{{COMPANY_NAME}}</div>
+              <div class="brand-sub">{{COMPANY_TAGLINE}}</div>
+            </div>
+          </div>
+
+          <div class="title-rule"></div>
+          <h1 class="cert-title">Certificate of Internship</h1>
+          <div class="cert-subtitle">Official Recognition of Professional Training</div>
+        </header>
+
+        <!-- ---- recipient ---- -->
+        <section class="presented">
+          <div class="presented-label">This certificate is proudly presented to</div>
+          <div class="recipient-name">{{INTERN_NAME}}</div>
+          <div class="recipient-underline"></div>
+        </section>
+
+        <!-- ---- narrative ---- -->
+        <p class="narrative">
+          In recognition of the successful completion of the internship program at
+          <strong>{{COMPANY_NAME}}</strong>, where the intern demonstrated consistent
+          dedication, professional conduct, and meaningful contribution to the
+          <strong>{{DEPARTMENT}}</strong> team over the course of the engagement.
+          This certificate is awarded in acknowledgment of the skills, discipline,
+          and value delivered throughout the internship term.
+        </p>
+
+        <!-- ---- internship details card ---- -->
+        <section class="details-card">
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Position / Role</span>
+              <span class="detail-value">{{ROLE_TITLE}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Department</span>
+              <span class="detail-value">{{DEPARTMENT}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Internship Duration</span>
+              <span class="detail-value">{{START_DATE}} &nbsp;–&nbsp; {{END_DATE}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Reporting Mentor</span>
+              <span class="detail-value">{{MENTOR_NAME}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">{{LOCATION}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Employment Type</span>
+              <span class="detail-value">{{ENGAGEMENT_TYPE}}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---- signatures / seal ---- -->
+        <section class="footer-row">
+          <div class="sign-block">
+            <div class="signature-line">{{MENTOR_SIGNATURE_NAME}}</div>
+            <div class="sign-name">{{MENTOR_NAME}}</div>
+            <div class="sign-role">Reporting Mentor</div>
+          </div>
+
+          <div class="seal-wrap">
+            <svg class="seal" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <path id="sealCirclePath" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" />
+              </defs>
+              <circle cx="60" cy="60" r="56" fill="none" stroke="#a9812f" stroke-width="1" />
+              <circle cx="60" cy="60" r="50" fill="#fbf6e9" stroke="#0e3b3a" stroke-width="2" />
+              <circle cx="60" cy="60" r="44" fill="none" stroke="#a9812f" stroke-width="1" />
+              <path d="M60 30 L65 50 L86 50 L69 62 L75 82 L60 70 L45 82 L51 62 L34 50 L55 50 Z" fill="#6e1f2c" />
+              <text font-family="Jost, Arial, sans-serif" font-size="8.5" letter-spacing="1.5" fill="#0e3b3a">
+                <textPath href="#sealCirclePath" startOffset="2%">OFFICIAL SEAL • {{COMPANY_NAME}}</textPath>
+              </text>
+            </svg>
+            <div class="seal-caption">Verified &amp; Sealed</div>
+          </div>
+
+          <div class="sign-block">
+            <div class="signature-line">{{DIRECTOR_SIGNATURE_NAME}}</div>
+            <div class="sign-name">{{DIRECTOR_NAME}}</div>
+            <div class="sign-role">{{DIRECTOR_TITLE}}</div>
+          </div>
+        </section>
+
+        <!-- ---- certificate numbering + QR verification ---- -->
+        <section class="verify-strip">
+          <div class="verify-left">
+            <div class="verify-item">
+              <span class="verify-label">Certificate No.</span>
+              <span class="verify-value">{{CERTIFICATE_NUMBER}}</span>
+            </div>
+            <div class="verify-item">
+              <span class="verify-label">Date of Issue</span>
+              <span class="verify-value">{{ISSUE_DATE}}</span>
+            </div>
+            <div class="verify-item">
+              <span class="verify-label">Verification Code</span>
+              <span class="verify-value">{{VERIFICATION_CODE}}</span>
+            </div>
+          </div>
+
+          <div class="qr-block">
+            <img class="qr-img"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=0&data={{VERIFICATION_URL}}"
+              alt="Scan to verify certificate {{CERTIFICATE_NUMBER}}" loading="lazy" />
+            <span class="qr-text">Scan to verify authenticity at {{VERIFICATION_DOMAIN}}</span>
+          </div>
+        </section>
+
+        <!-- ---- legal footer ---- -->
+        <footer class="legal-footer">
+          {{COMPANY_NAME}} &nbsp;•&nbsp; {{COMPANY_ADDRESS}} &nbsp;•&nbsp; {{COMPANY_WEBSITE}}
+          &nbsp;—&nbsp; This document is system-generated and valid without a physical signature when verified via QR
+          code.
+        </footer>
+
       </div>
     </div>
   </div>
 
-  <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
 </body>
+
 </html>

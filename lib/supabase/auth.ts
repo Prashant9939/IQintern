@@ -444,7 +444,7 @@ export function devToggleRole() {
   }
 
   if (typeof window !== "undefined") {
-    window.location.reload();
+    window.location.href = newRole === "admin" ? "/admin/dashboard" : "/student/dashboard";
   }
 }
 
