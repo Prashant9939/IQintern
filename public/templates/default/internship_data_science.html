@@ -397,211 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Data Science
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report provides a detailed account of the exploratory data analysis, dataset preprocessing, statistical modeling workflows, and predictive analytics pipelines completed during the Data Science internship program at IQ Intern. The internship spanned multiple evaluation cycles where the candidate was tasked with analyzing complex, real-world datasets that contained significant noise, missing values, and structural inconsistencies. Using Python as the primary programming language, along with specialized libraries including pandas for data manipulation, NumPy for numerical computations, and Scikit-Learn for machine learning implementations, the candidate systematically approached each dataset with a rigorous analytical framework.
-
-The core methodology employed throughout this internship followed the CRISP-DM (Cross-Industry Standard Process for Data Mining) framework, beginning with business understanding and data comprehension phases, progressing through data preparation and modeling stages, and culminating in evaluation and deployment considerations. Each phase was documented thoroughly, with particular emphasis on the data preparation stage where the candidate demonstrated exceptional skill in handling messy, unstructured data formats commonly encountered in production environments.
-
-The analysis workflows included extensive exploratory data analysis (EDA) procedures where the candidate examined data distributions using histogram visualizations, identified correlation patterns through heatmaps and scatter plots, and detected anomalies through statistical outlier detection methods such as Z-score analysis and Interquartile Range (IQR) filtering. The candidate also implemented advanced feature engineering techniques, creating derived variables that significantly improved model performance metrics.
-
-Statistical modeling formed a significant portion of the internship, with the candidate designing, implementing, and validating multiple regression and classification models. The evaluation methodology incorporated k-fold cross-validation techniques, with particular attention to preventing data leakage between training and testing partitions. Model performance was assessed using appropriate metrics including R-squared scores for regression tasks, and precision, recall, F1-scores, and Area Under the Receiver Operating Characteristic Curve (AUC-ROC) for classification problems.
-
-The datasets analyzed during this internship represented diverse domains including retail sales forecasting, customer segmentation analysis, and predictive maintenance scenarios. This variety allowed the candidate to demonstrate adaptability in applying different analytical approaches based on the specific characteristics and requirements of each dataset. The report that follows provides week-by-week documentation of progress, detailed technical explanations of methodologies employed, challenges encountered and solutions implemented, and a comprehensive discussion of results obtained throughout the internship period.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `The field of Data Science represents one of the most transformative technological disciplines of the twenty-first century, combining mathematical and statistical foundations, computer science expertise, and domain-specific knowledge to extract meaningful insights from increasingly complex and voluminous datasets. As organizations across virtually every industry sector recognize the competitive advantages that data-driven decision-making provides, the demand for skilled data science practitioners continues to grow exponentially. This internship program was designed to equip participants with the practical skills and methodological rigor required to function effectively in professional data science roles.
-
-Data Science operates at the intersection of several established disciplines. Statistics provides the theoretical framework for understanding probability distributions, hypothesis testing, and inference procedures that form the backbone of analytical reasoning. Computer science contributes the programming capabilities, algorithmic thinking, and computational efficiency required to process large-scale datasets that would be impossible to analyze manually. Domain expertise ensures that analytical outputs are interpreted correctly and that the questions being asked of the data are relevant and actionable. This internship emphasized the integration of all three pillars, ensuring that technical skills were always contextualized within broader analytical objectives.
-
-The historical evolution of data science from traditional statistics and business intelligence provides important context for understanding current practices. Early data analysis was primarily descriptive, focusing on summarizing historical patterns through aggregation and visualization. The emergence of machine learning introduced predictive capabilities, allowing organizations to forecast future outcomes based on historical patterns. More recently, the explosion of available data—driven by digital transformation, Internet of Things sensors, and social media platforms—has created both opportunities and challenges that define the modern data science landscape.
-
-Throughout this internship, the candidate engaged with datasets that reflected the complexity and messiness characteristic of real-world data environments. Unlike the clean, well-structured datasets commonly used in educational settings, these datasets contained missing values encoded in inconsistent formats, duplicate records with subtle variations, categorical variables with high cardinality, temporal inconsistencies, and numerical outliers that required careful investigation to determine whether they represented genuine extreme values or data quality issues. Learning to navigate these challenges systematically was a primary learning objective of the program.
-
-The analytical workflows implemented during this internship followed established best practices in the data science community. Version control systems were used to track code changes and enable reproducibility. Jupyter Notebooks provided an interactive environment for exploration while maintaining documentation of analytical reasoning. Code was structured modularly to facilitate reuse and testing. Visualization choices were guided by principles of effective data communication, ensuring that graphical outputs conveyed insights clearly and accurately without introducing visual distortions or misleading impressions.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The first week of the Data Science internship focused on establishing the development environment and conducting initial data exploration. The candidate configured a Jupyter Notebook environment with all required Python packages including pandas, NumPy, Matplotlib, and Seaborn. Upon receiving the first dataset—a retail sales database containing over 50,000 transaction records spanning 24 months—the candidate conducted preliminary assessments including row and column counts, data type verification, and basic statistical summaries. Initial exploration revealed approximately 8% missing values across multiple columns, with the missing patterns suggesting both random and systematic mechanisms. The candidate documented these findings and proposed an investigation plan for subsequent weeks.
-
-During the second week, the candidate implemented comprehensive data cleaning procedures. Missing value analysis began with visual assessment using missingno library heatmaps and bar charts to identify patterns in missingness. Based on the MCAR/MAR/MNAR framework, the candidate applied different strategies to different features: mean imputation for numerical features with low missing rates and random missing patterns, median imputation for numerical features with skewed distributions, and mode imputation for categorical features. For features with high missing rates exceeding 30%, the candidate conducted analysis both with and without these features to assess their impact on downstream modeling. The week concluded with a cleaned dataset and comprehensive documentation of all preprocessing decisions.
-
-The third week centered on exploratory data analysis and visualization. The candidate generated distribution plots for all numerical features, identifying significant skewness in several variables that would require transformation for modeling. Correlation analysis using Pearson coefficients for linear relationships and Spearman coefficients for monotonic relationships revealed several expected patterns (such as correlation between purchase quantity and total amount) and some unexpected findings (such as negative correlation between certain product categories). The candidate created a comprehensive visualization portfolio including histograms, box plots, scatter plots, and correlation heatmaps, with each visualization accompanied by written interpretation of observed patterns.
-
-Weeks four and five focused on feature engineering and statistical modeling. The candidate created derived features including time-based features (day of week, month, quarter) from date variables, interaction terms between correlated predictors, and binned categories from continuous variables where non-linear relationships were suspected. For modeling, the candidate implemented multiple regression approaches including ordinary least squares regression, ridge regression with cross-validated penalty parameters, and random forest regression. Model comparison using k-fold cross-validation revealed that the random forest model achieved the highest R-squared score of 0.847, though the ridge regression model offered superior interpretability with an R-squared of 0.789.
-
-The sixth week addressed classification modeling and model evaluation. Using a customer segmentation dataset, the candidate implemented logistic regression, decision tree classification, and gradient boosting classifiers. Evaluation metrics included accuracy, precision, recall, F1-score, and AUC-ROC curves, with particular attention to class imbalance effects given that the target variable had an approximately 70:30 split. The candidate implemented stratified sampling in cross-validation to ensure representative splits and used precision-recall curves to assess performance across different classification thresholds. The final deliverable was a comprehensive model comparison report with recommendations for deployment considerations.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack employed during the Data Science internship was carefully selected to reflect current industry standards while providing a robust foundation for diverse analytical workflows. Understanding the capabilities, strengths, and limitations of each tool was itself a learning objective, as effective data science practice requires appropriate tool selection based on task requirements and constraints.
-
-Python 3.x served as the primary programming language throughout the internship. Python's dominance in the data science ecosystem stems from its readable syntax, extensive library ecosystem, and strong community support. The candidate utilized Python 3.9 specifically, taking advantage of features including improved type hinting capabilities and dictionary merge operators that enhance code clarity. Python's dynamic typing, while sometimes criticized for potential runtime errors, proved advantageous during exploratory analysis where rapid iteration and prototyping are prioritized over strict type safety.
-
-The pandas library was the workhorse for data manipulation tasks. The candidate leveraged pandas' DataFrame structure extensively, utilizing its comprehensive indexing capabilities, groupby operations for aggregation, merge and join functions for combining datasets, and apply/map functions for custom transformations. Particular attention was given to pandas' handling of missing data through the isna(), fillna(), and dropna() methods, understanding how different parameter settings affect results. The candidate also utilized pandas' time series functionality for date-based feature extraction and rolling window calculations.
-
-NumPy provided the foundational numerical computing capabilities underlying many higher-level operations. While pandas abstracts much of NumPy's functionality for tabular data, the candidate directly utilized NumPy arrays for certain computationally intensive operations where the overhead of pandas indexing became noticeable. NumPy's linear algebra module was used for matrix operations in regression implementations, and its random number generation capabilities supported bootstrapping and simulation exercises.
-
-Scikit-Learn served as the primary machine learning library, providing implementations of regression, classification, clustering, and dimensionality reduction algorithms. The candidate utilized Scikit-Learn's consistent API design—where all models follow the fit/predict pattern—to efficiently experiment with multiple algorithms. Pipeline functionality was used to chain preprocessing and modeling steps, ensuring that cross-validation properly accounted for all transformations. The library's metrics module provided comprehensive evaluation capabilities, while its model_selection module supported various cross-validation strategies.
-
-Matplotlib and Seaborn handled all visualization requirements. Matplotlib's flexibility allowed for highly customized plots when standard configurations were insufficient, while Seaborn's statistical plotting functions provided convenient shortcuts for common visualization types. The candidate developed proficiency in both libraries, understanding when each was most appropriate. Particular attention was given to visualization best practices including appropriate axis labeling, legend placement, color palette selection for accessibility, and figure sizing for different output contexts.
-
-Jupyter Notebooks provided the interactive development environment that facilitated exploratory analysis. The notebook format, combining executable code, rendered visualizations, and narrative text in a single document, proved ideal for the iterative nature of data exploration. The candidate utilized notebook features including cell tagging for organization, variable inspection for debugging, and export capabilities for sharing results. SQL was used for initial data extraction from source databases before loading into pandas for analysis..`,
-  "Challenges Faced": `The Data Science internship presented numerous technical and methodological challenges that required creative problem-solving and systematic debugging approaches. Documenting these challenges and their resolutions provides valuable learning insights that extend beyond the specific contexts encountered.
-
-Missing value handling emerged as one of the most nuanced challenges. Initial approaches using simple mean imputation produced unsatisfactory results, with models showing reduced performance compared to analyses excluding missing data entirely. Investigation revealed that the missingness was not random but correlated with other variables—a MAR (Missing At Random) mechanism. Resolving this required implementing multiple imputation using chained equations (MICE), where each missing value is predicted based on other variables in an iterative process. While more computationally intensive, this approach preserved the statistical properties of the original distribution and improved downstream model performance.
-
-Database join optimization became critical when working with large, normalized datasets. Initial queries joining transaction tables with product, customer, and location tables through pandas merge operations consumed excessive memory and processing time. The challenge required transitioning from pandas-based joins to SQL-side joins, reducing the data volume before loading into Python. This experience highlighted the importance of understanding where different processing paradigms (SQL versus pandas) are most efficient, a consideration that becomes increasingly important as dataset sizes grow.
-
-Model overfitting presented a persistent challenge throughout the modeling phases. Initial decision tree models achieved near-perfect training accuracy but showed significant performance degradation on test data. Diagnosing overfitting required systematic analysis including learning curve plotting to assess whether additional training data would help, hyperparameter tuning to increase regularization, and ensemble methods to reduce variance. The candidate developed a diagnostic workflow that assessed overfitting through comparison of training and validation metrics, feature importance analysis to identify potential spurious correlations, and cross-validation stability assessment.
-
-Multicollinearity in regression models complicated interpretation efforts. Variance Inflation Factor (VIF) analysis revealed several predictor pairs with VIF values exceeding 10, indicating severe multicollinearity. The challenge was determining the appropriate response: removing one variable from each correlated pair risked losing predictive information, while retaining both variables produced unstable coefficient estimates. Resolution involved a combination of principal component analysis for interpretation-focused models and regularization (ridge regression) for prediction-focused models, demonstrating how analytical objectives should drive methodological choices.
-
-Computational efficiency became a concern during grid search hyperparameter tuning with larger models. Exhaustive grid searches over multiple hyperparameters with cross-validation proved prohibitively time-consuming for gradient boosting models on the full dataset. The candidate implemented random search as an alternative, which samples hyperparameter combinations randomly rather than exhaustively, achieving comparable results with approximately 20% of the computational cost. This experience illustrated practical trade-offs between thoroughness and efficiency that characterize real-world data science work.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Data Science internship program successfully achieved its primary objective of developing practical data science competencies through hands-on engagement with realistic analytical challenges. The candidate demonstrated progressive skill development across all program domains, from foundational data manipulation to advanced statistical modeling and result interpretation.
-
-The technical skills developed during this internship represent a solid foundation for professional data science practice. Proficiency in pandas data manipulation, including complex groupby operations, multi-index handling, and merge strategies, provides the capability to prepare diverse datasets for analysis. Experience with multiple modeling approaches—spanning linear models, tree-based methods, and ensemble techniques—equips the candidate to select appropriate algorithms based on data characteristics and analytical objectives. The emphasis on proper validation methodology, including k-fold cross-validation with appropriate stratification and holdout test sets, instills practices that protect against the common pitfall of overfitting to sample-specific patterns.
-
-Beyond technical skills, the internship cultivated professional practices essential for effective data science work. The discipline of documenting analytical decisions and their justifications prepares the candidate for the reproducibility requirements of production environments. Experience communicating findings through both written reports and visual presentations develops the ability to translate technical results into actionable insights for diverse audiences. The iterative nature of the work—where initial analyses often raised new questions requiring additional investigation—reflects the reality of data science projects where objectives evolve as understanding deepens.
-
-The challenges encountered during the internship proved as valuable as the successes in developing problem-solving capabilities. Debugging data quality issues required systematic investigation and hypothesis testing about data-generating processes. Resolving model performance problems demanded understanding of algorithm behavior beyond surface-level API usage. Optimizing computational efficiency necessitated consideration of trade-offs that characterize real-world engineering decisions. These experiences developed resilience and methodological sophistication that cannot be acquired through textbook study alone.
-
-Looking forward, the candidate is well-positioned to continue developing data science expertise. The foundational skills established during this internship provide a platform for exploring more advanced topics including deep learning for unstructured data, Bayesian statistical methods, and deployment considerations including model monitoring and drift detection. The professional practices cultivated—documentation, version control, reproducible analysis—will serve the candidate well regardless of specific technical directions pursued.
-
-In conclusion, this internship provided a comprehensive introduction to data science practice that successfully balanced breadth of exposure with depth of engagement. The candidate's performance throughout the program demonstrated the analytical aptitude, technical capability, and professional maturity required for entry-level data science roles. The evaluation board's assessment confirms that all program objectives were met, and the candidate is certified as having completed the Data Science internship with distinction.`
+const trackData = {
+  abstract: `This report details the exploratory data analysis, dataset preprocessing, statistical modeling workflows, and predictive analytics pipelines completed during the Data Science internship at IQ Intern. The candidate analyzed complex, real-world datasets containing significant noise, missing values, and structural inconsistencies using Python with pandas, NumPy, and Scikit-Learn. The methodology followed the CRISP-DM framework, progressing through business understanding, data preparation, modeling, and evaluation phases. Analysis workflows included extensive EDA procedures examining data distributions, correlation patterns, and anomaly detection using Z-score and IQR filtering. The candidate implemented advanced feature engineering techniques creating derived variables that improved model performance substantially. Statistical modeling involved designing, implementing, and validating multiple regression and classification models using k-fold cross-validation with appropriate metrics including R-squared, precision, recall, F1-scores, and AUC-ROC. Datasets spanned retail sales forecasting, customer segmentation, and predictive maintenance scenarios, demonstrating adaptability in applying analytical approaches based on dataset characteristics and domain-specific requirements.`,
+  acknowledgement: `I express sincere gratitude to IQ Intern Vocational Training Platform for this invaluable Data Science internship opportunity. Special thanks to the program coordinators for designing a curriculum that progressively built foundational concepts into advanced techniques with remarkable clarity. I am particularly grateful to my mentor whose guidance was indispensable—their ability to explain complex statistical concepts accessibly and their constructive feedback significantly enhanced my learning trajectory throughout the program. The technical support team deserves recognition for ensuring computational resources were consistently available and responsive to our processing demands. I acknowledge my fellow interns whose collaborative discussions and peer code reviews enriched the experience and exposed me to diverse analytical perspectives. Finally, I thank the evaluation board for their comprehensive assessment and detailed feedback that provides a clear roadmap for continued professional development in data science.`,
+  introduction: `Data Science combines mathematical and statistical foundations, computer science expertise, and domain-specific knowledge to extract meaningful insights from complex datasets. As organizations increasingly recognize competitive advantages from data-driven decision-making, demand for skilled practitioners grows exponentially across industries. This internship equipped participants with practical skills and methodological rigor essential for professional data science roles. Data Science operates at the intersection of statistics (probability distributions, hypothesis testing, inference), computer science (programming, algorithms, computational efficiency), and domain expertise (correct interpretation, relevant questions). The candidate engaged with datasets reflecting real-world complexity—missing values in inconsistent formats, duplicate records, high-cardinality categorical variables, and outliers requiring careful investigation. Analytical workflows followed established best practices: version control for reproducibility, Jupyter Notebooks for interactive exploration with thorough documentation, modular code structure promoting reusability, and visualization choices guided by effective data communication principles tailored to target audiences.`,
+  objectives: `The Data Science internship objectives were structured to build progressively upon foundational skills toward advanced competency. The primary technical objective was developing proficiency in data acquisition and preprocessing: loading data from multiple formats (CSV, JSON, Excel, databases), diagnosing data quality issues (missing values, inconsistent formatting, duplicates, outliers), and implementing appropriate remediation strategies including imputation methods, categorical encoding, and feature normalization. A second objective focused on exploratory data analysis: generating comprehensive statistical summaries, creating effective visualizations revealing patterns and anomalies, and formulating hypotheses about underlying data-generating processes. Emphasis was placed on correlation analysis, distinguishing correlation from causation, and interpreting high-dimensional correlation matrices with statistical significance considerations. Statistical modeling objectives included understanding theoretical foundations of regression and classification algorithms, implementing them using established libraries, evaluating performance using appropriate metrics and validation strategies, and diagnosing overfitting, underfitting, and multicollinearity. Additional objectives covered feature engineering techniques, ethical considerations (privacy, algorithmic fairness, bias detection), and professional practices including documentation, version control, and communicating findings to technical and non-technical audiences effectively.`,
+  literatureReview: `The CRISP-DM framework (Chapman et al., 2000) remains widely adopted for structuring data science projects through six iterative phases. Tukey's 1977 "Exploratory Data Analysis" established principles central to current practice—preliminary data examination through visual and numerical summaries reveals patterns and quality issues that might otherwise go undetected. Modern EDA practices including violin plots, heatmaps, and parallel coordinate plots build directly on these foundational insights. Rubin's 1976 framework distinguishing MCAR, MAR, and MNAR missing data mechanisms remains standard, with multiple imputation methods (van Buuren) outperforming simpler approaches in many real-world scenarios with complex missingness patterns. Breiman's 2001 "Statistical Modeling: The Two Cultures" highlighted the distinction between traditional statistical modeling (inference, interpretability) and algorithmic modeling (prediction accuracy)—this internship thoughtfully incorporated both approaches. Recent literature addressing ethical dimensions, including O'Neil's "Weapons of Math Destruction" (2016) on algorithmic inequities and academic work on algorithmic fairness metrics, informed ethical discussions throughout the program curriculum.`,
+  weeklyProgress: `Week one focused on environment setup and initial data exploration. The candidate configured Jupyter Notebooks with pandas, NumPy, Matplotlib, and Seaborn in a reproducible virtual environment. Initial dataset assessment (50,000+ retail transaction records over 24 months) revealed approximately 8% missing values across multiple columns with both random and systematic missingness patterns requiring different treatment strategies. Week two implemented comprehensive data cleaning: visual assessment using missingno library, applying MCAR/MAR/MNAR framework to select appropriate strategies (mean imputation for low-missing numerical features, median for skewed distributions, mode for categorical), and analyzing impact of excluding high-missing features (>30%) on downstream analysis. Week three centered on EDA and visualization: distribution plots identifying skewness requiring transformation, correlation analysis using Pearson and Spearman coefficients revealing expected and unexpected patterns, and creating a visualization portfolio with detailed interpretive documentation. Weeks four-five focused on feature engineering and modeling: creating time-based features, interaction terms, and binned categories; implementing OLS regression, ridge regression, and random forest regression with k-fold cross-validation (random forest achieved R-squared of 0.847, ridge achieved 0.789). Week six addressed classification: implementing logistic regression, decision trees, and gradient boosting with careful attention to class imbalance (70:30 split), stratified sampling, and precision-recall curve analysis.`,
+  technologies: `Python 3.9 served as the primary language, leveraging improved type hinting capabilities and dictionary merge operators for cleaner code. Pandas was the data manipulation workhorse—utilizing DataFrame indexing, groupby operations, merge/join functions, and apply/map transformations with particular attention to missing data handling (isna, fillna, dropna) and efficient memory usage patterns. NumPy provided foundational numerical computing support for matrix operations and random number generation with reproducible seeding. Scikit-Learn served as the primary ML library with its consistent fit/predict API enabling efficient algorithm experimentation and comparison; Pipeline functionality chained preprocessing and modeling steps for proper cross-validation without data leakage. Matplotlib offered flexible plot customization for publication-quality figures while Seaborn provided statistical plotting shortcuts for common analytical visualizations. Jupyter Notebooks combined executable code, visualizations, and narrative text for interactive exploratory analysis with exportable documentation. SQL was used for initial data extraction and aggregation before pandas processing for complex transformations.`,
+  challenges: `Missing value handling proved more nuanced than initially anticipated—simple mean imputation actually reduced model performance because missingness was correlated with other variables (MAR mechanism). Resolution required implementing MICE (Multiple Imputation by Chained Equations), which preserved statistical properties and improved downstream performance despite higher computational cost and implementation complexity. Database join optimization became critical with large normalized datasets—pandas merge operations consumed excessive memory causing kernel crashes. Transitioning to SQL-side joins reduced data volume before Python loading, highlighting the importance of understanding processing paradigm efficiency and working within memory constraints. Model overfitting persisted throughout modeling phases—decision trees achieved near-perfect training accuracy but degraded significantly on test data. Diagnosing this required learning curve plotting, systematic hyperparameter tuning for regularization, and ensemble methods to reduce variance while maintaining bias balance. Multicollinearity (VIF >10) complicated regression interpretation—resolution used PCA for interpretation-focused models and ridge regularization for prediction-focused models. Grid search hyperparameter tuning proved prohibitively time-consuming for gradient boosting; random search achieved comparable results with approximately 20% of the computational cost.`,
+  resultsAndDiscussion: `Regression modeling yielded R-squared values ranging from 0.72 to 0.85 across different model configurations. Random forest achieved highest accuracy (0.847), though improvement over ridge regression (0.79) was modest, suggesting predominantly linear relationships in the data—implying simpler models may be preferred for interpretability and computational efficiency. Feature importance analysis revealed temporal features (month, day of week, holiday proximity) accounted for approximately 45% of predictive power, product categories contributed roughly 30%, with remaining variance explained by demographics and promotional factors. The modest promotional contribution warrants further investigation for potential confounding with seasonal effects. Classification performance varied more substantially across algorithms: logistic regression AUC-ROC 0.82, decision trees 0.79, gradient boosting 0.88. Decision tree overfitting without appropriate pruning explained poor test performance; gradient boosting demonstrated clear ensemble method value for complex decision boundaries. All models showed lower minority-class precision, reflecting persistent class imbalance challenges requiring specialized techniques. EDA produced actionable findings beyond modeling—distinct purchasing patterns by acquisition channel suggested targeted marketing opportunities; high-return-rate categories correlated with specific shipping methods indicated operational improvement areas. Imputation method choice had measurable but varying effects—simpler models showed greater sensitivity than robust random forests.`,
+  conclusion: `The Data Science internship successfully achieved its primary objective of developing practical competencies through hands-on engagement with realistic analytical challenges. The candidate demonstrated progressive skill development across all domains: pandas data manipulation including complex groupby and merge strategies provides capability to prepare diverse datasets efficiently; experience with linear, tree-based, and ensemble models equips thoughtful algorithm selection based on data characteristics and project requirements; proper validation methodology (k-fold with stratification and holdout sets) protects against overfitting and provides reliable performance estimates. Beyond technical skills, the internship cultivated essential professional practices—documenting analytical decisions prepares for reproducibility requirements in production environments; communicating findings through reports and presentations translates technical results into actionable business insights. Challenges encountered proved as valuable as successes—debugging data quality issues required systematic investigation and hypothesis-driven approaches; resolving model performance problems demanded algorithm understanding beyond simple API usage; optimizing computational efficiency necessitated careful trade-off consideration between accuracy and resource consumption. The candidate is well-positioned for continued development in deep learning, Bayesian methods, and production deployment considerations. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Data Cleansing Pipeline', desc: 'Developed comprehensive cleaning pipeline handling 8% missing values using context-appropriate imputation strategies (mean, median, mode, MICE). Implemented robust outlier detection via Z-score and IQR methods, identifying and appropriately handling 342 extreme values. Created automated data quality reports with summary statistics and visualizations.', status: 'Completed' },
+    { name: 'EDA and Visualization Portfolio', desc: 'Generated 47 visualizations including distribution plots, correlation heatmaps, and scatter matrices with interpretive annotations. Discovered 12 significant patterns including unexpected negative correlations warranting further investigation. All visualizations followed accessibility guidelines for color-blind audiences.', status: 'Completed' },
+    { name: 'Modeling and Evaluation Framework', desc: 'Implemented 6 regression and 4 classification models using rigorous k-fold cross-validation with stratification. Achieved best regression R-squared of 0.847 (random forest) and best classification AUC-ROC of 0.88 (gradient boosting). Developed comprehensive comparison documentation with feature importance analysis.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Data Cleansing and Preprocessing Pipeline", desc: "Developed a comprehensive data cleaning pipeline that handled 8% missing values across multiple columns using context-appropriate imputation strategies (mean, median, mode, and MICE multiple imputation). Implemented outlier detection using Z-score and IQR methods, resulting in identification and appropriate handling of 342 extreme values. Created automated data quality reports documenting all preprocessing decisions and their rationales.", status: "Completed" },
-      { name: "Exploratory Data Analysis and Visualization Portfolio", desc: "Generated 47 visualizations including distribution plots, correlation heatmaps, scatter matrices, and time series decompositions. Discovered 12 significant patterns including unexpected negative correlations between product categories. Created an interactive visualization dashboard allowing stakeholders to explore data relationships dynamically. All visualizations followed accessibility guidelines for color-blind users.", status: "Completed" },
-      { name: "Statistical Modeling and Evaluation Framework", desc: "Implemented and compared 6 regression models and 4 classification models using rigorous k-fold cross-validation with stratified sampling. Achieved best regression R-squared of 0.847 using random forest and best classification AUC-ROC of 0.88 using gradient boosting. Developed comprehensive model comparison documentation including learning curves, feature importance rankings, and error analysis across different customer segments.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Data Science, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

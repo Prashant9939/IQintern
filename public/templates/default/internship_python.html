@@ -397,213 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Python Programming
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive work completed during the Python Programming internship at AVADS Private Limited. The internship focused on developing advanced Python programming skills through the design and implementation of object-oriented architectures, backend application development using modern frameworks, database integration and management, and the establishment of automated testing practices. Over the course of the program, the candidate progressed from implementing fundamental control structures and data manipulation techniques to architecting complex, modular software systems that demonstrate production-ready coding practices.
-
-The core focus of this internship was establishing deep proficiency in Python's object-oriented programming paradigm. Python's implementation of OOP, including its approach to classes, inheritance, polymorphism, encapsulation, and abstraction, was explored through the development of multiple interconnected software modules. The candidate designed class hierarchies that modeled real-world domains, implemented abstract base classes to define interface contracts, utilized decorators for cross-cutting concerns such as logging and access control, and applied design patterns including Singleton, Factory, and Observer patterns to solve recurring design challenges.
-
-Backend application development formed a significant component of the internship, with the candidate building RESTful API services using both Django and Flask frameworks. This dual-framework approach provided valuable perspective on the trade-offs between "batteries-included" frameworks that provide comprehensive functionality out of the box versus microframeworks that offer greater flexibility but require more explicit configuration. The candidate implemented authentication systems, request validation middleware, error handling strategies, and response serialization for both frameworks.
-
-Database integration was explored through multiple paradigms including raw SQL queries, the SQLAlchemy Object-Relational Mapping (ORM) library, and Django's built-in ORM. The candidate designed normalized database schemas, implemented migration strategies for schema evolution, and developed repository patterns that abstracted data access logic from business logic. Particular attention was given to transaction management, connection pooling, and query optimization to ensure database interactions were both correct and efficient.
-
-Automated testing practices were integrated throughout the development process, with the candidate writing unit tests, integration tests, and end-to-end tests using the unittest and pytest frameworks. Test-Driven Development (TDD) practices were employed for several modules, with the candidate experiencing firsthand how writing tests first influences code design toward greater modularity and testability. The internship concluded with the establishment of continuous integration concepts, where automated test suites were triggered by code commits to ensure ongoing code quality.
-
-This report provides detailed documentation of each development phase, including architectural decisions, implementation specifics, challenges encountered, and the resolutions applied. The work demonstrates a systematic approach to software development that balances theoretical understanding with practical implementation skills.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Python has emerged as one of the most versatile and widely-adopted programming languages in the contemporary software development landscape. Originally conceived by Guido van Rossum in the late 1980s and first released in 1991, Python was designed with an emphasis on code readability, simplicity, and the principle that "there should be one—and preferably only one—obvious way to do it." These design principles, enshrined in the so-called "Zen of Python," have contributed to the language's reputation for being both accessible to beginners and powerful enough for expert practitioners.
-
-The language's versatility stems from its extensive standard library, which provides built-in modules for file handling, network programming, database access, cryptographic operations, and numerous other common tasks without requiring third-party installations. Beyond the standard library, the Python Package Index (PyPI) hosts over 400,000 packages covering virtually every domain of software development, from web frameworks and data science libraries to game development engines and hardware interaction tools. This ecosystem richness means that Python developers can often find pre-built solutions for common problems, allowing them to focus their efforts on application-specific logic.
-
-Python's object-oriented programming capabilities, while not as rigidly enforced as in languages like Java, provide powerful abstractions for organizing complex software. Python's approach to OOP includes support for classes, inheritance (including multiple inheritance), polymorphism, encapsulation through name mangling, and abstraction through abstract base classes. Additionally, Python includes several advanced OOP features including metaclasses, descriptors, properties, and class decorators that enable sophisticated programming patterns. Understanding these capabilities deeply was a primary focus of this internship.
-
-The language's dynamic typing system, while sometimes criticized for allowing type-related errors to manifest at runtime rather than compile time, offers significant advantages in rapid prototyping and exploratory programming. The introduction of type hints in Python 3.5 and their progressive enhancement in subsequent versions has addressed many of these concerns, allowing developers to optionally specify types for improved tooling support and documentation while retaining the flexibility of dynamic typing where desired. This internship utilized type hints extensively, developing the candidate's ability to write type-annotated code that leverages static type checkers like mypy.
-
-Backend web development represents one of Python's strongest application domains, with Django and Flask being among the most popular web frameworks in any language. Django, following the "batteries included" philosophy, provides an ORM, authentication system, admin interface, and numerous other components out of the box, making it well-suited for content management systems and data-driven web applications. Flask, as a microframework, provides only the essentials (routing and request/response handling) while leaving other concerns to developer-chosen extensions, making it ideal for APIs and microservices where minimalism is valued. This internship provided hands-on experience with both paradigms.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship commenced with an intensive first week focused on advanced Python fundamentals and development environment configuration. The candidate set up a comprehensive development environment including Python 3.10, virtual environments using both venv and conda, VS Code with Python extension configurations, and pre-commit hooks for code formatting (Black) and linting (Flake8, mypy). Initial exercises focused on advanced data structure manipulation, including implementing complex list comprehensions with conditional logic, utilizing generator expressions for memory-efficient iteration over large datasets, and mastering dictionary operations including unpacking, merging, and comprehension syntax. The week concluded with a foundational project implementing a command-line data processing tool that demonstrated file I/O, argument parsing with argparse, and structured error handling.
-
-During the second week, the candidate deepened their understanding of Python's function-related capabilities, focusing on closures, decorators, and generators. Implementation exercises included creating caching decorators using functools.lru_cache and custom memoization logic, writing parameterized decorators that accept configuration arguments, and implementing context managers using both class-based and generator-based approaches (contextlib.contextmanager). The candidate developed a logging framework as a practical application, implementing decorators that automatically log function entry, exit, execution time, and exceptions with configurable verbosity levels. Generator-based solutions were developed for processing large files line-by-line without loading entire files into memory, demonstrating the practical benefits of lazy evaluation.
-
-Weeks three and four concentrated on object-oriented programming, beginning with class design fundamentals and progressing to advanced patterns. The candidate implemented a class hierarchy modeling an e-commerce system, with base classes for Product, Customer, and Order, and derived classes for specialized variants (DigitalProduct, PhysicalProduct, VIPCustomer). Implementation of abstract base classes using the abc module defined interface contracts that derived classes were required to fulfill. The candidate explored multiple inheritance scenarios, including the "diamond problem" and Python's method resolution order (MRO) algorithm, implementing a plugin architecture where functionality could be composed through mixin classes. Design patterns were applied including Factory Method for object creation, Observer for event notification, and Strategy for algorithm selection.
-
-The fifth and sixth weeks shifted focus to web framework development, beginning with Flask and progressing to Django. For Flask, the candidate implemented a RESTful API for a task management system, including application factory pattern for configuration management, Blueprint-based modular organization, JWT authentication middleware, request validation using Marshmallow schemas, and comprehensive error handling with consistent error response formats. The Django module involved building a blog application with user authentication, post creation and management, commenting system with nested replies, and an administrative interface customized for content management. The candidate configured Django's ORM models with appropriate field types, validators, and relationships, implemented class-based views for both list and detail pages, and created form classes with custom validation logic.
-
-The seventh and eighth weeks addressed database integration and testing. The candidate implemented a repository pattern that abstracted data access from business logic, allowing the same business code to work with different storage backends (in-memory for testing, SQLite for development, PostgreSQL for production). SQLAlchemy was used to implement complex queries including joins across multiple tables, aggregate functions with grouping, window functions for running calculations, and CTE (Common Table Expression) queries for recursive data structures. The testing component involved writing pytest test suites achieving 92% code coverage, including unit tests with mocked database interactions, integration tests verifying actual database operations, and end-to-end tests using Flask's test client and Django's test case classes.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Python Programming internship was selected to provide comprehensive exposure to the Python ecosystem while maintaining coherence with professional development practices. Each technology choice was deliberate, serving specific learning objectives that contribute to well-rounded Python development capabilities.
-
-Python 3.10 served as the primary language version, selected for its inclusion of structural pattern matching (match/case statements), improved error messages, and performance improvements in common operations. The candidate utilized new features where appropriate while maintaining compatibility awareness for deployment environments that might run earlier versions. Python's standard library provided numerous modules used throughout the internship, including os and pathlib for file system operations, json and csv for data serialization, logging for structured output, unittest for testing, and argparse for command-line interfaces.
-
-Django 4.2 was the selected version for the "batteries-included" framework component. Django's ORM provided the primary database interaction layer for Django projects, with the candidate leveraging its model definition syntax, query construction through QuerySet methods, and migration generation and execution. Django's forms framework handled both HTML form rendering and server-side validation, with the candidate implementing custom field validators and form-level validation logic. The Django REST Framework extension was used to build API endpoints alongside traditional HTML views, demonstrating how Django can serve both human-facing and programmatic interfaces.
-
-Flask 2.3 represented the microframework component, selected for its minimalism and explicit configuration requirements. Flask's routing system, using decorators to associate URL patterns with view functions, provided a straightforward introduction to web request handling. Extensions used with Flask included Flask-SQLAlchemy for database access, Flask-JWT-Extended for authentication, Flask-Marshmallow for request/response serialization, and Flask-CORS for cross-origin resource sharing configuration. The candidate experienced firsthand how Flask's modular approach requires explicit decisions about components that Django provides by default.
-
-SQLAlchemy 2.0 served as the standalone ORM for non-Django projects, with the candidate utilizing both its ORM interface and its Core SQL expression language. The ORM interface provided Pythonic class-based database interaction, while the Core interface offered more direct control over SQL generation for performance-critical queries. The candidate implemented mappings using both the declarative base approach and the mapper() function approach, understanding the trade-offs between convenience and explicitness. Alembic, SQLAlchemy's migration tool, was used for schema version control, with the candidate writing both auto-generated and manually-crafted migration scripts.
-
-SQLite served as the development database due to its zero-configuration nature and file-based storage that simplified environment setup. However, the candidate was also exposed to PostgreSQL concepts through SQLAlchemy's dialect system, understanding how database-specific features require dialect-aware code. Connection pooling configuration, transaction isolation levels, and database-specific data type mappings were discussed even when not directly implemented due to SQLite limitations.
-
-Testing was conducted using both the built-in unittest framework and the third-party pytest framework. The candidate developed preference for pytest's more concise syntax (simple functions versus class-based test cases), its powerful fixture system for test setup, and its extensive plugin ecosystem. Pytest-cov was used for coverage measurement, pytest-mock for mocking utilities, and pytest-xdist for parallel test execution. The candidate also utilized hypothesis, a property-based testing library, for generating comprehensive test inputs automatically..`,
-  "Challenges Faced": `The Python Programming internship presented numerous technical challenges that required systematic debugging, research, and iterative refinement to resolve. These challenges, while frustrating in the moment, provided some of the most valuable learning experiences by exposing gaps in understanding and developing problem-solving resilience.
-
-Package dependency conflicts emerged early in the internship when attempting to install libraries with incompatible version requirements. A project requiring both an older Django version (for compatibility with specific tutorial examples) and newer library versions (for security patches) created unresolvable dependency constraints. Resolving this required learning about virtual environments in depth, understanding how pip's dependency resolver works, and eventually implementing a multi-environment setup where different projects used isolated environments with compatible dependency sets. This experience instilled the importance of pinning dependency versions explicitly in requirements files and understanding the implications of version range specifications.
-
-Circular import dependencies presented a particularly challenging problem during the development of interconnected modules. When Module A imported a class from Module B, and Module B imported a utility function from Module A, Python raised an ImportError because the first module's namespace was incomplete when the second module attempted its import. Initial attempts to resolve this through import reordering proved fragile. The ultimate solution involved restructuring the code to extract the shared dependency into a separate Module C that both A and B could import without circularity, coupled with understanding Python's import system mechanics including how modules are cached in sys.modules and how lazy imports can defer circular dependency resolution.
-
-Refactoring nested loops for improved time complexity became necessary when a data processing function exhibited unacceptable performance on larger inputs. The original implementation used three nested loops to process a list of records, resulting in O(n³) complexity that became prohibitive for inputs exceeding a few hundred records. Analysis using Python's cProfile module identified the nested loops as the bottleneck. Refactoring to use dictionary lookups (O(1) average case) instead of inner loop searches reduced complexity to O(n²), and further optimization using set operations for membership testing achieved O(n log n) complexity. This exercise developed the candidate's ability to analyze algorithmic complexity and select appropriate data structures.
-
-Database schema migration conflicts arose when development occurred on multiple branches simultaneously, with each branch making independent schema changes. Merging these branches created migration sequences that could not be applied cleanly. Resolution required understanding Alembic's migration versioning system, manually editing migration files to resolve conflicts, and establishing team conventions for migration development including never editing applied migrations and using a single branch for schema changes. This experience highlighted the importance of database change management practices in team environments.
-
-Debugging asynchronous code introduced new categories of errors unfamiliar from synchronous programming. When implementing async database operations using SQLAlchemy's async extension, the candidate encountered "coroutine was never awaited" warnings, "asyncio event loop is closed" errors, and mysterious deadlocks where tasks waited for each other. Resolving these required deep study of Python's asyncio module, understanding the event loop lifecycle, proper use of async/await syntax, and the distinction between thread-based and coroutine-based concurrency. The candidate developed debugging strategies including careful logging of coroutine creation and completion, using asyncio's built-in debug mode, and gradual introduction of async patterns rather than wholesale conversion of synchronous code.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Python Programming internship successfully achieved its objective of developing comprehensive Python development capabilities through progressive, hands-on engagement with realistic programming challenges. The candidate demonstrated substantial growth across all program domains, from foundational language mastery to architectural design skills.
-
-The technical skills developed represent a strong foundation for professional Python development. Deep understanding of Python's object-oriented features, including metaclasses, descriptors, and the method resolution order, enables the candidate to utilize Python's full expressive power rather than treating it as "just another language." Proficiency with both Django and Flask provides flexibility in framework selection based on project requirements, while understanding of their philosophical differences enables informed architectural decisions. Database integration skills spanning raw SQL, SQLAlchemy ORM, and Django ORM provide versatility in data access approaches.
-
-The professional practices cultivated during this internship are arguably as valuable as the technical skills. Version control discipline, including meaningful commit messages, branch management, and merge conflict resolution, prepares the candidate for collaborative development environments. Code quality practices including automated formatting, linting, and type checking instill habits that improve code maintainability. Comprehensive testing practices, including the ability to write effective test cases and interpret coverage metrics appropriately, ensure that the candidate can deliver reliable software.
-
-The challenges encountered during the internship developed resilience and systematic problem-solving capabilities. The experience of debugging complex issues—circular imports, async deadlocks, migration conflicts—developed debugging intuition that accelerates future problem resolution. The research required to understand unfamiliar concepts developed self-directed learning skills essential for keeping pace with Python's evolving ecosystem.
-
-Looking forward, the candidate is well-prepared for continued Python development growth. The foundation established supports exploration of more specialized areas including async programming for high-concurrency applications, data science libraries for analytical work, or systems programming with Python for infrastructure automation. The architectural awareness developed supports progression from implementing specified designs to participating in design decisions and eventually leading technical architecture efforts.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the technical capability, professional maturity, and learning agility expected of a Python developer completing a rigorous internship program. The candidate is certified as having completed the Python Programming internship with distinction, having demonstrated readiness for entry-level Python development positions with the potential for rapid growth into senior roles.`
+const trackData = {
+  abstract: `This report documents the Python Programming internship at IQ Intern, focusing on advanced OOP design principles, backend development using Django and Flask frameworks, database integration through SQLAlchemy and Django ORM, and automated testing practices. The candidate progressed from fundamental control structures to architecting modular software systems demonstrating production-ready development practices. Core focus areas included Python's OOP paradigm—classes, inheritance, polymorphism, encapsulation, abstract base classes, decorators, and design patterns (Singleton, Factory, Observer). Backend development built RESTful APIs with authentication, request validation, error handling, and response serialization following industry standards. Database integration covered raw SQL queries, ORM mapping strategies, migration management, repository patterns, transaction management, and query optimization techniques. Automated testing integrated unit, integration, and end-to-end tests using unittest and pytest frameworks, with Test-Driven Development practices applied to selected modules for enhanced code reliability.`,
+  acknowledgement: `I express profound gratitude to IQ Intern for this transformative Python Programming internship experience. Special thanks to the lead instructor whose expertise in Python architecture and ability to explain complex concepts like metaclasses and descriptors accessibly was invaluable throughout the program. Code review sessions significantly improved my attention to code quality, Pythonic conventions, and maintainability considerations. The technical infrastructure team deserves recognition for pre-configured development environments that eliminated configuration friction and allowed immediate focus on learning objectives. I appreciate fellow interns for pair programming sessions and code review exchanges that exposed me to diverse problem-solving approaches and alternative implementation strategies. The evaluation committee's detailed feedback, referencing specific implementations and design decisions, demonstrated thorough assessment integrity and genuine investment in learning outcomes.`,
+  introduction: `Python, conceived by Guido van Rossum and first released in 1991, emphasizes code readability and the guiding principle that "there should be one obvious way to do it." Its remarkable versatility stems from an extensive standard library and PyPI's 400,000+ packages covering virtually every development domain imaginable. Python's OOP capabilities include classes, inheritance (including multiple inheritance), polymorphism, encapsulation through name mangling, and abstraction through abstract base classes, plus advanced features like metaclasses, descriptors, and class decorators that enable sophisticated metaprogramming. Type hints (Python 3.5+) address dynamic typing concerns by enabling optional type specifications for improved tooling, static analysis, and IDE support while retaining Python's characteristic flexibility. Backend web development represents a particularly strong application domain—Django provides "batteries included" functionality (ORM, authentication, admin interface) suitable for content management and complex applications, while Flask offers minimalism (routing, request/response) ideal for APIs and microservices architectures. This internship provided comprehensive hands-on experience with both paradigms and their appropriate use cases.`,
+  objectives: `The foundational objective was achieving expert-level Python core proficiency: advanced data structure manipulation (list comprehensions, generators, dictionary views, collections module specialized containers), protocol-based polymorphism (duck typing with iterables, iterators, context managers), and function capabilities (closures, decorators with and without arguments, generators for memory-efficient processing). OOP objectives included designing appropriate class hierarchies modeling problem domains, understanding MRO (Method Resolution Order) for multiple inheritance scenarios, and applying SOLID principles effectively in Python-specific contexts. Framework objectives covered Django's MVT architecture, URL routing configuration, form validation, ORM operations, and middleware configuration; plus Flask's application factory pattern, extension configuration, blueprint modular structure, and development versus production deployment distinctions. Database objectives spanned raw SQL proficiency (JOINs, subqueries, aggregates, transactions) and ORM levels (class-table mapping, relationship configuration, locking strategies, performance implications, migration management with versioning). Testing objectives emphasized comprehensive automated test suites—unit tests isolating units with mocks, integration tests verifying component interactions, and end-to-end tests validating complete workflows—using unittest and pytest with TDD practices applied to selected modules for enhanced reliability.`,
+  literatureReview: `Joshua Bloch's "Effective Java" (with principles applicable across languages) provides foundational guidance on software design, with Python-specific adaptations thoroughly documented by Brett Slatkin in "Effective Python" and R. Hettinger's acclaimed presentations. Notably, some GoF patterns prove less necessary in Python—Iterator is built-in, Observer has event listener equivalents—while Python-specific patterns like descriptor protocols have no direct equivalent elsewhere and enable powerful metaprogramming capabilities. Django architecture is comprehensively documented in "The Definitive Guide to Django" by Holovaty et al., covering the framework's philosophical foundations. Flask's microframework philosophy is documented by Armin Ronacher, representing a deliberate reaction against framework opinionation and emphasizing developer choice. Database interaction literature addresses the "Object-Relational Impedance Mismatch" (S. Ambler)—ORMs are not transparent mappings but involve explicit design decisions with significant performance implications requiring careful consideration. Software testing methodology draws from Kent Beck's "Test-Driven Development" (2002), with Python's testing ecosystem evolving from unittest (modeled on JUnit) to more Pythonic pytest leveraging dynamic language capabilities for concise, expressive test writing.`,
+  weeklyProgress: `Week one focused on advanced fundamentals and environment setup: Python 3.10 installation, VS Code configuration with extensions, virtual environment management, and pre-commit hooks (Black, Flake8, mypy) for automated code quality. Exercises covered advanced data structures and a command-line data processing tool demonstrating practical application. Week two deepened function capabilities: caching decorators with LRU strategy, parameterized decorators for flexible behavior, context managers (both class-based and generator-based implementations), and a comprehensive logging framework implementation. Weeks three-four concentrated on OOP principles: an e-commerce class hierarchy with base classes and specialized variants, abstract base classes defining clear interface contracts, multiple inheritance with thorough MRO understanding, and design patterns (Factory Method, Observer, Strategy) applied to realistic scenarios. Weeks five-six shifted to web frameworks: Flask RESTful task management API with application factory pattern, blueprints for modular organization, JWT authentication, Marshmallow validation, and consistent error responses; Django blog platform with user authentication, content management, nested comments, and customized admin interface. Weeks seven-eight addressed database integration and testing: repository pattern abstracting data access for testability, SQLAlchemy complex queries (joins, aggregates, window functions, CTEs), Django ORM configuration; pytest suite achieving 92% coverage with unit tests using mocked dependencies and integration tests with real database operations.`,
+  technologies: `Python 3.10 provided the language foundation with structural pattern matching, improved error messages, and performance improvements. Django 4.2 served as the "batteries-included" framework with comprehensive ORM, form handling, and admin interface. Flask 2.3 represented the microframework approach with routing decorators and extension-based configuration (Flask-SQLAlchemy, Flask-JWT-Extended, Flask-Marshmallow, Flask-CORS). SQLAlchemy 2.0 served as standalone ORM with both ORM interface and Core SQL expression language, plus Alembic for database migration management. SQLite served as the development database with exposure to PostgreSQL concepts through the dialect system for production readiness. Testing utilized both built-in unittest and third-party pytest with pytest-cov for coverage measurement, pytest-mock for mocking utilities, and hypothesis for property-based testing discovering edge cases. Dependency management used pip with requirements files and virtual environments for isolation.`,
+  challenges: `Package dependency conflicts arose when different libraries required incompatible versions of shared dependencies. Resolution required learning virtual environment depth, understanding pip's dependency resolver behavior, and implementing multi-environment setups with pinned versions in requirements files. Circular import dependencies (Module A importing B, B importing A) caused ImportError from incomplete namespaces during initialization. Resolution involved extracting shared dependencies into separate Module C and understanding lazy imports for circularity deferral in specific cases. Refactoring nested loops for time complexity (O(n³) became prohibitive for large inputs) required cProfile-identified bottlenecks—refactoring to dictionary lookups reduced to O(n²), with set operations achieving O(n log n) for specific operations. Database schema migration conflicts during parallel branch development required understanding Alembic's versioning system, manual conflict resolution editing, and establishing single-branch migration conventions. Debugging async code introduced unfamiliar error patterns (coroutine never awaited, event loop closed, deadlocks)—resolution required studying asyncio module internals, proper async/await syntax usage, and gradual async pattern introduction to minimize complexity.`,
+  resultsAndDiscussion: `The OOP component yielded 23 classes in a coherent e-commerce hierarchy applying inheritance for genuine "is-a" relationships and composition for "has-a" relationships following SOLID principles. SOLID adherence was verified through rigorous code review with particular success in Single Responsibility and Dependency Inversion principles. The Flask API achieved 100% OpenAPI compliance, handled approximately 500 requests/second for simple endpoints and 150 req/s for database-intensive queries. The Django blog provided complete user experience from registration through content creation to commenting. Repository pattern abstraction introduced approximately 5% overhead versus direct ORM access—acceptable trade-off for significantly improved testability and maintainability. SQLAlchemy optimization reduced complex query execution from 2.3s to 0.4s through strategic index addition and query restructuring based on EXPLAIN analysis. Test coverage achieved 87% line coverage and 82% branch coverage; Hypothesis property-based testing discovered two bugs (integer overflow edge case, string encoding issue) that manual testing had missed. Code quality metrics improved substantially: Flake8 violations decreased from 47 to 3, mypy strict mode compliance improved from 62% to 94%.`,
+  conclusion: `The Python Programming internship successfully achieved its objective of developing comprehensive Python development capabilities from foundational to advanced levels. Technical skills represent a strong foundation for professional work: deep OOP understanding (metaclasses, descriptors, MRO) enables full Python expressiveness for complex designs; Django and Flask proficiency provides framework selection flexibility based on project requirements; database integration skills span raw SQL, SQLAlchemy, and Django ORM for appropriate technology matching. Professional practices—version control discipline, code quality automation (Black, Flake8, mypy), comprehensive testing with meaningful coverage—instill habits expected in professional development environments. Challenges encountered developed resilience and systematic debugging approaches applicable to any Python development context. The candidate is prepared for continued growth in async programming, data science libraries, or systems automation domains. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'OOP E-Commerce System', desc: 'Designed comprehensive 23-class hierarchy applying SOLID principles, abstract base classes for interface contracts, factory patterns for flexible instantiation, and observer notifications for event handling. Achieved 94% mypy strict mode compliance with comprehensive type annotations throughout.', status: 'Completed' },
+    { name: 'Dual Framework Web Application', desc: 'Built Flask RESTful API with JWT authentication and complete OpenAPI documentation; built Django blog with authentication, content management, and nested comment system. Achieved 500 req/s for simple endpoints with proper error handling.', status: 'Completed' },
+    { name: 'Comprehensive Testing Framework', desc: 'Developed pytest suite achieving 87% line coverage with mocked unit tests, integration tests verifying component interactions, and property-based tests for edge case discovery. Hypothesis discovered two previously unknown bugs missed by manual testing.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Object-Oriented E-Commerce System", desc: "Designed and implemented a comprehensive e-commerce domain model with 23 classes organized into inheritance hierarchies. Applied SOLID principles throughout, implemented abstract base classes for interface contracts, created factory patterns for object creation, and built an observer pattern for order status notifications. Included complete type annotations achieving 94% mypy strict mode compliance.", status: "Completed" },
-      { name: "Dual Framework Web Application", desc: "Built a RESTful task management API using Flask with JWT authentication, request validation, and OpenAPI documentation. Separately implemented a blog application using Django with user authentication, content management, nested commenting system, and customized admin interface. Conducted performance benchmarking showing 500 req/s for simple endpoints and 150 req/s for database-intensive operations.", status: "Completed" },
-      { name: "Comprehensive Testing Framework", desc: "Developed a pytest-based testing suite achieving 92% code coverage across all project modules. Implemented unit tests with mocked dependencies, integration tests verifying database operations, and property-based tests using Hypothesis that discovered two previously unknown bugs. Created reusable pytest fixtures for common test setups and implemented parallel test execution for reduced runtime.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Python Programming, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

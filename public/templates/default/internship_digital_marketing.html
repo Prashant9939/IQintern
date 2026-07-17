@@ -397,215 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Digital Marketing
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive digital marketing work completed during the Digital Marketing internship at AVADS Private Limited. The internship focused on developing practical skills in search engine optimization (SEO), paid advertising management, social media marketing, analytics and measurement, and content marketing strategy. Over the course of the program, the candidate progressed from understanding marketing fundamentals to executing integrated digital marketing campaigns that demonstrate data-driven marketing practice.
-
-The core focus of this internship was establishing proficiency in data-driven digital marketing, where marketing decisions are informed by analytics rather than intuition. Digital marketing's advantage over traditional marketing lies in its measurability—every click, view, and conversion can be tracked, enabling precise understanding of what works and what doesn't. The candidate developed skills in setting up analytics tracking, interpreting marketing metrics, conducting experiments to optimize performance, and reporting results to stakeholders.
-
-Search Engine Optimization (SEO) formed a foundational component, with the candidate learning to improve website visibility in organic search results. SEO encompasses technical optimization (ensuring search engines can crawl and index content effectively), on-page optimization (optimizing content and HTML elements for target keywords), and off-page optimization (building authority through backlinks and brand signals). The candidate conducted technical SEO audits, performed keyword research, optimized content for target keywords, and developed link building strategies.
-
-Paid advertising management addressed the ability to reach audiences through paid channels including search ads (Google Ads), social media ads (Meta Ads, LinkedIn Ads), and display advertising. The candidate developed skills in campaign structure, audience targeting, ad copywriting, bid management, and performance optimization. Understanding of key metrics including click-through rate, cost per click, conversion rate, and return on ad spend enabled data-driven campaign optimization.
-
-Analytics and measurement provided the feedback loops essential for digital marketing optimization. The candidate developed proficiency with Google Analytics for website analytics, Google Search Console for search performance data, and advertising platform analytics for campaign performance. Skills included implementing tracking correctly, creating custom reports and dashboards, defining and tracking conversion events, and attributing conversions to marketing channels.
-
-This report provides detailed documentation of each marketing initiative, including strategy rationale, execution details, performance results, and optimization recommendations.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Digital marketing encompasses all marketing efforts that use electronic devices or the internet, leveraging digital channels such as search engines, social media, email, and websites to connect with current and prospective customers. The digital transformation of marketing has been driven by the shift of consumer attention to digital channels and by digital's inherent measurability, which enables precise optimization impossible in traditional media. This internship focused on developing practical skills in key digital marketing channels and the analytics capabilities that enable data-driven optimization.
-
-Search engine marketing, encompassing both SEO (organic) and paid search advertising, addresses the reality that many consumer journeys begin with a search query. Google processes approximately 8.5 billion searches daily, and appearing prominently in search results—whether through organic ranking or paid placement—captures demand at the moment of intent. SEO builds long-term organic visibility through content and authority development, while paid search provides immediate visibility at a cost per click. This internship developed skills in both approaches, recognizing their complementary roles in search marketing.
-
-Social media marketing leverages platforms including Facebook, Instagram, LinkedIn, Twitter, and TikTok to reach audiences, build brand awareness, and drive engagement. Social platforms offer sophisticated targeting capabilities based on demographics, interests, behaviors, and connections, enabling precise audience reach. Both organic social media presence (building and engaging followers) and paid social advertising (reaching beyond existing followers) play roles in social media marketing strategy. This internship focused primarily on paid social advertising due to its scalability and measurability.
-
-Content marketing focuses on creating and distributing valuable, relevant content to attract and retain a defined audience, ultimately driving profitable customer action. Content marketing differs from advertising in its emphasis on providing value rather than directly promoting products. Blog posts, videos, infographics, podcasts, and ebooks are common content formats. Content marketing supports SEO (by creating indexable content and earning backlinks), social media marketing (by providing shareable content), and email marketing (by providing value that justifies newsletter subscriptions).
-
-Marketing analytics provides the measurement foundation that enables data-driven marketing. The ability to track user behavior from initial touchpoint through conversion—called attribution—enables understanding of which marketing activities drive results. Digital marketing's measurability is a significant advantage over traditional marketing, but realizing this advantage requires correct tracking implementation, appropriate metric selection, and analytical rigor in interpretation. This internship emphasized analytics as a core capability underlying all other marketing activities.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship commenced with an intensive first week focused on marketing fundamentals, analytics setup, and initial SEO analysis. The candidate set up Google Analytics 4 with proper event tracking, Google Search Console for search performance data, and Google Tag Manager for flexible tracking management. Initial SEO audit of a hypothetical e-commerce website identified technical issues including slow page load times (average 4.2 seconds), missing meta descriptions on 30% of pages, duplicate content from URL parameters, and broken links. Keyword research identified 50 target keywords across category, product, and informational intent.
-
-During the second week, the candidate focused on on-page SEO optimization. Title tags and meta descriptions were optimized for the top 20 target keywords, incorporating primary keywords naturally while maintaining click appeal. Content gaps were identified where target keywords lacked dedicated pages, and content briefs were created for new page development. Internal linking structure was analyzed and improved to ensure important pages received appropriate link equity. Header tag hierarchy was corrected to ensure proper H1-H6 usage across the site.
-
-Weeks three and four concentrated on paid search advertising using Google Ads. Campaign structure was designed following best practices: campaigns by product category, ad groups by keyword theme, and ads with relevant messaging for each ad group. Keyword research expanded beyond SEO keywords to include transactional and commercial investigation intents appropriate for paid search. Ad copy was written incorporating keywords, value propositions, and calls to action. Landing pages were reviewed for relevance to ad messaging and conversion optimization. Campaigns were launched with initial bids and budgets.
-
-The fifth and sixth weeks addressed social media advertising using Meta Ads Manager. Campaign objective was set to conversions (purchases) with campaign budget optimization. Audience targeting was configured using demographic targeting (age, location, gender), interest targeting (related product categories, competitor brands), and lookalike audiences based on existing customer lists. Ad creative was developed in multiple formats (single image, carousel, video) for A/B testing. Campaigns were launched with automated placement and budget allocation.
-
-The seventh and eighth weeks focused on analytics analysis, optimization, and reporting. Performance data was analyzed across channels: organic search traffic trends, keyword rankings, paid search KPIs (CTR, CPC, CVR, ROAS), and social ad performance. Optimization actions included adjusting bids based on performance, pausing underperforming keywords and ad variations, reallocating budget from lower-performing to higher-performing channels, and implementing landing page improvements based on behavior data. A comprehensive performance report was created with executive summary, channel-by-channel analysis, key findings, and optimization recommendations for the next period.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Digital Marketing internship was selected to provide proficiency in the tools most widely used in professional digital marketing practice.
-
-Google Analytics 4 (GA4) served as the primary website analytics platform. The candidate utilized GA4's event-based data model, configuring events for key user actions (page views, add to cart, purchase, form submissions). Exploration reports were created for custom analysis including funnel exploration for conversion paths and path exploration for user navigation patterns. Audience building capabilities were used to create segments for remarketing. The candidate understood GA4's differences from Universal Analytics, including the shift to event-based data and the machine learning-powered insights.
-
-Google Search Console provided search performance data including impressions, clicks, CTR, and average position for pages and queries. The candidate utilized Search Console for keyword performance analysis, identifying high-impression/low-click opportunities for CTR optimization and tracking ranking changes over time. URL inspection tool was used for debugging indexing issues. Sitemap submission and robots.txt configuration were managed through Search Console.
-
-Google Tag Manager (GTM) served as the tag management platform for flexible tracking implementation. The candidate configured tags, triggers, and variables in GTM, enabling tracking changes without code deployment. GA4 configuration tag, conversion tracking tags, and third-party tracking pixels were implemented through GTM. Debug mode was used to verify tag firing before publishing.
-
-Google Ads served as the paid search advertising platform. The candidate utilized Google Ads' campaign structure (campaigns, ad groups, keywords, ads), targeting options (keywords, audiences, demographics, devices), and bidding strategies (manual CPC, maximize clicks, maximize conversions). Ad extensions (sitelinks, callouts, structured snippets) were configured to enhance ad visibility. Performance reports were analyzed for optimization decisions.
-
-Meta Ads Manager served as the social media advertising platform for Facebook and Instagram campaigns. The candidate utilized Meta's campaign structure (campaign, ad set, ad), targeting options (demographics, interests, behaviors, lookalike audiences, custom audiences), and placement options (automatic, manual). Ad creative was developed using Meta's creative tools. Performance reporting through Ads Manager and Ads Insights provided optimization data.
-
-SEMrush served as the SEO and competitive analysis tool. The candidate utilized SEMrush for keyword research (search volume, keyword difficulty, related keywords), site audit (technical SEO issues), position tracking (keyword ranking monitoring), and competitive analysis (competitor keywords, traffic estimates, ad spending estimates). The tool provided data that supplemented Google Search Console and enabled competitive benchmarking..`,
-  "Challenges Faced": `The Digital Marketing internship presented numerous challenges requiring analytical thinking, experimentation, and iterative optimization to resolve.
-
-Adapting to shifting search keywords and user intent proved challenging as search behavior evolved. Initial keyword targeting based on historical data didn't always reflect current search patterns. Resolution involved regularly refreshing keyword research using multiple data sources (Search Console actual queries, keyword tool suggestions, search trend analysis), monitoring ranking changes to identify emerging opportunities, and creating content that addressed topic clusters rather than individual keywords for resilience to keyword variation.
-
-Managing ad budget allocation across channels with different performance characteristics required balancing exploration (testing new opportunities) with exploitation (focusing on proven performers). Initial budget allocation heavily weighted toward paid search due to higher intent, but social ads showed unexpected performance for brand awareness objectives. Resolution involved establishing allocation frameworks based on funnel position (awareness: social, consideration: content/SEO, conversion: paid search), implementing minimum test budgets for new opportunities, and conducting regular reallocation based on performance data.
-
-Optimizing email open rates and engagement challenged assumptions about email marketing effectiveness. Initial email campaigns achieved 18% open rates, below the 22% industry benchmark. Resolution involved A/B testing subject lines (personalized vs. generic, question vs. statement, length variations), testing send times (day of week, time of day), segmenting lists for more relevant content, and cleaning inactive subscribers that depressed engagement metrics. Open rates improved to 24% through systematic testing.
-
-Attributing conversions to marketing channels accurately proved complex when users interacted with multiple touchpoints before converting. A user might see a social ad, later search for the brand, click an organic result, and finally convert through a retargeting ad. Last-click attribution (crediting the final touchpoint) undervalued upper-funnel activities. Resolution involved understanding different attribution models (last-click, first-click, linear, time-decay, data-driven), analyzing assisted conversions in Google Ads, and recognizing that no attribution model is perfect—different models provide different perspectives on channel contribution.
-
-Creating ad creative that balanced compliance with platform policies while maintaining effectiveness challenged copywriting skills. Meta's advertising policies restrict certain claims, images, and targeting practices that might otherwise be effective. Resolution involved studying platform policies thoroughly, developing creative approaches that achieved marketing objectives within policy boundaries, and maintaining a compliance checklist for ad review before submission. The candidate learned that platform compliance is a constraint that can drive creative solutions rather than just a limitation.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Digital Marketing internship successfully achieved its objective of developing data-driven digital marketing capabilities. The candidate demonstrated growth across all program domains, from SEO fundamentals to integrated campaign management.
-
-The technical skills developed represent a strong foundation for digital marketing roles. Proficiency with Google Analytics, Google Ads, Meta Ads, and SEO tools provides capability to execute and optimize campaigns across major digital channels. Understanding of tracking implementation ensures data quality that enables effective optimization.
-
-The analytical skills developed are particularly valuable in digital marketing's data-rich environment. The ability to interpret metrics, identify patterns, conduct A/B tests, and draw actionable insights distinguishes effective digital marketers from those who merely execute tactics. The candidate's performance analysis and optimization recommendations demonstrated analytical thinking beyond surface-level reporting.
-
-The strategic thinking developed enables the candidate to contribute to marketing strategy, not just tactic execution. Understanding of marketing funnels, channel roles, and attribution provides framework for integrated marketing planning. The ability to connect marketing activities to business outcomes enables participation in strategic discussions.
-
-The challenges encountered developed resilience and systematic problem-solving approaches. The experience of adapting to changing search behavior, optimizing under budget constraints, and navigating attribution complexity developed skills that transfer to any digital marketing context.
-
-Looking forward, the candidate is well-prepared for continued digital marketing development. The foundation supports specialization in SEO, paid advertising, marketing analytics, or marketing strategy. The analytical foundation ensures that specialization builds upon data-driven practices.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the technical capability, analytical rigor, and strategic thinking expected of a digital marketer completing a rigorous internship program. The candidate is certified as having completed the Digital Marketing internship with distinction.`
+const trackData = {
+  abstract: `This report details the Digital Marketing internship at IQ Intern, focusing on data-driven marketing strategies, search engine optimization (SEO), pay-per-click (PPC) advertising, and marketing analytics. The candidate progressed from understanding foundational marketing funnels to executing multi-channel digital campaigns with measurable return on investment (ROI). Core focus areas included on-page and off-page SEO optimization, managing Google Ads (Search and Display networks), content marketing strategy, social media community management, and advanced web analytics using Google Analytics 4 (GA4). The internship emphasized the transition from vanity metrics (likes, impressions) to actionable business metrics (conversion rate, customer acquisition cost, lifetime value). Methodologies followed the "See, Think, Do, Care" customer segmentation framework, ensuring messaging aligned with user intent at different stages of the buying journey. The candidate also gained exposure to marketing automation workflows and A/B testing methodologies for continuous campaign optimization.`,
+  acknowledgement: `I express my sincere gratitude to IQ Intern for this comprehensive Digital Marketing internship. Special thanks to my mentor, a seasoned digital marketer, whose expertise in Google Ads bidding strategies and GA4 event tracking was invaluable. Their emphasis on statistical significance in A/B testing cured my habit of making decisions based on insufficient data. I am grateful to the program coordinators for providing access to live campaign environments and simulated ad budgets, which allowed for real-world experimentation without financial risk. Appreciation is extended to my fellow interns for collaborative brainstorming sessions and for sharing diverse perspectives on content creation. Finally, I thank the evaluation board for their rigorous review of my campaign dashboards, optimization logics, and strategic rationales.`,
+  introduction: `Digital marketing has revolutionized how businesses reach and engage consumers, shifting budgets from traditional, untrackable media to highly measurable, targeted digital channels. However, the sheer volume of data available can be overwhelming without a strategic framework. Modern digital marketing is not about being present on every platform; it is about being present on the right platform, with the right message, at the right time in the customer lifecycle. This internship immersed the candidate in the tactical execution and strategic analysis of digital channels. It required understanding the technical underpinnings of search algorithms, the psychology of ad copywriting, and the statistical analysis required to optimize campaigns. The candidate learned to view a website not just as a brochure, but as a conversion engine where every element can be tracked, tested, and improved. The internship bridged the gap between creative marketing intuition and hard data analytics.`,
+  objectives: `The foundational objective was mastering the digital marketing funnel and customer journey mapping. SEO objectives included conducting technical SEO audits (crawlability, indexability, site speed), performing keyword research using tools like Ahrefs and SEMrush, optimizing on-page elements (meta tags, header hierarchy, internal linking), and developing off-page strategies (backlink analysis, outreach). PPC objectives covered setting up and managing Google Ads campaigns, understanding match types and keyword intent, writing compelling ad copy with clear CTAs, configuring conversion tracking, and applying bidding strategies (Manual CPC, Maximize Conversions). Analytics objectives focused on mastering Google Analytics 4, including setting up custom events, creating explorations for user behavior analysis, and building dashboards in Looker Studio to visualize KPIs. Content marketing objectives involved developing editorial calendars, understanding content distribution channels, and applying SEO best practices to blog writing. Finally, optimization objectives required designing statistically valid A/B tests for landing pages and ad copy, and understanding marketing automation sequences.`,
+  literatureReview: `Digital marketing strategy is heavily influenced by the "See, Think, Do, Care" framework popularized by Avinash Kaushik, which aligns content strategy with user intent. For SEO, the industry standard is largely dictated by Google's Search Quality Evaluator Guidelines, which emphasize E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness). The technical aspects of GA4 are documented in the Google Analytics 4 Property Setup Guide, which represents a shift from session-based to event-based data models. For PPC, Google's official Skillshop documentation provides the foundational knowledge for ad platform mechanics. The science of A/B testing is covered in "Trustworthy Online Controlled Experiments" by Kohavi, Tang, and Xu, which emphasizes the importance of guardrail metrics and avoiding peeking at results before statistical significance is reached. Content marketing theory draws from Joe Pulizzi's "Epic Content Marketing," which focuses on building audiences through consistent, valuable content rather than interruptive advertising.`,
+  weeklyProgress: `Week one focused on digital strategy and analytics setup. The candidate configured Google Analytics 4 on a test website, implemented enhanced measurement events, and built a foundational Looker Studio dashboard tracking traffic sources, engagement, and conversions. Week two centered on SEO. The candidate performed a comprehensive technical SEO audit using Screaming Frog, identified and fixed broken links and missing meta tags, conducted keyword research for a niche blog, and wrote three SEO-optimized articles targeting specific long-tail keywords. Weeks three and four transitioned to paid advertising. The candidate structured a Google Ads Search campaign, grouping keywords tightly by intent, writing responsive search ads, and configuring conversion tracking. The campaign was launched with a limited budget, and the candidate monitored early performance metrics (CTR, CPC). Week five focused on optimization and A/B testing. Analyzing the initial ad data, the candidate paused underperforming keywords, adjusted bids on high-converting terms, and set up A/B tests for landing page headlines using Google Optimize (or equivalent logic). Week six explored content marketing and social media. The candidate developed a 30-day editorial calendar, understood distribution strategies for LinkedIn and Twitter, and analyzed engagement metrics. Weeks seven and eight involved a comprehensive capstone project: creating an integrated digital marketing strategy for a hypothetical SaaS product, encompassing SEO, PPC, and content pillars, complete with a projected ROI analysis.`,
+  technologies: `Google Analytics 4 (GA4) served as the primary web analytics platform for event-based tracking. Google Looker Studio (formerly Data Studio) was used to build interactive, client-facing marketing dashboards. Google Ads platform was utilized for managing Search and Display campaigns, analyzing auction insights, and adjusting bidding strategies. Ahrefs and SEMrush were the primary tools for keyword research, competitor analysis, and backlink auditing. Screaming Frog SEO Spider performed technical website crawls to identify SEO issues. Google Search Console monitored organic search performance, index coverage, and manual actions. Canva and Adobe Express were used for creating social media assets and ad creatives. Mailchimp or equivalent tools were introduced for understanding email marketing automation workflows. Google Sheets/Excel were heavily utilized for data cleaning, pivot table analysis, and calculating campaign ROI and Customer Acquisition Cost (CAC).`,
+  challenges: `A major challenge was mastering the transition from Universal Analytics (UA) to Google Analytics 4. GA4's event-based model and new interface were initially disorienting; setting up custom conversions required a different mental model compared to UA's goal setup. Resolution involved extensive study of the GA4 documentation and practicing event parameter scoping. In PPC, managing "keyword cannibalization"—where multiple ads from the same account bid against each other—wasted budget and depressed click-through rates. The candidate resolved this by conducting a thorough negative keyword review, reorganizing ad groups to ensure strict thematic separation, and utilizing exact match types more effectively. Additionally, proving the ROI of content marketing was difficult due to the time lag between publishing and ranking. The candidate addressed this by focusing on "quick win" long-tail keywords with low competition, which provided faster organic traction and demonstrated value to stakeholders while waiting for broader content authority to build.`,
+  resultsAndDiscussion: `The SEO efforts yielded measurable results over the internship period. The technical audit resolved 150+ crawl errors, and the optimized blog posts began ranking on page 2 of Google for target keywords within four weeks, with one article reaching page 1 for a high-intent long-tail phrase. The Google Ads campaign achieved a strong Click-Through Rate (CTR) of 4.5% (above the industry benchmark of 3.5%). Through rigorous A/B testing of landing pages—testing a benefit-driven headline against a feature-driven headline—the candidate identified a variation that increased the conversion rate by 22%. By pausing low-quality score keywords and reallocating budget to high-converting terms, the Cost Per Acquisition (CPA) was reduced by 30% over a four-week period. The Looker Studio dashboard successfully automated weekly reporting, saving an estimated four hours of manual data pulling per week. The capstone project demonstrated the ability to synthesize these channels into a cohesive strategy, projecting a blended CAC that met the hypothetical company's profitability thresholds.`,
+  conclusion: `The Digital Marketing internship successfully achieved its objective of developing a data-driven, multi-channel marketing skillset. The candidate learned that digital marketing is fundamentally an applied science—it requires creativity, but that creativity must be constrained and validated by data. The shift from vanity metrics to business metrics (CPA, LTV, Conversion Rate) was the most critical mindset change. The candidate developed proficiency in the technical mechanics of major platforms (GA4, Google Ads) and the analytical skills to extract actionable insights from complex datasets. The experience of managing a live PPC budget and directly observing the impact of bid adjustments and ad copy changes instilled a strong sense of accountability. The candidate is well-prepared for roles as a Digital Marketing Specialist, Performance Marketer, or SEO Analyst. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Technical SEO Audit and Optimization', desc: 'Crawled a website with Screaming Frog, resolving 150+ technical SEO issues (broken links, missing meta tags). Wrote 3 SEO-optimized articles, achieving page 1 ranking for a high-intent long-tail keyword.', status: 'Completed' },
+    { name: 'Google Ads Campaign Management', desc: 'Structured and launched a Google Ads Search campaign, achieving a 4.5% CTR. Reduced Cost Per Acquisition (CPA) by 30% through keyword optimization and bid strategy adjustments.', status: 'Completed' },
+    { name: 'A/B Testing and Analytics Dashboard', desc: 'Designed and analyzed a landing page A/B test that increased conversion rate by 22%. Built an automated Looker Studio dashboard tracking GA4 events, ROI, and channel performance.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Comprehensive SEO Audit and Optimization", desc: "Conducted technical SEO audit identifying and resolving 80% of issues including page speed, meta tags, and crawlability problems. Optimized 20 pages for target keywords, achieving 23% organic traffic increase and page-one rankings for 12 keywords.", status: "Completed" },
-      { name: "Multi-Channel Paid Advertising Campaigns", desc: "Launched and optimized Google Ads and Meta Ads campaigns achieving 3.2x ROAS on paid search and 2.1x ROAS on social. Implemented proper tracking, A/B testing, and budget allocation based on performance data.", status: "Completed" },
-      { name: "Analytics Implementation and Performance Reporting", desc: "Implemented GA4 tracking with custom events and conversions, configured Google Tag Manager for flexible tracking management. Created comprehensive performance report with cross-channel analysis revealing 2.4x higher conversion rates for multi-channel customers.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Digital Marketing, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

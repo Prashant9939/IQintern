@@ -397,215 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Cyber Security
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive cybersecurity work completed during the Cyber Security internship at AVADS Private Limited. The internship focused on developing practical offensive and defensive security skills through network traffic analysis, vulnerability assessment, penetration testing methodologies, security tool utilization, and incident response procedures. Over the course of the program, the candidate progressed from understanding fundamental security concepts to conducting comprehensive security assessments that identify, document, and recommend remediation for vulnerabilities in networked systems.
-
-The core focus of this internship was establishing proficiency in the cybersecurity assessment lifecycle—reconnaissance, scanning, enumeration, vulnerability analysis, exploitation (in controlled environments), and reporting. This methodology, closely aligned with frameworks such as PTES (Penetration Testing Execution Standard) and OSSTMM (Open Source Security Testing Methodology Manual), provided a structured approach to security assessment that ensures thoroughness and reproducibility. The candidate applied this methodology to network infrastructure, web applications, and system configurations in isolated lab environments designed to simulate real-world scenarios without risking production systems.
-
-Network security formed a foundational component, with the candidate analyzing network traffic to identify patterns indicative of security threats or misconfigurations. Using tools including Wireshark for packet capture and analysis, the candidate developed the ability to read and interpret protocol headers, identify abnormal traffic patterns, detect potential intrusion indicators, and understand how different network protocols can be exploited or misconfigured. Analysis covered common protocols including HTTP, HTTPS, DNS, TCP/IP, and application-layer protocols, with attention to security-relevant aspects of each protocol's design and common implementation vulnerabilities.
-
-Vulnerability assessment represented a critical skill set developed during the internship. The candidate utilized both automated scanning tools (Nmap for network scanning, Nessus-style vulnerability scanners) and manual verification techniques to identify security weaknesses. Understanding the distinction between automated scanning results and confirmed vulnerabilities was emphasized, as scanners often produce false positives that require manual validation. The candidate developed systematic approaches for verifying scan results, estimating vulnerability severity, and prioritizing remediation based on exploitability and potential impact.
-
-Web application security was explored through analysis of common vulnerability categories defined in the OWASP Top 10, including injection flaws, broken authentication, sensitive data exposure, XML external entities, broken access control, security misconfiguration, cross-site scripting, insecure deserialization, using components with known vulnerabilities, and insufficient logging. For each category, the candidate studied the underlying cause, identified manifestations in test applications, and documented appropriate remediation strategies.
-
-This report provides detailed documentation of each assessment phase, including methodologies employed, tools utilized, vulnerabilities discovered, and remediation recommendations with technical specificity sufficient for implementation by system administrators.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Cybersecurity has become one of the most critical domains in contemporary technology, as organizations across all sectors face increasingly sophisticated threats to their digital infrastructure, data assets, and operational continuity. The financial impact of cybercrime is projected to reach trillions of dollars annually, while the reputational damage from security breaches can be devastating for organizations that fail to protect sensitive information. This internship focused on developing the practical skills needed to assess and improve organizational security posture through systematic vulnerability identification and remediation.
-
-The cybersecurity landscape encompasses multiple domains, each with specialized knowledge and techniques. Network security focuses on protecting network infrastructure and controlling data flow between networks. Application security addresses vulnerabilities in software applications, particularly web applications that face the public internet. Endpoint security protects individual devices including computers, mobile devices, and IoT devices. Cloud security addresses the unique challenges of shared responsibility models in cloud environments. Identity and access management ensures that only authorized users can access appropriate resources. This internship provided exposure to network and application security domains, with foundational concepts applicable across all domains.
-
-The offensive security methodology, commonly called penetration testing or ethical hacking, involves deliberately attempting to breach security controls to identify vulnerabilities before malicious actors can exploit them. This methodology follows a structured process: reconnaissance (gathering information about the target), scanning (identifying active systems and services), enumeration (extracting detailed information about discovered services), vulnerability analysis (identifying weaknesses in discovered services), exploitation (attempting to exploit vulnerabilities, when authorized), and post-exploitation (assessing what an attacker could accomplish after initial access). Importantly, penetration testing is conducted with explicit authorization and within defined scope boundaries, distinguishing it from malicious hacking.
-
-Defensive security encompasses the measures organizations implement to prevent, detect, and respond to security incidents. This includes preventive controls (firewalls, access controls, encryption), detective controls (intrusion detection systems, log monitoring, security information and event management), and responsive controls (incident response plans, forensic analysis capabilities). While this internship focused primarily on offensive assessment skills, understanding defensive controls was essential for providing actionable remediation recommendations and for appreciating how vulnerabilities might be detected or prevented.
-
-Legal and ethical considerations are fundamental to professional cybersecurity practice. Unauthorized access to computer systems is illegal in most jurisdictions, with penalties including imprisonment. Professional penetration testers operate under explicit authorization documents that define scope, limitations, and rules of engagement. Responsible disclosure of discovered vulnerabilities allows organizations to remediate issues before they are publicly known. This internship emphasized these ethical foundations throughout, ensuring that technical skills are always applied within appropriate ethical boundaries.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship commenced with an intensive first week focused on network fundamentals and reconnaissance techniques. The candidate reviewed TCP/IP fundamentals including the three-way handshake, sequence numbers, acknowledgment handling, and connection termination. Passive reconnaissance exercises included DNS enumeration using tools like dig and nslookup to identify DNS records (A, AAAA, MX, TXT, NS) and subdomain discovery techniques. WHOIS lookups revealed registration information and name server configurations. The candidate documented how seemingly innocuous information (DNS records revealing internal hostnames, MX records revealing email infrastructure, TXT records potentially revealing SPF/DKIM configurations) could inform targeted attacks.
-
-During the second week, the candidate focused on active network scanning using Nmap. Initial exercises covered basic host discovery (ping sweeps, ARP scans) to identify active hosts on the lab network. Port scanning techniques progressed from simple connect scans to SYN stealth scans, with understanding of how each scan type appears in traffic captures and how firewalls might detect or block them. Service and version detection using Nmap's -sV flag identified running services and their versions, which were then cross-referenced with known vulnerability databases. Nmap scripting engine (NSE) scripts were used for automated vulnerability detection and information gathering. The candidate produced detailed network maps showing discovered hosts, open ports, and identified services.
-
-Weeks three and four concentrated on network traffic analysis using Wireshark. The candidate captured traffic from various scenarios including web browsing, file transfers, DNS queries, and simulated attack traffic. Display filter mastery was developed through progressively complex filter expressions combining protocol fields, logical operators, and comparison functions. Analysis exercises included following TCP streams to reconstruct file transfers, identifying HTTP request/response pairs to understand web application behavior, and detecting suspicious patterns including port scans (multiple connection attempts to sequential ports), DNS tunneling indicators, and cleartext credential transmission. The candidate documented several instances where supposedly secure configurations transmitted sensitive data in cleartext due to misconfigurations.
-
-The fifth and sixth weeks addressed web application security following the OWASP Top 10 framework. The candidate analyzed a deliberately vulnerable web application (similar to OWASP WebGoat or DVWA), identifying and documenting vulnerabilities in each category. SQL injection testing involved identifying injectable parameters, extracting database information through UNION-based and blind injection techniques, and documenting how parameterized queries prevent injection. Cross-site scripting testing involved identifying reflected and stored XSS vulnerabilities, crafting proof-of-concept payloads, and documenting output encoding as the primary prevention mechanism. Authentication testing involved identifying weak password policies, session management flaws, and authorization bypass opportunities.
-
-The seventh and eighth weeks focused on vulnerability management, reporting, and remediation guidance. All findings from previous weeks were compiled into a comprehensive assessment report following professional formatting standards. Each finding was documented with description, evidence (screenshots, packet captures), severity rating using CVSS v3.1 methodology, and specific remediation recommendations with implementation steps. The candidate also researched and documented hardening guidelines for common services (web servers, database servers, SSH configurations) that addressed the vulnerability categories discovered during assessment. A final presentation of findings to the evaluation board simulated the debriefing that penetration testers conduct with client stakeholders.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Cyber Security internship was selected to provide exposure to the tools commonly used in professional security assessment while maintaining focus on understanding underlying principles rather than mere tool operation.
-
-Kali Linux served as the primary operating system for security assessment activities. Kali, a Debian-based Linux distribution maintained by Offensive Security, comes pre-installed with hundreds of security tools organized by category (information gathering, vulnerability analysis, web applications, password attacks, wireless attacks, reverse engineering, exploitation, sniffing/spoofing, post-exploitation, forensics). Using Kali exposed the candidate to the breadth of the security tool ecosystem and provided a consistent environment for tool usage. The candidate also gained proficiency with Linux command-line operations that underpin many security tools.
-
-Nmap (Network Mapper) served as the primary network scanning tool. The candidate utilized Nmap's diverse scanning capabilities including host discovery (-sn), port scanning with various techniques (-sS for SYN scan, -sT for TCP connect scan, -sU for UDP scan), service and version detection (-sV), operating system detection (-O), and Nmap Scripting Engine (NSE) scripts for automated vulnerability detection. Understanding of Nmap's timing templates (-T0 through -T5) enabled balancing scan speed against stealth and accuracy. Nmap's output formats (normal, XML, grepable) were used for different documentation purposes.
-
-Wireshark served as the primary packet capture and analysis tool. The candidate utilized Wireshark's capture filters to limit captured traffic and display filters to isolate relevant packets from large captures. Protocol dissection capabilities allowed examination of packet contents at every layer from Ethernet through application protocols. Wireshark's following features (follow TCP stream, follow UDP stream) reconstructed conversation sequences. Statistical features (conversations, endpoints, protocol hierarchy) provided overviews of traffic patterns. The candidate also used tshark, Wireshark's command-line interface, for automated analysis scenarios.
-
-Burp Suite Community Edition provided web application security testing capabilities. The proxy feature intercepted HTTP/HTTPS traffic between browser and server, allowing examination and modification of requests and responses. The repeater feature enabled manual manipulation and re-sending of requests for testing. The scanner feature (limited in Community Edition) provided automated vulnerability detection. The candidate configured browser proxy settings to route traffic through Burp Suite, analyzed request/response patterns, and manually tested for common vulnerabilities.
-
-Metasploit Framework provided exposure to exploitation concepts in controlled lab environments. The candidate understood Metasploit's architecture including modules (exploits, payloads, auxiliaries, encoders), the database for storing scan results and credentials, and the workflow for selecting and configuring exploits. While actual exploitation was limited to authorized lab targets, understanding Metasploit's capabilities informed vulnerability severity assessment—knowing that a vulnerability has a reliable, automated exploit affects its priority for remediation.
-
-Additional tools utilized included: Nikto for web server vulnerability scanning, identifying misconfigurations and outdated software; SQLmap for automated SQL injection testing and exploitation; Hydra for password brute-force testing against various services; and John the Ripper for password hash cracking. For each tool, the candidate understood not just how to operate it but what it does at a technical level, enabling informed interpretation of results..`,
-  "Challenges Faced": `The Cyber Security internship presented numerous technical and methodological challenges that required analytical thinking, research, and careful judgment to resolve.
-
-Differentiating harmless network activity from actual threat indicators proved challenging during traffic analysis exercises. Normal network traffic contains considerable "noise" including failed connection attempts, broadcast traffic, and occasional misconfigurations that can appear suspicious. The candidate developed the ability to establish baselines of normal activity and identify deviations that warranted investigation. Specific challenges included distinguishing between legitimate port scans (such as load balancers checking server health) and reconnaissance scans, and identifying DNS tunneling amidst normal DNS query patterns. Resolution required understanding not just what traffic looks like but why it occurs in normal operations.
-
-Firewall bypass simulations required understanding of how firewalls inspect traffic and techniques that might evade detection. Simple port scanning was often blocked by firewalls, requiring techniques including fragmenting packets, using decoy addresses, or manipulating TCP flag combinations to evade filtering rules. The candidate learned that modern firewalls employ stateful inspection that defeats many simple evasion techniques, and that successful evasion typically requires exploiting specific firewall misconfigurations rather than generic techniques. This underscored that security assessment is about finding weaknesses in specific configurations, not applying universal bypass techniques.
-
-Configuring secure cryptographic keys and understanding encryption implementations revealed the complexity of applied cryptography. While the mathematics of encryption algorithms is well-defined, implementation details including key generation, key storage, cipher suite selection, and protocol configuration significantly affect security. The candidate analyzed TLS configurations using tools like testssl.sh, identifying weaknesses including support for deprecated protocols (SSLv3, TLS 1.0), weak cipher suites, and improper certificate validation. Understanding these issues required studying TLS protocol specifications and known vulnerability databases.
-
-Prioritizing remediation when multiple vulnerabilities exist required balancing multiple factors. A critical-severity vulnerability in an internally-facing system might be lower priority than a high-severity vulnerability in an internet-facing system. A vulnerability with public exploit code might be higher priority than one without, even if both have the same CVSS score. The candidate developed a prioritization framework considering exploitability, exposure (internet-facing vs. internal), asset value, and availability of compensating controls. This framework required understanding business context that purely technical severity scores don't capture.
-
-Documenting findings appropriately for different audiences challenged the candidate to communicate technical details at varying levels of abstraction. Technical details necessary for remediation (specific configurations, code examples, tool commands) would overwhelm executive stakeholders, while high-level summaries lacked the specificity needed by system administrators. Resolution involved structuring reports in layers: executive summary for leadership, technical findings for IT staff, and detailed evidence appendices for verification. The candidate learned that effective security communication is as important as effective security assessment.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Cyber Security internship successfully achieved its objective of developing practical security assessment capabilities with ethical awareness. The candidate demonstrated substantial growth across all program domains, from network fundamentals to comprehensive vulnerability assessment and reporting.
-
-The technical skills developed represent a strong foundation for cybersecurity roles. Proficiency with Nmap for network scanning, Wireshark for traffic analysis, and web application testing tools provides capability to conduct security assessments across multiple domains. Understanding of common vulnerability categories and their remediation enables the candidate to identify and address security weaknesses. The emphasis on understanding what tools do at a technical level, not just how to operate them, ensures that skills transfer to new tools and evolving threat landscapes.
-
-The methodological rigor developed during this internship is particularly valuable. Following structured assessment methodologies (PTES, OWASP) ensures thoroughness and repeatability. Understanding of false positive rates and the importance of manual verification prevents both over-reporting of non-issues and under-reporting due to tool limitations. The systematic approach to prioritization that considers business context, not just technical severity, reflects professional security practice.
-
-The ethical foundation instilled throughout the program is essential for responsible security practice. Understanding of legal boundaries, authorization requirements, and responsible disclosure practices ensures that technical skills are applied appropriately. The distinction between ethical security assessment and unauthorized access was emphasized throughout, with the candidate demonstrating awareness of these boundaries in all assessment activities.
-
-The challenges encountered developed analytical skills and professional judgment. The experience of differentiating real threats from noise, prioritizing among multiple vulnerabilities, and communicating findings to diverse audiences developed capabilities that distinguish senior security professionals from tool operators.
-
-Looking forward, the candidate is well-prepared for continued cybersecurity development. The foundation supports exploration of specialized areas including malware analysis, digital forensics, security architecture, cloud security, or advanced penetration testing. The methodological foundation ensures that specialization builds upon solid assessment practices.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the technical capability, methodological rigor, and ethical awareness expected of a cybersecurity professional completing a rigorous internship program. The candidate is certified as having completed the Cyber Security internship with distinction.`
+const trackData = {
+  abstract: `This report documents the Cyber Security internship at IQ Intern, focusing on offensive and defensive security methodologies, vulnerability assessment, network traffic analysis, and security operations center (SOC) fundamentals. The candidate progressed from understanding core networking principles to actively identifying, exploiting, and remediating vulnerabilities in controlled environments. Core focus areas included penetration testing methodologies mapped to the PTES standard, web application security focusing on the OWASP Top 10, network defense using intrusion detection systems (IDS/IPS), and digital forensics principles. The internship heavily utilized virtualized lab environments to simulate enterprise networks, allowing for safe, hands-on exploitation of systems using tools like Kali Linux, Metasploit, and Burp Suite. Emphasis was placed not only on technical exploitation but also on comprehensive reporting, risk prioritization using CVSS scoring, and communicating technical findings to non-technical stakeholders.`,
+  acknowledgement: `I extend my deepest gratitude to IQ Intern for this intensive and highly practical Cyber Security internship. I am particularly thankful to my mentor, an experienced security professional, whose guidance on ethical hacking methodologies and real-world incident response scenarios was invaluable. Their emphasis on maintaining strict ethical boundaries and understanding the legal implications of security testing has profoundly shaped my professional conduct. I also want to thank the lab administrators for maintaining the robust virtualized environments that allowed us to safely practice complex attack vectors. My appreciation extends to my fellow interns for the collaborative red-team/blue-team exercises that simulated the high-pressure environment of a real Security Operations Center. Finally, I thank the evaluation committee for their thorough review of my penetration testing reports and defensive configurations.`,
+  introduction: `In an era of escalating cyber threats, sophisticated ransomware, and expansive digital footprints, cybersecurity has become a critical pillar of organizational resilience. The field requires a dual perspective: the offensive mindset to anticipate and simulate attacker behavior (Red Teaming), and the defensive expertise to detect, mitigate, and recover from incidents (Blue Teaming). This internship immersed the candidate in both paradigms. It began with the foundational principles of information security—the CIA triad (Confidentiality, Integrity, Availability)—and rapidly advanced to applied techniques. The candidate learned to view networks and applications not as end-users do, but as attackers do, seeking out misconfigurations, unpatched vulnerabilities, and logic flaws. Conversely, the defensive modules focused on hardening systems, configuring firewalls and IDS, analyzing network traffic for anomalous patterns, and understanding the frameworks (such as NIST and MITRE ATT&CK) that structure defensive operations.`,
+  objectives: `The foundational objectives included mastering networking fundamentals (TCP/IP stack, OSI model, DNS, HTTP/HTTPS) essential for understanding how data moves and where it can be intercepted. Offensive objectives covered proficiency in the Penetration Testing Execution Standard (PTES), utilizing tools in Kali Linux for reconnaissance (Nmap, Shodan), exploitation (Metasploit Framework), and post-exploitation (privilege escalation, lateral movement). A critical objective was mastering web application security, specifically identifying and exploiting the OWASP Top 10 vulnerabilities (SQL Injection, Cross-Site Scripting, Broken Access Control) using Burp Suite. Defensive objectives included configuring and tuning Snort/Suricata as Network Intrusion Detection Systems, implementing hardening techniques for Linux and Windows servers, and understanding endpoint detection and response (EDR) concepts. Forensic objectives introduced the principles of chain of custody, volatile memory acquisition, and basic disk forensics using tools like Autopsy. Finally, professional objectives focused on writing clear, actionable penetration test reports with CVSS v3.1 scoring and risk mitigation strategies.`,
+  literatureReview: `The cybersecurity landscape is guided by foundational frameworks and continuous research. The NIST Cybersecurity Framework (CSF) provides the industry standard for organizing security activities into Identify, Protect, Detect, Respond, and Recover functions. The MITRE ATT&CK framework is indispensable for understanding adversarial tactics, techniques, and procedures (TTPs), structuring both offensive simulations and defensive monitoring. The OWASP Foundation's documentation, particularly the OWASP Top 10 (2021), serves as the definitive guide for web application security risks. For penetration testing methodology, the Penetration Testing Execution Standard (PTES) provides a comprehensive technical guideline. Academic and industry literature, such as "The Web Application Hacker's Handbook" by Stuttard and Pinto, detail the intricate mechanics of web exploits. Furthermore, the SANS Reading Room offers applied research on incident response and digital forensics, emphasizing the procedural rigor required for legal admissibility of evidence.`,
+  weeklyProgress: `Week one focused on lab setup and network reconnaissance. The candidate configured virtualized networks using VirtualBox and VMware, learned advanced Nmap scanning techniques (SYN, UDP, script scanning), and performed passive reconnaissance using OSINT tools. Week two transitioned to system exploitation: understanding vulnerability databases (CVE, CVSS), using the Metasploit Framework to exploit unpatched services, and practicing Linux and Windows privilege escalation techniques (SUID binaries, kernel exploits, token impersonation). Weeks three and four were dedicated to web application security. The candidate configured Burp Suite as a local proxy, manually identified and exploited SQL Injection (union-based, blind) and Cross-Site Scripting (reflected, stored) vulnerabilities in deliberately vulnerable applications (DVWA, WebGoat), and learned to bypass common authentication mechanisms. Week five shifted to the defensive perspective: configuring a pfSense firewall, setting up Suricata IDS with custom rules to detect the exploits used in previous weeks, and analyzing packet captures (PCAPs) using Wireshark. Weeks six and seven introduced digital forensics and reporting. The candidate acquired volatile memory from a compromised virtual machine, analyzed it with Volatility, performed basic disk forensics to recover deleted files, and synthesized all findings into a formal penetration test report. Week eight involved a comprehensive capstone red-team/blue-team exercise.`,
+  technologies: `Kali Linux served as the primary offensive operating system. VirtualBox and VMware were used for network virtualization and sandboxing. Nmap and Masscan performed network discovery and port scanning. Metasploit Framework facilitated vulnerability exploitation and payload generation. Burp Suite Community Edition acted as the web proxy and vulnerability scanner. Wireshark and tcpdump were utilized for deep packet inspection and traffic analysis. Suricata was configured as the Network Intrusion Detection/Prevention System (NIDS/NIPS). Linux standard utilities (grep, awk, netstat) were heavily relied upon for log analysis and system administration. Autopsy and Volatility were the primary tools for disk and memory forensics, respectively. Finally, LaTeX and Markdown were used to generate professional, well-formatted penetration test reports.`,
+  challenges: `A persistent challenge was dealing with "false positives" during vulnerability scanning and IDS alerting. Automated tools often flagged safe configurations as critical vulnerabilities, requiring manual verification to avoid wasting time and inflating report inaccuracy. Another significant hurdle was mastering the syntax and logic of complex SQL Injection attacks, particularly time-based blind SQLi, which required writing intricate payload delays and interpreting database response times without direct output. On the defensive side, tuning Suricata rules proved difficult; initial configurations generated too much noise (alert fatigue), while overly strict rules blocked legitimate traffic. The resolution involved iterative baseline tuning—analyzing normal traffic patterns and writing specific, contextual rules rather than relying on generic signatures. Additionally, understanding the nuances of Windows Active Directory privilege escalation (Kerberoasting, Pass-the-Hash) required deep study of authentication protocols beyond simple tool usage.`,
+  resultsAndDiscussion: `The candidate successfully compromised a simulated multi-tier enterprise network during the capstone exercise. The attack chain began with an external Nmap scan identifying an outdated web server. Exploiting an XSS vulnerability on the public-facing site allowed session hijacking of an administrator account. From the web server, local enumeration revealed misconfigured internal network interfaces, enabling lateral movement to a database server via a reused SSH key found in a configuration file. The final objective—domain administrator access on the Active Directory controller—was achieved through a Pass-the-Hash attack using credentials dumped from memory. Defensively, the candidate successfully deployed a Suricata IDS that detected the initial lateral movement (anomalous SSH traffic) and generated an alert. The comprehensive penetration test report detailed this attack chain, assigned CVSS scores ranging from 6.5 to 9.8, and provided prioritized remediation steps, including patch management policies and principle of least privilege enforcement. The exercise demonstrated the critical gap between automated vulnerability scanning and manual exploitation logic.`,
+  conclusion: `The Cyber Security internship successfully achieved its objective of developing a practical, dual-perspective security mindset. The candidate progressed from theoretical understanding to hands-on proficiency in identifying, exploiting, and defending against real-world attack vectors. The emphasis on the OWASP Top 10 and MITRE ATT&CK framework provided a structured vocabulary for analyzing threats. More importantly, the internship highlighted that technical exploitation is only half the skill set; the ability to clearly communicate risk, prioritize remediation, and write professional reports is what ultimately secures organizational buy-in for security initiatives. The candidate developed a healthy respect for the adversarial mindset and a rigorous methodology for defensive hardening. The candidate is well-prepared for roles in penetration testing, security analysis, or incident response. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Enterprise Network Penetration Test', desc: 'Executed a multi-stage penetration test on a simulated enterprise network, achieving domain admin via XSS, lateral movement, and Pass-the-Hash. Documented the full attack chain and CVSS-scored vulnerabilities.', status: 'Completed' },
+    { name: 'Web Application Security Assessment', desc: 'Conducted manual and automated security testing against DVWA and custom targets. Successfully identified and exploited SQL Injection, XSS, and Broken Access Control flaws using Burp Suite.', status: 'Completed' },
+    { name: 'Blue Team Defense and Forensics', desc: 'Configured Suricata IDS with custom rules to detect lateral movement and SQLi attempts. Performed memory and disk forensics on a compromised machine using Volatility and Autopsy to extract IOCs.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Network Infrastructure Assessment", desc: "Conducted comprehensive network scan identifying 14 hosts and 127 open ports. Discovered outdated service versions with known CVEs, misconfigured services exposed to network, and flat network topology without segmentation. Produced detailed network map and service inventory.", status: "Completed" },
-      { name: "Web Application Security Assessment", desc: "Performed OWASP Top 10 aligned assessment identifying 23 vulnerabilities including critical SQL injection and stored XSS. Documented each finding with proof-of-concept exploitation, CVSS severity scoring, and specific remediation guidance with code examples.", status: "Completed" },
-      { name: "Traffic Analysis and Incident Detection", desc: "Captured and analyzed network traffic to identify security-relevant patterns including cleartext credential transmission, misconfigured DNS responses, and simulated attack indicators. Documented analysis methodology and detection signatures.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Cyber Security, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

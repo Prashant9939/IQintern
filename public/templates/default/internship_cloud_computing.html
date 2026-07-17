@@ -397,215 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Cloud Computing
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive cloud computing work completed during the Cloud Computing internship at AVADS Private Limited. The internship focused on developing practical skills in cloud infrastructure deployment, containerization technologies, orchestration platforms, and automated deployment pipelines. Over the course of the program, the candidate progressed from understanding cloud service models to architecting and deploying complete application environments that demonstrate production-ready infrastructure practices.
-
-The core focus of this internship was establishing proficiency in cloud infrastructure as code, where infrastructure definitions are expressed in declarative configuration files that can be version controlled, reviewed, and automatically provisioned. This approach, contrasting with traditional manual infrastructure management, enables reproducibility, consistency across environments, and the ability to rapidly recreate infrastructure when needed. The candidate implemented infrastructure using both AWS CloudFormation and Terraform, developing understanding of the declarative paradigm where desired state is specified rather than imperative steps to reach that state.
-
-Containerization formed a foundational component, with the candidate mastering Docker for packaging applications into portable, isolated units that run consistently across different environments. Dockerfile best practices were developed including multi-stage builds for optimized image sizes, minimal base images for reduced attack surface, non-root user execution for security, and proper layer caching for build efficiency. The candidate also developed understanding of container networking, volume management for persistent data, and resource constraints for controlling container resource usage.
-
-Container orchestration with Kubernetes addressed the challenge of managing containers at scale. The candidate deployed Kubernetes clusters, defined applications using Deployments, Services, and ConfigMaps, implemented scaling policies for handling variable load, and configured health checks for automatic failure recovery. Understanding of Kubernetes architecture—including control plane components (API server, etcd, scheduler, controller manager) and node components (kubelet, container runtime, kube-proxy)—informed operational decisions and troubleshooting approaches.
-
-CI/CD (Continuous Integration/Continuous Deployment) pipelines automated the path from code commit to production deployment. The candidate implemented pipelines using GitHub Actions that automatically ran tests, built container images, pushed images to container registries, and deployed updated applications to Kubernetes. Pipeline design addressed concerns including secret management, environment-specific configurations, rollback capabilities, and approval gates for production deployments.
-
-This report provides detailed documentation of each infrastructure component, including architecture decisions, configuration specifics, deployment procedures, and the challenges encountered and resolved throughout the internship period.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Cloud computing has fundamentally transformed how organizations provision and manage computing resources, replacing capital-intensive upfront investments in physical infrastructure with flexible, pay-as-you-go consumption models. The major cloud service providers—Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform—offer hundreds of services spanning compute, storage, networking, databases, machine learning, and more, enabling organizations to focus on building applications rather than managing infrastructure. This internship focused on developing practical skills for leveraging cloud services effectively while following best practices for security, cost optimization, and operational excellence.
-
-Cloud service models define different levels of abstraction between the provider and the consumer. Infrastructure as a Service (IaaS) provides virtualized computing resources (virtual machines, storage, networks) that consumers configure and manage. Platform as a Service (PaaS) provides managed platforms (application runtimes, databases) where consumers focus on application code and data. Software as a Service (SaaS) provides complete applications that consumers use without managing any underlying infrastructure. This internship operated primarily at the IaaS level, with some exposure to managed services, developing the candidate's understanding of infrastructure management that underpins all service models.
-
-Containerization has become the dominant application packaging and deployment approach in cloud environments. Containers package applications with their dependencies into isolated units that run consistently across different environments, addressing the "works on my machine" problem that plagued earlier deployment approaches. Docker, the most widely used container runtime, provides tooling for building images (Dockerfile, docker build), running containers (docker run), and distributing images (container registries). Containers are more lightweight than virtual machines because they share the host operating system kernel, enabling faster startup and higher density.
-
-Kubernetes has emerged as the de facto standard for container orchestration—managing containerized applications at scale. Kubernetes automates deployment, scaling, and management of containerized applications, providing features including service discovery, load balancing, storage orchestration, automated rollouts and rollbacks, self-healing, and secret/configuration management. Understanding Kubernetes' declarative model—where desired state is specified and the system works to achieve and maintain that state—represents a paradigm shift from imperative configuration management approaches.
-
-Infrastructure as Code (IaC) applies software engineering practices to infrastructure management. Instead of manually clicking through console interfaces or running imperative scripts, IaC defines infrastructure in declarative configuration files that can be version controlled, peer reviewed, tested, and automatically provisioned. Tools like Terraform and AWS CloudFormation enable IaC across cloud providers and on-premises environments. IaC provides repeatability (infrastructure can be recreated identically), documentation (configuration files describe the actual infrastructure), and change management (infrastructure changes go through the same review process as code changes).`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship commenced with an intensive first week focused on Docker fundamentals and containerization best practices. The candidate set up Docker Desktop, verified installation, and ran initial container exercises. Dockerfile writing began with simple single-stage builds and progressed to multi-stage builds that separate build dependencies from runtime dependencies, reducing final image sizes by 60-80%. Best practices were implemented including using specific image tags rather than 'latest', running as non-root user, setting appropriate HEALTHCHECK instructions, and organizing instructions for optimal layer caching. Docker Compose was introduced for defining a multi-container application (web server, database, cache) with a single docker-compose.yml file.
-
-During the second week, the candidate deepened Docker skills with focus on networking, volumes, and optimization. Container networking was explored through creating custom bridge networks, understanding DNS resolution between containers, and implementing port mapping for external access. Volume management covered named volumes for database persistence, bind mounts for development (mounting source code for live reload), and tmpfs mounts for temporary data. Image optimization exercises reduced a Node.js application image from 1.2GB to 180MB through multi-stage builds, Alpine-based images, and .dockerignore configuration. The candidate also implemented Docker logging configuration and resource constraints (CPU and memory limits).
-
-Weeks three and four concentrated on Kubernetes fundamentals. The candidate provisioned a local Kubernetes cluster using Minikube and later kind (Kubernetes in Docker). Core resource types were implemented progressively: Pods for running single containers, Deployments for managing replicated Pods with update strategies, Services for stable network endpoints and load balancing, and ConfigMaps/Secrets for configuration. The candidate experienced and resolved common challenges including CrashLoopBackOff (from misconfigured applications), ImagePullBackOff (from incorrect image references), and pending Pods (from insufficient resources). Kubernetes commands for debugging (logs, describe, exec, port-forward) became familiar through extensive troubleshooting.
-
-The fifth and sixth weeks addressed advanced Kubernetes topics and production considerations. Horizontal Pod Autoscaler was configured to scale Deployments based on CPU utilization, with testing using load generation tools to verify scaling behavior. Ingress controllers (nginx-ingress) were deployed and configured for HTTP routing with TLS termination. PersistentVolumeClaims were implemented for database storage with testing of volume deletion and recreation behavior. Network Policies were configured to restrict pod-to-pod communication, implementing security segmentation. The candidate also explored Helm for package management, deploying applications from public charts and creating simple charts for the internship application.
-
-The seventh and eighth weeks focused on infrastructure as code and CI/CD pipelines. Terraform was used to provision AWS resources including VPC with public and private subnets, EC2 instances for Kubernetes nodes, security groups, and IAM roles. The candidate learned Terraform's state management, understanding how state tracks provisioned resources and the importance of remote state storage for collaboration. GitHub Actions pipelines were implemented with workflows triggered on push events, running tests, building and pushing Docker images to Amazon ECR, and deploying to Kubernetes using kubectl. The pipeline included environment-specific variables, secrets management using GitHub Secrets, and manual approval gates for production deployments. The final deliverable was a complete infrastructure deployment that could be reprovisioned from a single terraform apply command followed by pipeline execution.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Cloud Computing internship was selected to provide comprehensive exposure to the cloud native ecosystem while maintaining focus on widely-adopted, production-proven tools.
-
-Docker served as the containerization platform. The candidate utilized Docker Engine for building and running containers, Docker Compose for multi-container application definitions, and Docker Hub as a container registry (with later migration to Amazon ECR for production-like workflows). Dockerfile instructions mastered included FROM, RUN, COPY, WORKDIR, EXPOSE, CMD, ENTRYPOINT, ENV, ARG, USER, and HEALTHCHECK. Multi-stage builds using multiple FROM statements enabled optimized images separating build and runtime dependencies.
-
-Kubernetes served as the container orchestration platform. The candidate utilized kubectl as the primary command-line interface for interacting with Kubernetes clusters, mastering commands for resource creation (apply, create), inspection (get, describe, logs), debugging (exec, port-forward, cp), and management (scale, rollout, delete). Resource types implemented included Pod, Deployment, Service (ClusterIP, NodePort, LoadBalancer), ConfigMap, Secret, PersistentVolumeClaim, HorizontalPodAutoscaler, Ingress, and NetworkPolicy. YAML resource definitions followed Kubernetes API conventions.
-
-Minikube and kind provided local Kubernetes cluster environments. Minikube offered a simplified single-node cluster suitable for initial learning, with add-ons for ingress, dashboard, and metrics. Kind (Kubernetes in Docker) provided multi-node clusters more closely resembling production environments, useful for testing node-related features. Both tools enabled local development without requiring cloud resources.
-
-Terraform served as the primary infrastructure as code tool. The candidate utilized HashiCorp Configuration Language (HCL) for defining infrastructure, with proficiency in resource blocks (defining infrastructure), data source blocks (reading existing infrastructure), variable blocks (parameterization), output blocks (exposing values), and module blocks (reusable components). AWS provider configuration enabled provisioning of VPC, subnets, security groups, EC2 instances, ECR repositories, and IAM roles. Terraform state management including state files, state locking (with S3 backend and DynamoDB lock table), and state manipulation commands (show, mv, rm) was understood.
-
-Amazon Web Services (AWS) served as the cloud platform. Services utilized included VPC for network isolation, EC2 for compute instances, ECR for container image storage, IAM for identity and access management, and CloudWatch for monitoring and logging. The candidate understood AWS region and availability zone concepts, security group rules for network access control, and IAM least-privilege principles for service authorization.
-
-GitHub Actions provided CI/CD pipeline implementation. The candidate utilized workflow YAML files defining triggers (on push, on pull_request), jobs (groups of steps), steps (individual actions), and runners (execution environments). Actions used included actions/checkout for code retrieval, actions/setup-node for Node.js setup, docker/build-push-action for image building and pushing, and AWS CLI actions for ECR authentication and Kubernetes deployment. Matrix strategies enabled testing across multiple Node.js versions..`,
-  "Challenges Faced": `The Cloud Computing internship presented numerous technical challenges characteristic of cloud native development and operations. These challenges required systematic debugging, documentation research, and iterative resolution.
-
-Balancing microservice routing and service discovery in Kubernetes proved complex. Initial Service configurations using ClusterIP required applications to know service names for DNS resolution. When implementing Ingress for external access, the candidate encountered routing issues including incorrect path matching, backend service health check failures, and TLS certificate configuration errors. Resolution involved understanding Ingress controller logging, implementing proper health check paths in Services, and configuring TLS secrets correctly. The candidate learned that Kubernetes networking involves multiple layers (container networking, pod networking, service networking, ingress networking) that must all be configured correctly.
-
-Optimizing container image sizes required understanding of Docker's layer-based storage. Initial images included unnecessary files (build tools, development dependencies, package caches) that inflated sizes. Multi-stage builds addressed this but required understanding of which files need to be copied between stages. The candidate discovered that COPY commands create new layers even when files haven't changed, learning to order instructions from least to most frequently changing for optimal caching. Alpine-based images reduced size but sometimes required additional packages (ca-certificates for HTTPS, libc compatibility for Node.js native modules). Final optimized images were 85% smaller than initial versions.
-
-Troubleshooting network firewall permissions required systematic analysis of multiple layers of access control. When Pods couldn't communicate as expected, the candidate had to check: Kubernetes NetworkPolicy restrictions, AWS security group rules, VPC network ACLs, and application-level firewall configurations. Resolution involved enabling detailed logging at each layer, testing connectivity incrementally, and documenting the complete network path. This experience highlighted that cloud networking involves many configurable components that must all align for successful communication.
-
-Terraform state management challenges arose when multiple pipeline runs attempted concurrent state modifications. Initial attempts to run parallel deployments caused state lock conflicts and inconsistent infrastructure. Resolution involved implementing proper state locking using an S3 backend with DynamoDB lock table, structuring pipelines to avoid concurrent modifications to the same state, and understanding Terraform's state isolation mechanisms (workspaces for environment isolation). The candidate also experienced state drift when infrastructure was modified outside Terraform, learning to use terraform plan to detect drift and terraform refresh to reconcile state.
-
-Pipeline secret management required balancing security with functionality. Hardcoding secrets in workflow files was obviously unacceptable. GitHub Secrets provided secure storage but had limitations including lack of versioning and difficulty sharing across repositories. AWS Secrets Manager offered more features but added complexity. The candidate implemented a solution using GitHub Secrets for pipeline-specific secrets (registry credentials) and AWS Secrets Manager for application secrets, with pipeline steps that retrieved application secrets at deployment time. This experience developed understanding that secret management in CI/CD requires intentional design.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Cloud Computing internship successfully achieved its objective of developing practical cloud infrastructure and DevOps capabilities. The candidate demonstrated substantial growth across all program domains, from containerization fundamentals to complete CI/CD pipeline implementation.
-
-The technical skills developed represent a strong foundation for cloud/DevOps roles. Proficiency with Docker for containerization, Kubernetes for orchestration, and Terraform for infrastructure as code provides capability to deploy and manage cloud-native applications. Understanding of CI/CD pipeline design enables automation of the deployment lifecycle. The emphasis on security best practices (non-root containers, least-privilege IAM, network segmentation) ensures that deployments meet security requirements.
-
-The infrastructure as code mindset developed during this internship is particularly valuable. Treating infrastructure with the same rigor as application code—version control, code review, testing, automated deployment—represents a fundamental shift from traditional operations practices. The candidate's experience with Terraform state management, including the challenges it presents, provides realistic preparation for production IaC work.
-
-The operational awareness developed through observability implementation and cost analysis reflects professional expectations. Understanding that deployment is not the end of the work—that monitoring, alerting, cost management, and incident response are ongoing responsibilities—distinguishes production-ready thinking from development-only thinking.
-
-The challenges encountered developed systematic debugging skills applicable to any cloud native environment. The experience of troubleshooting Kubernetes networking (with its multiple layers), Terraform state issues, and pipeline reliability developed resilience and methodical problem-solving approaches.
-
-Looking forward, the candidate is well-prepared for continued cloud computing development. The foundation supports exploration of advanced topics including service mesh (Istio, Linkerd), serverless computing (Lambda, Fargate), multi-cloud or hybrid cloud strategies, and GitOps workflows (ArgoCD, Flux). The foundational understanding ensures that advanced topics build upon solid concepts.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the technical capability, operational awareness, and IaC mindset expected of a cloud computing professional completing a rigorous internship program. The candidate is certified as having completed the Cloud Computing internship with distinction.`
+const trackData = {
+  abstract: `This report details the Cloud Computing internship at IQ Intern, focusing on architecting, deploying, and managing scalable infrastructure on AWS (Amazon Web Services). The candidate progressed from fundamental cloud concepts (IaaS, PaaS, SaaS) to designing highly available, fault-tolerant systems using Infrastructure as Code (IaC). Core focus areas included compute services (EC2, Lambda), storage solutions (S3, EBS), networking architecture (VPC, subnets, route tables), containerization with Docker and orchestration using Amazon EKS (Elastic Kubernetes Service), and CI/CD pipeline integration. The internship emphasized the principles of cloud-native architecture, including immutability, loose coupling, and observability. A significant focus was placed on security best practices—implementing the Principle of Least Privilege using IAM roles, encrypting data at rest and in transit, and establishing network security groups and NACLs. The methodology shifted away from manual console clicking toward automated, version-controlled infrastructure deployment.`,
+  acknowledgement: `I express my sincere gratitude to IQ Intern for this comprehensive Cloud Computing internship. Special thanks to my mentor, an AWS Solutions Architect, whose insights into designing for failure and optimizing cloud costs were invaluable. Their rigorous code reviews of my Terraform configurations taught me the importance of clean, modular infrastructure definitions. I am also grateful to the program coordinators for providing access to AWS sandbox accounts, which allowed for risk-free experimentation with complex architectures. Appreciation is extended to my fellow interns for collaborative troubleshooting sessions, particularly when debugging intricate VPC routing issues. Finally, I thank the evaluation board for assessing not just the working infrastructure, but the efficiency, security, and reproducibility of the deployments.`,
+  introduction: `Cloud computing has fundamentally transformed IT from a capital-intensive, hardware-centric model to an agile, utility-based paradigm. Organizations leverage cloud platforms like AWS to achieve rapid elasticity, global reach, and a shift from managing hardware to managing code. However, the cloud is not merely "someone else's computer"; it requires a distinct architectural mindset. Traditional on-premises assumptions about network perimeters, single points of failure, and fixed capacity do not translate directly to the cloud. This internship focused on AWS as the primary platform, immersing the candidate in cloud-native design patterns. It required understanding the shared responsibility model—where AWS secures the infrastructure of the cloud, while the customer is responsible for security in the cloud. The candidate learned to architect systems that leverage AWS managed services to reduce operational overhead, while implementing Infrastructure as Code (IaC) to ensure environments are predictable, versioned, and easily reproducible.`,
+  objectives: `The foundational objective was mastering core AWS services across compute, storage, and networking. This included provisioning EC2 instances with appropriate instance types, configuring auto-scaling groups to handle dynamic load, and managing object storage (S3) with lifecycle policies. Networking objectives focused on designing custom VPCs with public and private subnets, configuring Internet Gateways and NAT Gateways for secure outbound internet access, and establishing VPC peering. Containerization objectives required building optimized Docker images, pushing them to Amazon ECR (Elastic Container Registry), and orchestrating them using Amazon EKS, including configuring Ingress controllers and managing Kubernetes manifests. IaC objectives centered on using Terraform to provision complete environments, managing state files remotely in S3, and creating reusable modules for common patterns (e.g., a standard VPC module). CI/CD objectives involved using GitHub Actions to automatically build Docker images, run security scans (Trivy), and deploy updated infrastructure or application code. Security objectives mandated implementing strict IAM policies, encrypting EBS volumes and S3 buckets, and utilizing AWS Secrets Manager.`,
+  literatureReview: `Cloud architecture is guided by the Well-Architected Framework, published by AWS, which evaluates systems across five pillars: Operational Excellence, Security, Reliability, Performance Efficiency, and Cost Optimization. This framework served as the primary benchmark for evaluating all internship projects. For infrastructure as code, HashiCorp's Terraform documentation and "Terraform: Up & Running" by Yevgeniy Brikman provide the standard methodologies for state management and module creation. The shift to container orchestration is best understood through the official Kubernetes documentation and the CNCF (Cloud Native Computing Foundation) landscape, which defines the ecosystem of cloud-native tools. Furthermore, literature on DevSecOps, such as "The Phoenix Project," informed the integration of security scanning directly into the CI/CD pipeline, treating security as a code-quality issue rather than an afterthought.`,
+  weeklyProgress: `Week one focused on AWS fundamentals and networking. The candidate configured the AWS CLI, designed a custom VPC with public and private subnets across two Availability Zones, and established secure routing with Internet and NAT Gateways. Week two centered on compute and storage: launching EC2 instances with user data scripts for automated bootstrapping, configuring Auto Scaling Groups based on CPU utilization, and setting up S3 buckets with versioning and lifecycle policies to archive old data. Weeks three and four transitioned to containerization. The candidate wrote optimized Dockerfiles for a sample Node.js application, created an Amazon ECR repository, and deployed a local Kubernetes cluster using Minikube before scaling up to Amazon EKS. This involved writing complex Deployment, Service, and Ingress manifests. Weeks five and six were dedicated to Infrastructure as Code. The candidate rewrote all previously manually created AWS resources into Terraform configurations, learned to manage remote state in S3 with DynamoDB locking, and refactored the code into reusable Terraform modules. Week seven focused on CI/CD and security, building a GitHub Actions pipeline that triggered on git push, ran Trivy container scans, and automatically applied Terraform changes. Week eight addressed cost optimization and monitoring, configuring AWS CloudWatch alarms and analyzing costs using the Cost Explorer.`,
+  technologies: `Amazon Web Services (AWS) was the primary cloud provider, utilizing services including VPC, EC2, Auto Scaling, S3, ECR, EKS, IAM, CloudWatch, and Secrets Manager. Docker was used for containerizing applications. Kubernetes (K8s) managed container orchestration via Amazon EKS. Terraform by HashiCorp served as the Infrastructure as Code tool for provisioning and managing AWS resources. GitHub Actions facilitated the CI/CD pipelines for automated testing and deployment. Trivy was integrated for container image vulnerability scanning. kubectl was the command-line tool for interacting with Kubernetes clusters. Helm was introduced as a package manager for Kubernetes to simplify complex manifest deployments. AWS CLI was used extensively for scripting interactions with AWS services.`,
+  challenges: `A major challenge was mastering Terraform state management. Initially, local state caused conflicts when collaborating, and accidental state deletion risked infrastructure drift. The resolution involved configuring remote state storage in an S3 bucket with DynamoDB for state locking, ensuring only one process could modify the infrastructure at a time. Debugging Kubernetes networking also proved highly complex. A deployed application was returning 502 errors; resolving this required deep diving into AWS VPC routing, understanding how the EKS CNI (Container Network Interface) allocates IP addresses, and fixing misconfigured Security Groups that were blocking traffic between the Ingress controller and the application pods. Furthermore, managing secrets securely was a hurdle. Hardcoding credentials in Terraform or Kubernetes manifests posed severe security risks. The candidate resolved this by integrating AWS Secrets Manager and using Kubernetes External Secrets to securely inject credentials at runtime without storing them in version control.`,
+  resultsAndDiscussion: `The internship culminated in the deployment of a highly available, cloud-native web application architecture. The infrastructure was 100% defined in Terraform, consisting of a custom VPC, an EKS cluster spanning two Availability Zones, and an S3 bucket for static asset storage. The CI/CD pipeline successfully automated the entire workflow: a code commit triggered a GitHub Actions run, which built a new Docker image, scanned it with Trivy (rejecting images with Critical CVEs), pushed it to ECR, and updated the Kubernetes deployment manifest. The application remained available even when the candidate manually terminated an EC2 node in the EKS cluster, demonstrating the self-healing capabilities of Kubernetes. Cost optimization analysis revealed that switching from reserved EC2 instances to Spot Instances for non-critical worker nodes could reduce compute costs by approximately 60% without impacting availability, demonstrating an understanding of the Well-Architected Framework's Cost Optimization pillar. The final architecture passed a rigorous security review, utilizing IAM roles with least privilege and no publicly exposed sensitive ports.`,
+  conclusion: `The Cloud Computing internship successfully achieved its objective of developing practical, production-ready cloud architecture skills. The candidate transitioned from a user of the AWS Management Console to an author of Infrastructure as Code, understanding that manual configurations are unscalable and error-prone. The deep dive into containerization and Kubernetes provided a solid foundation for modern application deployment methodologies. Most critically, the internship instilled an architectural mindset oriented around the AWS Well-Architected Framework—constantly evaluating designs for reliability, security, and cost. The candidate learned that cloud engineering is as much about managing configuration drift and automating operational tasks as it is about provisioning servers. The candidate is well-prepared for roles as a Cloud Engineer, DevOps Engineer, or Junior Solutions Architect. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Cloud-Native Infrastructure Deployment', desc: 'Designed and provisioned a highly available AWS VPC architecture with public/private subnets, NAT Gateways, and security groups entirely using Terraform with remote state management.', status: 'Completed' },
+    { name: 'Kubernetes Orchestration on EKS', desc: 'Containerized a multi-tier application, deployed it to Amazon EKS using Kubernetes manifests and Helm charts, and verified high availability by simulating node failures.', status: 'Completed' },
+    { name: 'Automated CI/CD Pipeline', desc: 'Built a GitHub Actions pipeline that automated Docker builds, integrated Trivy security scanning to block vulnerable images, and automatically deployed updates to the EKS cluster.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Containerized Application Architecture", desc: "Developed optimized Docker containers for a multi-service application, achieving 85% image size reduction through multi-stage builds and Alpine bases. Implemented Docker Compose for local development with proper networking, volumes, and health checks.", status: "Completed" },
-      { name: "Kubernetes Production Deployment", desc: "Deployed application to Kubernetes with Deployments, Services, Ingress, HPA, and NetworkPolicies. Achieved 500 req/s handling capacity with automatic scaling. Configured liveness/readiness probes and pod disruption budgets for high availability.", status: "Completed" },
-      { name: "Complete CI/CD Pipeline", desc: "Implemented GitHub Actions pipeline automating test execution, image building, ECR pushing, and Kubernetes deployment. Achieved 8-minute commit-to-deployment time with 98% reliability and automated rollback capability.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Cloud Computing, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

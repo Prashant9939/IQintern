@@ -397,217 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - Artificial Intelligence
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive artificial intelligence work completed during the AI internship at AVADS Private Limited. The internship focused on developing deep learning models for computer vision tasks, implementing neural network architectures from scratch and using established frameworks, applying data augmentation and preprocessing techniques for image datasets, and understanding the mathematical foundations underlying modern AI systems. Over the course of the program, the candidate progressed from implementing basic neural network components to training and evaluating sophisticated convolutional neural networks for real-world image classification and object detection tasks.
-
-The core focus of this internship was establishing deep understanding of neural network architectures, particularly convolutional neural networks (CNNs) that have revolutionized computer vision. The candidate explored the mathematical foundations of neural networks including forward propagation, backpropagation, gradient descent optimization, and activation functions, implementing these components from scratch using NumPy before utilizing high-level frameworks. This dual approach ensured understanding of what frameworks abstract away, enabling more effective debugging and architecture design decisions.
-
-Computer vision tasks formed the primary application domain, with the candidate working on image classification, object detection, and image segmentation problems. Datasets included standard benchmarks (CIFAR-10, MNIST) for methodology development and custom datasets for practical application. The candidate implemented data pipelines for loading, preprocessing, and augmenting image data, understanding how pipeline design affects model training and generalization. Evaluation methodologies appropriate for each task type were implemented, including confusion matrices and per-class metrics for classification, Intersection over Union for detection, and pixel-level accuracy and Dice coefficient for segmentation.
-
-Deep learning frameworks were utilized extensively, with primary focus on TensorFlow/Keras and secondary exposure to PyTorch. The candidate developed proficiency in model definition using both sequential and functional APIs, custom training loops for advanced training scenarios, callback mechanisms for learning rate scheduling and early stopping, and model saving and loading for deployment considerations. Transfer learning was practiced by fine-tuning pre-trained models (ResNet, VGG, MobileNet) on domain-specific datasets, understanding how to balance frozen pre-trained layers with trainable new layers.
-
-Model optimization and evaluation represented sophisticated challenges that the candidate addressed through systematic experimentation. Hyperparameter tuning was conducted using grid search, random search, and Bayesian optimization approaches. Regularization techniques including dropout, L2 regularization, and data augmentation were applied to address overfitting. Learning rate scheduling policies including step decay, cosine annealing, and warm-up strategies were evaluated for their effects on training dynamics. The candidate developed skills in interpreting training curves, identifying underfitting and overfitting patterns, and diagnosing training problems including vanishing/exploding gradients.
-
-This report provides detailed documentation of each development phase, including architectural decisions, hyperparameter choices, training procedures, and the challenges encountered and resolved throughout the internship period.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Artificial Intelligence, particularly the subset known as deep learning, has transformed numerous fields through its ability to learn complex patterns from data. Unlike traditional machine learning, which typically requires manual feature engineering, deep learning automatically discovers hierarchical representations from raw data, enabling breakthrough performance in domains including computer vision, natural language processing, and game playing. This internship focused on the computer vision application of deep learning, where convolutional neural networks have achieved and surpassed human-level performance on many tasks.
-
-The theoretical foundations of neural networks draw from multiple mathematical disciplines. Linear algebra provides the framework for representing and manipulating high-dimensional data as vectors and matrices, with matrix multiplication forming the core computational operation in neural networks. Calculus, particularly the chain rule of differentiation, enables backpropagation—the algorithm that computes gradients of loss functions with respect to network parameters, enabling learning through gradient descent. Probability theory provides the framework for understanding model uncertainty, interpreting outputs as probabilities, and designing loss functions that quantify prediction errors. The candidate reviewed these mathematical foundations before proceeding to implementation, ensuring that framework usage was informed by understanding rather than recipe-following.
-
-Convolutional Neural Networks (CNNs) represent the dominant architecture for computer vision tasks. CNNs exploit the spatial structure of images through convolutional layers that apply learnable filters across the image, detecting local patterns (edges, textures, shapes) that are combined into increasingly abstract representations through successive layers. Key architectural innovations include pooling layers that provide translation invariance and reduce spatial dimensions, batch normalization that stabilizes training by normalizing layer inputs, and skip connections (as in ResNet) that enable training of very deep networks by providing gradient flow paths that bypass layers.
-
-Transfer learning has become a standard practice in computer vision, recognizing that features learned on large datasets (ImageNet, with 1.2 million images across 1000 categories) transfer effectively to new domains with limited data. Pre-trained models such as ResNet (residual learning with skip connections), VGG (deep networks with small convolutional filters), and MobileNet (efficient architectures for mobile deployment) provide starting points that can be fine-tuned for specific tasks. The candidate explored different transfer learning strategies including feature extraction (freezing pre-trained layers, training only new classifier layers) and fine-tuning (unfreezing some pre-trained layers for joint training).
-
-Computer vision tasks extend beyond simple classification to more complex outputs. Object detection requires both classifying objects and localizing them with bounding boxes, typically implemented through architectures like YOLO (You Only Look Once) or Faster R-CNN. Semantic segmentation assigns a class label to every pixel, requiring architectures that preserve spatial resolution such as U-Net or DeepLab. Instance segmentation extends semantic segmentation by distinguishing individual object instances. This internship focused primarily on classification with exposure to detection concepts, providing a foundation for more advanced tasks.
-
-The practical challenges of deep learning—computational requirements, data quality and quantity, hyperparameter sensitivity, and evaluation methodology—often receive less attention than architectural innovations but are equally important for successful model deployment. The internship addressed these practical considerations throughout, ensuring the candidate developed skills not just in training models but in the full workflow from data preparation to model evaluation.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship began with an intensive first week focused on mathematical foundations and neural network implementation from scratch. The candidate reviewed linear algebra concepts including matrix multiplication, broadcasting, and element-wise operations as implemented in NumPy. Forward propagation was implemented for a multi-layer perceptron, with each layer performing the operation Z = WX + b followed by activation function application. Backpropagation was implemented by manually deriving gradients for each layer and verifying correctness through numerical gradient checking (comparing analytical gradients to finite-difference approximations). A simple two-layer network was trained on a synthetic spiral classification dataset, achieving successful separation of intertwined classes.
-
-During the second week, the candidate extended the from-scratch implementation to include convolutional layers. The convolution operation was implemented using nested loops (educational, though slow), then optimized using im2col transformation that converts convolutions to matrix multiplications. Pooling operations (max pooling, average pooling) were implemented. A simple CNN with two convolutional layers followed by fully-connected layers was trained on MNIST digits, achieving approximately 98% accuracy. This success confirmed understanding of convolutional operations and backpropagation through convolutional layers.
-
-Weeks three and four focused on TensorFlow/Keras framework usage. The candidate implemented models using the Sequential API for simple architectures and the Functional API for models with multiple inputs/outputs or skip connections. Data pipelines were built using tf.data, with image loading, resizing, normalization, and augmentation (random flips, rotations, brightness adjustments). The candidate trained custom CNNs on CIFAR-10, achieving approximately 85% accuracy with a carefully designed architecture. Learning rate scheduling using callbacks was implemented, with experiments comparing constant learning rate, step decay, and cosine annealing. TensorBoard was used to visualize training curves, model graphs, and sample predictions.
-
-The fifth and sixth weeks addressed transfer learning and pre-trained model fine-tuning. The candidate loaded pre-trained ResNet50, VGG16, and MobileNet models from tf.keras.applications, initially using them as feature extractors (freezing all pre-trained layers, training only a new classification head). Results on a custom dataset of product images showed ResNet50 achieving 92% accuracy with feature extraction alone. Fine-tuning experiments unfroze varying numbers of pre-trained layers, with optimal results achieved by unfreezing the last 10-15 layers and training with a reduced learning rate (1/10 of the feature extraction learning rate). The candidate documented the trade-off between fine-tuning more layers (risk of overfitting, catastrophic forgetting) and fewer layers (suboptimal adaptation to new domain).
-
-The seventh and eighth weeks focused on advanced topics including object detection concepts, model optimization, and comprehensive evaluation. The candidate studied YOLO architecture through implementation of a simplified version that detected single objects in images. Hyperparameter tuning experiments using Keras Tuner identified optimal configurations. Comprehensive evaluation including confusion matrices, per-class metrics, calibration analysis, and failure mode analysis (examining misclassified examples to understand systematic errors) was conducted. The final deliverable was a documented model trained on the custom dataset with performance analysis suitable for a deployment decision.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the Artificial Intelligence internship was selected to provide comprehensive exposure to the deep learning ecosystem while maintaining focus on the tools most relevant to computer vision practice.
-
-Python 3.9 served as the primary programming language, with NumPy providing the foundational numerical computing capabilities. NumPy arrays were used for all numerical operations, with the candidate developing proficiency in array manipulation including reshaping, broadcasting, slicing, and mathematical operations. NumPy's random number generation was used for weight initialization and data shuffling. Understanding of NumPy's memory model and contiguous array layouts informed performance optimization for data-intensive operations.
-
-TensorFlow 2.x with Keras API served as the primary deep learning framework. The candidate utilized Keras layers for model definition, including Conv2D, MaxPooling2D, Dense, Dropout, BatchNormalization, and GlobalAveragePooling2D. The Functional API was used for complex architectures, while the Sequential API sufficed for simple models. tf.GradientTape enabled custom training loops for advanced scenarios. tf.data provided efficient data pipeline construction with prefetching and parallel loading. TensorFlow's model saving formats (SavedModel, HDF5) were used for persistence.
-
-Keras Applications provided pre-trained models for transfer learning. The candidate utilized ResNet50, VGG16, VGG19, and MobileNetV2 architectures, loading them with ImageNet-pretrained weights. The models' preprocessing functions (preprocess_input) were applied to ensure input data matched training distribution. The include_top parameter controlled whether classification layers were included or removed for custom classification heads. The candidate understood the architectural differences between these models and the trade-offs between accuracy and computational efficiency.
-
-PyTorch 2.x was used for secondary exposure to the dynamic computation graph paradigm. The candidate implemented equivalent models in PyTorch, experiencing its more explicit training loop (forward pass, loss computation, backward pass, optimizer step) compared to Keras's model.fit abstraction. PyTorch's debugging advantages—including the ability to print intermediate tensor values and use standard Python debugging tools—were leveraged for understanding model behavior. The candidate understood the philosophical differences between TensorFlow's static graph origins and PyTorch's dynamic graph design.
-
-OpenCV (cv2) provided image processing capabilities beyond what deep learning frameworks offer. The candidate used OpenCV for image reading and writing, color space conversions (BGR to RGB for framework compatibility), geometric transformations (resize, rotate, affine transforms), and morphological operations. OpenCV's contour detection and bounding box functions were used for basic object detection preprocessing. Understanding of OpenCV complemented framework capabilities for data pipeline construction.
-
-Jupyter Notebooks provided the interactive development environment, with each experiment documented in a notebook combining code, visualizations, and narrative text. Matplotlib was used for visualization including training curves, confusion matrices, sample predictions with overlays, and feature map visualizations. Seaborn enhanced statistical visualizations. The candidate also used TensorBoard for training monitoring, leveraging its capabilities for comparing multiple runs, visualizing model graphs, and inspecting histogram distributions of weights and gradients..`,
-  "Challenges Faced": `The Artificial Intelligence internship presented numerous technical challenges characteristic of deep learning work. These challenges required systematic experimentation, mathematical analysis, and creative problem-solving to resolve.
-
-High computational times during neural network training constrained experimentation bandwidth. Training a custom CNN on CIFAR-10 from scratch required approximately 30 minutes per epoch on CPU, making comprehensive hyperparameter searches impractical. Resolution involved multiple strategies: utilizing Google Colab's free GPU access for training-intensive experiments, implementing early stopping to avoid unnecessary training epochs once performance plateaued, reducing dataset size for initial architecture validation before full training, and implementing efficient data pipelines with prefetching to minimize data loading bottlenecks. The candidate learned to design experiments efficiently, validating approaches on small datasets before committing to full-scale training.
-
-Gradient descent weight tuning presented the classic challenge of learning rate selection. Learning rates too high caused loss divergence or oscillation; rates too low resulted in impractically slow convergence. The candidate implemented learning rate finder techniques (starting with a very small learning rate and gradually increasing while monitoring loss) to identify promising ranges. Learning rate scheduling policies including step decay, exponential decay, and cosine annealing were implemented and compared. The candidate developed intuition for learning rate behavior: watching loss curves for signs of instability (oscillation) or stagnation (plateau) and adjusting accordingly.
-
-Parsing noise from camera frames in object detection preprocessing proved challenging when working with custom image data. Variations in lighting, background clutter, and image quality affected detection reliability. Resolution involved implementing robust preprocessing including histogram equalization for lighting normalization, Gaussian blur for noise reduction, and adaptive thresholding for segmentation. Data augmentation was expanded to include realistic variations (brightness, contrast, blur) that made the model robust to input variations. The candidate learned that data quality and preprocessing often matter more than architectural sophistication.
-
-Vanishing gradient problems emerged when attempting to train deep networks without skip connections. Gradients computed through many layers became exponentially small, preventing early layers from learning. The candidate diagnosed this by monitoring gradient magnitudes at each layer during training, observing that early layer gradients were orders of magnitude smaller than later layer gradients. Resolution involved implementing ResNet-style skip connections that provide gradient flow paths bypassing layers, using batch normalization to maintain activation distributions, and careful weight initialization (He initialization for ReLU networks) that set appropriate initial gradient scales.
-
-Overfitting on small custom datasets limited generalization despite aggressive data augmentation. With only 500 training images per class, models quickly memorized training data. Resolution involved multiple strategies applied together: transfer learning from ImageNet-pretrained models provided strong feature extractors that generalized better; aggressive data augmentation (random crops, flips, color jitter, CutMix, MixUp) effectively increased training data diversity; dropout and L2 regularization penalized complex fits; and early stopping prevented continued training after validation performance degraded. The candidate learned that overfitting management typically requires multiple complementary strategies rather than a single solution.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The Artificial Intelligence internship successfully achieved its objective of developing practical deep learning capabilities with theoretical understanding. The candidate demonstrated substantial growth across all program domains, from mathematical foundations to production-oriented model development.
-
-The technical skills developed represent a strong foundation for AI/ML roles. Understanding of neural network mathematics enables informed architecture design and effective debugging when models don't learn as expected. Proficiency with TensorFlow/Keras and exposure to PyTorch provides capability to work in either ecosystem. Computer vision skills including CNN architecture design, transfer learning, and evaluation methodology prepare the candidate for computer vision focused roles.
-
-The from-scratch implementation experience, while not directly applicable to production work (frameworks are always used in practice), provided invaluable understanding that distinguishes practitioners who understand what they're doing from those who are merely following tutorials. This understanding manifests in more effective debugging, better architecture design decisions, and ability to read and understand research papers.
-
-The experimental methodology developed during this internship is particularly valuable. AI/ML work is fundamentally experimental, requiring systematic variation of variables, careful measurement, and rigorous comparison. The candidate developed skills in designing experiments that efficiently explore the hyperparameter space, interpreting training curves to diagnose problems, and evaluating models comprehensively rather than relying on single metrics.
-
-The challenges encountered developed resilience and systematic problem-solving approaches characteristic of effective AI practitioners. The experience of debugging vanishing gradients, resolving overfitting on small datasets, and optimizing training pipelines developed skills that transfer to any deep learning context. The patience required for training iterations and the humility required when models fail to perform as expected are important professional qualities.
-
-Looking forward, the candidate is well-prepared for continued AI/ML development. The foundation supports exploration of advanced architectures (transformers, diffusion models), other modalities (NLP with BERT/GPT, audio processing), and deployment considerations (model optimization, edge deployment). The theoretical understanding supports reading research papers and adapting to new techniques as the field continues to evolve rapidly.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the mathematical understanding, implementation capability, and experimental methodology expected of an AI practitioner completing a rigorous internship program. The candidate is certified as having completed the Artificial Intelligence internship with distinction.`
+const trackData = {
+  abstract: `This report documents the AI internship at IQ Intern, focusing on deep learning model training for computer vision tasks, neural network architecture implementation from fundamental principles, data augmentation techniques for robust model generalization, and mathematical foundations underlying modern AI systems. The candidate progressed from implementing basic neural network components from scratch to training and evaluating convolutional neural networks (CNNs) for image classification and object detection tasks. Core focus areas included mathematical foundations (forward propagation, backpropagation, gradient descent variants, activation functions) implemented from scratch using NumPy before utilizing established frameworks for production efficiency, computer vision tasks (classification, detection, semantic segmentation) with proper evaluation metrics and dataset handling, transfer learning strategies leveraging pre-trained models, and practical considerations including GPU utilization, mixed precision training, and deployment optimization techniques. Rigorous evaluation protocols including stratified k-fold cross-validation, confusion matrix analysis, and statistical significance testing ensured reliable performance estimates. The methodology emphasized understanding theoretical foundations before applying frameworks, ensuring informed architectural and hyperparameter decisions rather than treating deep learning as a black box.`,
+  acknowledgement: `I express sincere gratitude to IQ Intern for this comprehensive Artificial Intelligence internship experience. Special thanks to the AI mentor whose expertise in deep learning theory, practical training techniques, and computer vision applications was invaluable—their insistence on understanding mathematical foundations before framework usage provided deeper learning than typical tutorial-based approaches. The program coordinators deserve recognition for curriculum balancing theoretical rigor with practical application, progressing logically from fundamentals to advanced topics without sacrificing depth. I am grateful to the infrastructure team for providing consistent GPU access essential for training deep learning models within reasonable timeframes, as well as robust storage for large datasets. I acknowledge fellow interns for collaborative debugging sessions, paper discussion groups analyzing seminal research, and sharing diverse perspectives on approach selection. The evaluation committee's assessment of model implementations, training procedures, and result analysis demonstrated professional research standards exceeding typical educational assessment.`,
+  introduction: `Artificial Intelligence, particularly deep learning, has achieved remarkable breakthroughs in computer vision, natural language processing, and generative modeling over the past decade. These advances rest on solid mathematical foundations—linear algebra for tensor operations, calculus for gradient computation through backpropagation, probability for uncertainty quantification, and optimization theory for training algorithms. Neural networks, inspired by biological neurons but significantly simplified, learn hierarchical representations through successive layers of transformations. Convolutional Neural Networks (CNNs) exploit spatial locality through shared-weight filters, reducing parameters while capturing translation-invariant features essential for image understanding. The rise of large-scale datasets (ImageNet, COCO) and computational resources (GPUs, TPUs) enabled training increasingly deep architectures. Transfer learning—leveraging knowledge from models trained on massive datasets for downstream tasks—has democratized access to powerful representations. Furthermore, the recent paradigm shift toward foundation models and attention mechanisms, pioneered by the Transformer architecture, has begun to complement and in some domains supplant traditional CNNs, necessitating familiarity with global context modeling. However, deep learning remains prone to overfitting, requires careful hyperparameter tuning, and demands significant computational resources. This internship provided structured progression from mathematical foundations to practical model development, emphasizing understanding over rote application.`,
+  objectives: `The foundational objective was developing deep mathematical understanding: implementing forward propagation computing layer outputs through linear transformations and activations, deriving and implementing backpropagation for gradient computation using the chain rule, implementing gradient descent variants (SGD, SGD with momentum, Adam), and understanding activation function properties (vanishing gradients with sigmoid, dying ReLU problem, benefits of variants like Leaky ReLU and GELU). Neural network architecture objectives included implementing fully-connected networks from scratch, understanding CNN components (convolution operations, pooling layers, batch normalization, residual connections), and designing architectures appropriate for task complexity. Computer vision objectives covered image classification with proper train/validation/test splits and stratification, object detection with bounding box regression and anchor mechanisms, semantic segmentation with pixel-level classification, and appropriate evaluation metrics (accuracy, precision, recall, F1, mAP, IoU for detection, dice coefficient for segmentation). Practical training objectives included data augmentation strategies (geometric transformations, color jittering, cutout, mixup), regularization techniques (dropout, weight decay, early stopping), learning rate scheduling (step decay, cosine annealing, warm restarts), and mixed precision training for efficiency. Transfer learning objectives covered feature extraction versus fine-tuning strategies, layer freezing decisions, and learning rate selection for pre-trained layers. Additionally, the internship aimed to cultivate model interpretability skills using techniques like Grad-CAM for visual explanations, ensuring predictions could be understood and trusted.`,
+  literatureReview: `Deep learning foundations draw on Rumelhart, Hinton, and Williams' 1986 backpropagation paper, though connectionist ideas extend earlier. LeCun's 1998 LeNet established CNN architectures for digit recognition. The 2012 ImageNet competition victory by AlexNet (Krizhevsky et al.) demonstrated deep learning's potential with GPU training and ReLU activations, catalyzing the modern deep learning era. VGGNet (Simonyan & Zisserman, 2014) established that depth with small filters outperforms shallower networks with larger filters. ResNet (He et al., 2016) addressed vanishing gradients through skip connections enabling 100+ layer networks. Transfer learning effectiveness was systematically studied by Yosinski et al. (2014), demonstrating feature transferability across tasks. Data augmentation research includes Simple Copy-Paste (Ghiasi et al., 2021) for detection and CutMix (Yun et al., 2019) for classification improvement. Optimization literature covers Kingma & Ba's Adam (2015) adaptive learning rates and Loshchilov & Hutter's AdamW (2019) decoupled weight decay. The introduction of the Transformer architecture by Vaswani et al. in "Attention Is All You Need" (2017) has profoundly impacted computer vision through Vision Transformers (ViT), challenging the inductive biases of CNNs. Goodfellow, Bengio, and Courville's "Deep Learning" textbook provides comprehensive theoretical foundation.`,
+  weeklyProgress: `Week one focused on mathematical foundations and environment setup: PyTorch installation with CUDA support, implementing forward propagation through fully-connected layers with NumPy, deriving backpropagation gradients manually, and implementing basic gradient descent with visualization of loss landscapes. Week two deepened implementation: multi-layer networks with various activations, comparing gradient behavior across architectures, implementing momentum and Adam optimizer from scratch, and validating against PyTorch implementations for numerical correctness. Weeks three-four concentrated on CNNs: implementing convolution operations understanding padding and stride effects, building VGG-style and ResNet-style architectures in PyTorch, training on CIFAR-10 with extensive logging via Weights & Biases, and analyzing feature map activations for interpretability. Weeks five-six addressed advanced computer vision: image classification on custom dataset with proper augmentation pipeline, object detection with Faster R-CNN understanding region proposal networks and ROI pooling, semantic segmentation with U-Net architecture understanding encoder-decoder structure and skip connections. Weeks seven-eight focused on transfer learning, optimization, and interpretability: fine-tuning pre-trained ResNet and EfficientNet models with systematic layer freezing experiments, implementing comprehensive augmentation strategies using the Albumentations library (random crops, horizontal flips, color jitter, cutout, mixup), mixed precision training with torch.cuda.amp, and applying Grad-CAM for model interpretability analysis to ensure models focused on semantically relevant image regions.`,
+  technologies: `Python 3.9 with PyTorch 2.0 served as the primary deep learning framework, providing dynamic computation graphs, automatic differentiation, and comprehensive neural network modules (torch.nn). NumPy provided efficient array operations for from-scratch implementations and data preprocessing. torchvision supplied pre-trained models (ResNet, EfficientNet, VGG), datasets (CIFAR-10, ImageNet subsets), and image transformation utilities for augmentation pipelines. PIL/Pillow handled image loading and basic transformations. CUDA 11.8 enabled GPU acceleration with torch.cuda for device management. torch.cuda.amp provided automatic mixed precision training reducing memory usage and accelerating computation on compatible GPUs. matplotlib and seaborn visualized training curves, confusion matrices, and feature activations. Weights & Biases (WandB) was integrated for comprehensive experiment tracking, hyperparameter logging, and artifact versioning. Albumentations offered high-performance, advanced image augmentation pipelines. OpenCV assisted with image processing operations not covered by torchvision transforms. scikit-learn provided metrics (classification_report, confusion_matrix, average_precision) and dataset splitting utilities ensuring proper evaluation methodology.`,
+  challenges: `Training instability with deep networks manifested as loss explosions or plateaus—resolution required careful weight initialization (He initialization for ReLU networks), gradient clipping for extreme scenarios, and learning rate warmup before full training schedule. Overfitting on small custom datasets (500 images) required aggressive augmentation, strong regularization (dropout 0.5, weight decay 1e-4), and ultimately transfer learning with frozen early layers providing robust feature extractors. Object detection bounding box loss balancing between classification and localization proved sensitive—focal loss helped with class imbalance, while adjusting localization loss weight required experimentation guided by validation mAP. Semantic segmentation class imbalance (background dominated) required weighted cross-entropy and dice loss combination for meaningful minority class learning. GPU memory limitations with high-resolution images and large batch sizes required gradient accumulation to simulate larger batches, mixed precision training reducing memory by approximately 40%, and gradient checkpointing trading computation for memory. Data labeling inconsistencies in the custom dataset introduced noise—resolution involved consensus labeling for ambiguous samples and implementing robust loss functions like focal loss to down-weight potentially mislabeled examples.`,
+  resultsAndDiscussion: `From-scratch implementations validated correctly against PyTorch reference implementations, with gradient differences below 1e-6 confirming deep mathematical understanding. Image classification on CIFAR-10 achieved 94.2% accuracy with custom ResNet-18, comparing favorably to reported baselines. Custom dataset classification improved from 78% baseline to 91% through transfer learning with EfficientNet-B4 and comprehensive augmentation—ablation showed augmentation contributed approximately 8% improvement, transfer learning approximately 5%. Object detection with Faster R-CNN achieved mAP@0.5 of 0.76 on custom dataset, with analysis revealing systematic failure modes on small objects and occluded instances suggesting data collection improvements. Semantic segmentation with U-Net achieved mean IoU of 0.72, with class-wise analysis showing background at 0.91 but small object classes at 0.48 indicating class imbalance challenges despite loss weighting. Mixed precision training reduced training time by 35% with negligible accuracy difference (<0.2%). Grad-CAM visualizations confirmed that classification models attended to semantically relevant regions rather than background artifacts, providing qualitative validation of learned representations. Statistical significance tests (paired t-tests on cross-validation folds) confirmed that performance improvements from architectural changes were significant (p < 0.05) rather than due to random initialization.`,
+  conclusion: `The Artificial Intelligence internship successfully achieved its objective of developing deep learning competencies grounded in mathematical understanding rather than superficial framework usage. Technical skills provide a strong foundation: mathematical foundation understanding (backpropagation derivation, gradient descent analysis) enables debugging training problems systematically; PyTorch proficiency enables efficient model development and experimentation; computer vision expertise spans classification, detection, and segmentation with appropriate evaluation metrics. Architectural understanding developed—knowing why residual connections help, when transfer learning is appropriate, how to design augmentation strategies—represents progression from tutorial-following to informed decision-making. Practical training skills—managing GPU resources, implementing mixed precision, applying regularization appropriately—prepare for real-world model development with computational constraints. Furthermore, the internship instilled a critical awareness of AI ethics, including the risks of dataset bias, the environmental impact of large-scale training, and the necessity of model interpretability. Challenges encountered developed systematic debugging approaches essential for deep learning where failures have many potential causes. The candidate is prepared for continued growth in transformer architectures, generative models, or domain-specific applications. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Neural Network From Scratch', desc: 'Implemented fully-connected neural networks with forward propagation, backpropagation (manual gradient derivation using chain rule), and Adam optimizer using only NumPy. Validated against PyTorch with gradient differences below 1e-6, demonstrating deep mathematical understanding of optimization.', status: 'Completed' },
+    { name: 'Computer Vision Pipeline', desc: 'Built image classification (ResNet-18, 94.2% on CIFAR-10), object detection (Faster R-CNN, mAP 0.76), and semantic segmentation (U-Net, mIoU 0.72) pipelines with proper evaluation metrics, failure mode analysis, and Grad-CAM interpretability visualizations.', status: 'Completed' },
+    { name: 'Transfer Learning and Optimization', desc: 'Fine-tuned EfficientNet-B4 achieving 91% on custom dataset through comprehensive Albumentations augmentation and systematic layer freezing experiments tracked via Weights & Biases. Implemented mixed precision training reducing time by 35% and applied focal loss for noisy label robustness.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Neural Network From-Scratch Implementation", desc: "Implemented a complete neural network library using only NumPy, including fully-connected and convolutional layers, backpropagation with gradient verification, and multiple activation functions. Achieved 98.2% accuracy on MNIST, validating correctness against framework implementations.", status: "Completed" },
-      { name: "Transfer Learning Product Classifier", desc: "Fine-tuned ResNet50 on custom product image dataset, achieving 94.2% accuracy through systematic experimentation with frozen layers, learning rates, and augmentation strategies. Conducted comprehensive evaluation including per-class metrics, calibration analysis, and failure mode investigation.", status: "Completed" },
-      { name: "Automated Training Pipeline", desc: "Developed a reusable training pipeline with TensorFlow incorporating early stopping, learning rate scheduling (cosine annealing), model checkpointing, TensorBoard logging, and hyperparameter search integration. Reduced experiment cycle time by 60% compared to manual training management.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">Artificial Intelligence, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================

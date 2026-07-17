@@ -397,215 +397,281 @@ td{
 
     <div class="toc-item">
         <span>4. Objectives</span>
-        <span>6</span>
-    </div>
-
-    <div class="toc-item">
-        <span>5. Literature Review</span>
         <span>7</span>
     </div>
 
     <div class="toc-item">
-        <span>6. Weekly Progress</span>
-        <span>8</span>
-    </div>
-
-    <div class="toc-item">
-        <span>7. Technologies Used</span>
+        <span>5. Literature Review</span>
         <span>9</span>
     </div>
 
     <div class="toc-item">
-        <span>8. Challenges Faced</span>
-        <span>10</span>
-    </div>
-
-    <div class="toc-item">
-        <span>9. Results & Discussion</span>
+        <span>6. Weekly Progress</span>
         <span>11</span>
     </div>
 
     <div class="toc-item">
+        <span>7. Technologies Used</span>
+        <span>13</span>
+    </div>
+
+    <div class="toc-item">
+        <span>8. Challenges Faced</span>
+        <span>15</span>
+    </div>
+
+    <div class="toc-item">
+        <span>9. Results & Discussion</span>
+        <span>17</span>
+    </div>
+
+    <div class="toc-item">
         <span>10. Conclusion</span>
-        <span>12</span>
+        <span>19</span>
     </div>
 
 </div>
 
 <script>
 /* =====================================================
-   REPORT SECTIONS
-===================================================== */
+   REPORT SECTIONS - UI/UX Product Design
+   Expanded version for exactly 20-page reports
+ ===================================================== */
 
-const sections = [
-    "Abstract",
-    "Acknowledgement",
-    "Introduction",
-    "Objectives",
-    "Literature Review",
-    "Weekly Progress",
-    "Technologies Used",
-    "Challenges Faced",
-    "Results & Discussion",
-    "Conclusion"
-];
-
-const sectionParagraphs = {
-  "Abstract": `This comprehensive report documents the extensive UI/UX Product Design work completed during the internship at AVADS Private Limited. While sharing foundational principles with general UI/UX design, product design extends the scope to encompass strategic product thinking, business model consideration, and end-to-end product lifecycle management. The internship focused on developing capabilities in product discovery, feature prioritization, cross-functional collaboration, and designing products that balance user needs with business objectives.
-
-The core focus of this internship was establishing proficiency in product-level design thinking that goes beyond screen-level design to encompass the full product experience. Product designers must understand not just how individual screens work, but how features fit together into coherent product experiences, how product decisions align with business strategy, and how to prioritize design investment across competing opportunities. The candidate developed skills in product strategy, roadmapping, and the cross-functional collaboration that product design requires.
-
-Product discovery formed a foundational component, with the candidate learning to validate product assumptions before investing in design and development. Discovery activities included opportunity assessment (is this problem worth solving?), user needs validation (do users actually have this problem?), solution exploration (what approaches might address this need?), and viability assessment (can we build and sustain this solution?). Understanding of the dual-track discovery/delivery model—where discovery informs delivery while delivery generates learning that feeds back to discovery—provided a framework for ongoing product evolution.
-
-Feature prioritization addressed the challenge of limited resources and unlimited ideas. The candidate learned to evaluate feature opportunities using frameworks including RICE (Reach, Impact, Confidence, Effort), MoSCoW (Must have, Should have, Could have, Won't have), and value versus complexity matrices. Understanding that prioritization is ongoing and contextual—what's important changes as market conditions, user needs, and business circumstances evolve—developed strategic thinking beyond single-point decisions.
-
-Cross-functional collaboration skills were developed through simulated product team scenarios. Product designers work closely with product managers (on strategy and priorities), engineers (on feasibility and implementation), and stakeholders (on alignment and buy-in). The candidate practiced communicating design decisions to different audiences, incorporating technical constraints into design solutions, and facilitating design reviews that aligned diverse perspectives.
-
-This report provides detailed documentation of each product design phase, including strategic rationale, prioritization decisions, and the cross-functional considerations that informed design outcomes.`,
-  "Acknowledgement": `I express my sincere gratitude to the evaluation board at AVADS Private Limited for their guidance during the project cycles. Special thanks to the mentors and project coordinators for structured guidance.`,
-  "Introduction": `Product design, as distinct from general UI/UX design, encompasses the end-to-end process of identifying user needs, defining product solutions, and shepherding those solutions from concept to launch and beyond. While UI/UX designers may focus on specific features or screens, product designers maintain a broader view of how features fit together into coherent product experiences and how product decisions align with business strategy. This internship developed capabilities in this broader product-level design thinking.
-
-The evolution from UX design to product design reflects industry recognition that effective digital products require integration of user understanding with business understanding. A design that perfectly serves user needs but cannot be built, cannot be sustained financially, or doesn't align with organizational strategy will not succeed as a product. Conversely, a product that perfectly serves business needs but ignores user needs will fail to attract and retain users. Product design operates at this intersection, requiring fluency in both user-centered design methods and business/product management frameworks.
-
-Product discovery—the process of determining what to build—receives particular emphasis in product design. Unlike delivery (building what's been decided), discovery is inherently uncertain and requires different methods. Teresa Torres' continuous discovery framework proposes that product teams should continuously engage in three activities: interviewing users to understand their needs, testing solutions with users to validate desirability, and collaborating with engineers to assess feasibility. This ongoing discovery ensures that products evolve based on evidence rather than assumptions.
-
-Business model understanding enables product designers to make design decisions that support product sustainability. Different business models (subscription, advertising, transactional, freemium) create different design imperatives. Subscription products need designs that drive engagement and retention. Advertising products need designs that maximize attention while maintaining user satisfaction. Understanding how design decisions affect business metrics enables product designers to contribute to strategic discussions beyond screen-level concerns.
-
-Product metrics provide the feedback loops that inform product evolution. Product designers need to understand which metrics indicate product health (retention, engagement, satisfaction), which indicate feature success (adoption, task success, efficiency), and which indicate business performance (revenue, costs, growth). Design decisions should be informed by baseline metrics, and design changes should be evaluated through metric impact. This internship introduced metrics thinking as a complement to qualitative user understanding.`,
-  "Objectives": `The objectives of this project were to apply core industry practices, implement scalable software engineering models, handle complex system diagnostics, and validate performance indicators under proctored evaluations.`,
-  "Literature Review": `Recent developments in industrial software processes highlight the importance of containerization, agile scripting models, structured analytics dashboards, and proctored grading structures to verify practical competencies.`,
-  "Weekly Progress": `The internship commenced with an intensive first week focused on product strategy foundations and opportunity assessment. The candidate analyzed a hypothetical product opportunity (a learning platform for professional skills development), defining the target user segment (early-career professionals seeking to upskill), articulating the value proposition (structured, practical learning that leads to measurable skill development), and conducting competitive analysis of 8 existing solutions. An opportunity assessment document evaluated market size, competitive landscape, differentiation potential, and alignment with organizational capabilities, concluding that the opportunity warranted further exploration.
-
-During the second week, the candidate conducted user needs validation research. Semi-structured interviews with 10 potential users explored their current approaches to professional learning, pain points with existing solutions, and unmet needs. Key findings included: users struggled to apply learning to their actual work, existing platforms felt too academic and theoretical, and users wanted recognition (certifications, portfolios) that they could share with employers. Affinity diagramming organized findings into opportunity themes: practical application, industry relevance, and verifiable outcomes. These themes informed subsequent solution exploration.
-
-Weeks three and four focused on solution exploration and prioritization. The candidate generated solution concepts for each opportunity theme, resulting in 12 potential features ranging from project-based learning modules to skill assessment tools to employer-facing verification systems. Each feature was evaluated using RICE scoring, with reach and impact estimated from research findings, confidence assessed based on evidence strength, and effort estimated at a high level for comparison. The top 5 features by RICE score formed the v1 scope: project-based learning paths, skill assessments with feedback, portfolio generation, progress tracking, and employer verification system.
-
-The fifth and sixth weeks addressed detailed design for prioritized features. User flows were created for core scenarios: selecting a learning path, completing a project module, receiving assessment feedback, and sharing a portfolio with an employer. Information architecture was defined through card sorting and sitemap creation. Low-fidelity wireframes were created in Figma, focusing on the end-to-end experience across features rather than individual screens in isolation. Design decisions were documented with rationale connecting back to user needs and business objectives.
-
-The seventh and eighth weeks focused on high-fidelity design, prototyping, and stakeholder communication. High-fidelity screens applied a design system with appropriate visual treatment for a professional learning context. An interactive prototype demonstrated the core user journey. The candidate prepared and delivered a design review presentation to simulated stakeholders (fellow interns role-playing as product manager, engineering lead, and business stakeholder), articulating design decisions, addressing feasibility questions, and defending prioritization choices. Usability testing with 5 participants validated the core experience, with findings used for final refinements. The deliverable package included not just design files but a product brief documenting strategic rationale, prioritization decisions, and success metrics.`,
-  "Technologies Used": `The tools and runtime environments utilized during the evaluations include: The technology stack for the UI/UX Product Design internship extended beyond design tools to include product management and collaboration tools that reflect the cross-functional nature of product design work.
-
-Figma served as the primary design tool, with utilization identical to the UI/UX Design track. Additionally, Figma's FigJam feature was used for collaborative brainstorming, opportunity solution tree creation, and prioritization exercises. The candidate developed proficiency in organizing design files for product-level work, including separate pages for research, strategy, wireframes, components, and high-fidelity designs.
-
-Miro served as the collaborative whiteboard for strategic exercises. Opportunity solution trees were created and maintained in Miro, providing a visual structure connecting user needs to tested solutions. Prioritization matrices were created in Miro for collaborative evaluation. Journey maps documented the end-to-end user experience across features and touchpoints.
-
-Notion was used for product documentation including product briefs, feature specifications, research findings, and meeting notes. The candidate developed structured documentation templates that could be maintained and updated as products evolved. Notion's database features enabled tracking of feature status, prioritization scores, and research findings in queryable formats.
-
-Spreadsheet applications (Google Sheets) were used for RICE scoring calculations and sensitivity analysis. The candidate built a scoring template that allowed adjustment of input assumptions and visualization of how score changes affected prioritization rankings, demonstrating understanding of prioritization as a decision support tool rather than a deterministic algorithm.
-
-Presentation tools (Google Slides, Figma presentation mode) were used for stakeholder communication. The candidate developed presentation templates for design reviews that balanced visual design documentation with strategic rationale. Presentation skills including structuring narratives, handling questions, and adapting level of detail for different audiences were practiced.
-
-Analytics concepts were introduced using Google Analytics and Mixpanel documentation (without live data access). The candidate learned to define events, funnels, and retention cohorts conceptually, preparing for integration with analytics tools in future product work..`,
-  "Challenges Faced": `The UI/UX Product Design internship presented challenges that extended beyond design execution to strategic and cross-functional domains.
-
-Balancing user needs with business constraints required navigating tensions between what users want and what the business can support. Users wanted extensive features and free access; the business model required monetization and feasible scope. Resolution involved identifying which user needs were most critical (must-haves versus nice-to-haves), exploring monetization approaches that aligned with value delivery (charging for verification features that directly benefit career advancement), and making explicit tradeoff decisions documented with rationale. The candidate learned that product design inherently involves tradeoffs, and the designer's role includes facilitating tradeoff discussions.
-
-Prioritization uncertainty arose when RICE scores were sensitive to uncertain input estimates. Small changes in reach, impact, or confidence assumptions could significantly change feature rankings, making prioritization feel arbitrary. Resolution involved acknowledging uncertainty explicitly, using ranges rather than point estimates for key inputs, conducting sensitivity analysis to identify which assumptions most affected decisions, and applying judgment to supplement quantitative scoring. The candidate learned that prioritization frameworks are aids to thinking, not substitutes for thinking.
-
-Communicating design decisions to non-design stakeholders required adapting language and emphasis. Technical stakeholders wanted implementation details; business stakeholders wanted business impact; product managers wanted user outcomes. Resolution involved developing different presentations for different audiences, leading with what each audience cares about while providing supporting detail for deeper questions. The candidate learned that effective communication is audience-specific, not one-size-fits-all.
-
-Defining success metrics for design initiatives proved challenging when outcomes are influenced by many factors beyond design. A change in task completion rates might result from design improvements, marketing changes, or external factors. Resolution involved defining leading indicators closely tied to design changes (task success rate, time on task) alongside lagging business metrics (retention, revenue), and establishing baseline measurements before changes. The candidate learned that design measurement requires thoughtful definition of what to measure and how to attribute outcomes.
-
-Managing scope creep while maintaining user-centered focus required discipline when new ideas emerged during design. User research revealed additional needs; competitive analysis identified features to consider; stakeholder feedback suggested additions. Resolution involved explicitly documenting the v1 scope, evaluating new ideas against the prioritization framework before incorporating them, and maintaining a "future considerations" list that preserved ideas without expanding current scope. The candidate learned that saying "not now" is different from saying "no," and that maintaining focus is essential for successful delivery.`,
-  "Results & Discussion": `The final evaluation registers metrics indicating stable operational understanding. The proctored assessments verified the candidate's understanding of system parameters and logic components.`,
-  "Conclusion": `The UI/UX Product Design internship successfully achieved its objective of developing product-level design capabilities that extend beyond screen-level UI/UX skills. The candidate demonstrated growth in strategic thinking, prioritization, and cross-functional communication that characterize product design roles.
-
-The product strategy skills developed enable the candidate to contribute to product direction, not just screen design. Understanding of opportunity assessment, competitive analysis, and value proposition articulation provides foundation for participating in strategic discussions. The ability to connect design decisions to business outcomes enables the candidate to make the case for design investment to non-design stakeholders.
-
-The discovery skills developed instill the discipline of validating assumptions before committing to solutions. The opportunity solution tree framework provides a structure for organizing ongoing discovery. Understanding that discovery is continuous, not a one-time phase, prepares the candidate for the iterative nature of product development.
-
-The prioritization skills developed address a core product design challenge. The ability to apply frameworks like RICE while understanding their limitations, to make and defend tradeoff decisions, and to manage scope while maintaining user focus enables the candidate to contribute productively to resource allocation discussions.
-
-The cross-functional collaboration skills developed reflect the reality of product design work. The ability to communicate effectively with different audiences, to incorporate technical constraints, and to facilitate alignment across perspectives prepares the candidate for team-based product development.
-
-Looking forward, the candidate is well-prepared for product design roles that require both design craft and product thinking. The foundation supports growth into senior product design roles that shape product strategy or into product management for those who want to shift toward strategy and away from design execution.
-
-The evaluation board's assessment confirms that all program objectives were met and that the candidate demonstrated the strategic thinking, prioritization capability, and cross-functional communication expected of a product designer completing a rigorous internship program. The candidate is certified as having completed the UI/UX Product Design internship with distinction.`
+const trackData = {
+  abstract: `This report documents the UI/UX Product Design internship at IQ Intern, focusing on systems thinking, product lifecycle management, and the intersection of user experience with business strategy and technical feasibility. Distinguished from general UI/UX, this track emphasized designing for complex, evolving ecosystems rather than isolated features. Core focus areas included advanced information architecture for scalable platforms, designing for state and edge cases, defining Design System governance, and integrating product analytics into the design iteration loop. The internship required the candidate to operate as a product thinker, utilizing frameworks like Jobs-to-be-Done (JTBD) to uncover underlying user motivations and RICE prioritization to balance user value with engineering effort. Methodologies followed a dual-track agile process, where discovery (research, testing) ran parallel to delivery (development), ensuring continuous validation. The candidate engaged heavily with "dark patterns" (avoiding manipulative design) and inclusive design principles, ensuring the product ecosystem was ethical, accessible, and capable of supporting future feature expansion without requiring complete redesigns.`,
+  acknowledgement: `I express my sincere gratitude to IQ Intern for this advanced UI/UX Product Design internship. Special thanks to my mentor, a Principal Product Designer, whose expertise in systems design and design ops was invaluable. Their rigorous critique of my component architecture taught me to design for the edge cases, not just the happy path. I am grateful to the program coordinators for providing complex, multi-domain problem spaces that required true systems thinking rather than simple screen design. Appreciation is extended to my fellow interns for our intense design system governance debates, which highlighted the challenges of scaling design across multiple teams. Finally, I thank the evaluation board for assessing my strategic product thinking, the robustness of my design systems, and my ability to balance user needs with technical constraints.`,
+  introduction: `Product Design at the UI/UX level is fundamentally different from interface design; it is the architecture of user behavior over time. While a UI designer might ask "How should this button look?", a Product Designer asks "Why does this feature exist, how does it fit into the user's broader workflow, and how will it scale when we add three new modules next year?". This internship immersed the candidate in the complexities of designing large-scale digital products. It required moving beyond the "happy path" (the ideal user flow) to obsessively designing for state—empty states, loading states, error states, and success states—which constitute the majority of a user's actual experience. The candidate engaged with the intersection of design and engineering, learning how design decisions impact database schemas, API payloads, and frontend performance. The internship emphasized that good product design is invisible; the user should feel empowered by the system's logic, not confused by its interface. It focused on building the foundational design infrastructure (Design Systems) that allows product teams to move fast without breaking consistency.`,
+  objectives: `The foundational objective was mastering systems thinking—understanding how individual features interact within the broader product ecosystem and avoiding localized optimizations that degrade the global user experience. Research objectives included applying the Jobs-to-be-Done (JTBD) framework to uncover the functional, emotional, and social jobs users are hiring the product to do, moving beyond simple persona demographics. Information architecture objectives focused on designing scalable navigation systems (e.g., mega-menus, faceted search) that accommodate hundreds of pages or categories without overwhelming the user. Design system objectives were critical: establishing a token-based architecture (colors, spacing, typography), building a component library with strict rules for composition and variant usage, and writing documentation for developer handoff and cross-team governance. State design objectives required mapping every possible state of a component or view and ensuring the UI responds gracefully to data variations (e.g., a name that is 100 characters long, an image that fails to load). Strategic objectives involved using the RICE framework (Reach, Impact, Confidence, Effort) to prioritize the design backlog and learning to present design solutions not as "art," but as solutions to measurable business problems.`,
+  literatureReview: `Product design strategy is heavily influenced by Teresa Torres's "Continuous Discovery Habits," which introduced the Opportunity Solution Tree (OST) framework for mapping user desires to business outcomes. The Jobs-to-be-Done theory, popularized by Clayton Christensen, provides the foundational lens for understanding user motivation beyond simple feature requests. For design systems, Nathan Curtis's "Modular Web Design" and Brad Frost's "Atomic Design" provide the methodology for breaking interfaces into reusable, composable systems. The importance of designing for state and edge cases is a staple of interaction design, championed by practitioners like Jarrett Webb. For strategic prioritization, the RICE framework (popularized by Intercom) serves as the standard for balancing qualitative design insights with quantitative engineering constraints. Furthermore, literature on "Dark Patterns" (Harry Brignull) informed the internship's strong emphasis on ethical design practices and transparency.`,
+  weeklyProgress: `Week one focused on product strategy and JTBD research. The candidate conducted in-depth interviews to map the "Opportunity Solution Tree" for a complex B2B SaaS platform, identifying the core jobs users were trying to accomplish. Week two centered on scalable information architecture. The candidate audited an existing product with poor navigation, conducted open card sorting, and redesigned the IA using a hierarchical taxonomy that could support future product expansion. Weeks three and four transitioned to Design System architecture. The candidate established a design token structure in Figma, built core primitive components (buttons, inputs, tags) with exhaustive state variants (hover, focus, disabled, error, loading), and documented usage guidelines. Week five focused on state and edge case design. The candidate took a complex data table feature and designed every possible state: empty table, partially loaded table, server error table, table with overflowing text, and table with pagination logic. Week six involved product analytics integration. The candidate defined the event tracking plan for a new feature (identifying the "aha moment" clicks), ensuring the design included the necessary hooks for the analytics team to measure success. Weeks seven and eight involved a capstone project: designing a comprehensive "Settings" ecosystem for a multi-tenant application, requiring complex permission matrices, state management, and strict adherence to the established design system.`,
+  technologies: `Figma served as the core tool, heavily utilizing its Advanced Prototyping features (conditional logic, variables) to simulate complex state changes and multi-step flows. Figma's Variables and Modes features were critical for implementing design tokens (switching between light/dark themes or brand themes seamlessly). Notion or Confluence were used for writing extensive Design System documentation, including do's/don'ts, accessibility guidelines, and code snippets for developers. Miro was used for mapping Opportunity Solution Trees and complex user flow diagrams. Amplitude or Mixpanel (simulated interfaces) were used to understand how event tracking data is structured and visualized. Jira or Linear were referenced for understanding how design tasks are integrated into agile engineering sprints and prioritized using RICE scores.`,
+  challenges: `A major challenge was managing the complexity of the Design System without making it too rigid. Initially, the candidate created components that were so locked down that designers on other "teams" (simulated) couldn't adapt them for new, unforeseen use cases. The resolution involved learning the balance between "constraints" (enforcing brand consistency) and "flexibility" (using Figma's component properties and variants to allow safe customization). Designing for all edge cases also proved exhausting but necessary. The candidate realized that most user frustration comes from the system breaking when data doesn't fit the ideal mold. Designing a modal that looked good with a short title was easy; designing that same modal so it didn't break visually when the title was three lines long, or when the dynamic content failed to load, required extensive use of Figma's auto-layout and component variants. Integrating product analytics into the design process was initially an afterthought; the candidate had to retrain themselves to ask, "What interaction do we need to track here to know if this design is successful?" during the wireframe stage, not the development stage.`,
+  resultsAndDiscussion: `The redesigned Information Architecture dramatically reduced the navigational clutter. Tree testing of the new structure showed a 40% increase in successful task completion compared to the old flat menu. The Design System created during the internship proved its value during the capstone project; by utilizing the established tokens and primitive components, the complex "Settings" ecosystem was designed 50% faster than if it had been built from scratch. The strict focus on state design resulted in a prototype that felt remarkably robust; stakeholders noted that the error and loading states provided a sense of reliability and trust that is often missing in early-stage products. The Opportunity Solution Tree successfully reframed a requested feature ("add a filter") into a deeper opportunity ("help users find relevant data faster"), leading to a completely different, more impactful design solution (predictive search) that better served the business goal. The RICE prioritization exercise forced the candidate to kill a beloved design idea because the engineering effort was too high for the projected reach, demonstrating the difficult but necessary trade-offs required in product design.`,
+  conclusion: `The UI/UX Product Design internship successfully achieved its objective of elevating the candidate from an interface designer to a strategic product thinker. The candidate learned that true product design is about building scalable systems and managing complexity, not just pushing pixels. The deep dive into Design Systems instilled an understanding of design operations (DesignOps) and how to scale design quality across an organization. The emphasis on Jobs-to-be-Done and Opportunity Solution Trees provided a rigorous framework for ensuring that design efforts are aligned with core user needs and business outcomes, rather than stakeholder whims. The experience of obsessively designing for edge cases and state shifted the candidate's definition of "done"—a design is not done when the happy path works, but when it gracefully handles chaos. The candidate is well-prepared for roles as a Senior Product Designer, Design Systems Lead, or UX Strategist. The evaluation board confirms all objectives were met, certifying completion with distinction.`
 };
 
-const sampleParagraph = `${sectionParagraphs["Introduction"]}`;
+const taskList = [
+    { name: 'Scalable Design System Architecture', desc: 'Built a robust Figma design system using tokens and variables, creating primitive components with exhaustive state variants (error, loading, empty) and comprehensive documentation for cross-team governance.', status: 'Completed' },
+    { name: 'Information Architecture Overhaul', desc: 'Conducted card sorting and tree testing to redesign a complex B2B navigation structure, achieving a 40% increase in user task completion rates compared to the previous flat hierarchy.', status: 'Completed' },
+    { name: 'Complex State and Analytics Integration', desc: 'Designed a multi-tenant \"Settings\" ecosystem handling complex permission matrices and edge cases, and defined an event tracking plan integrating analytics hooks to measure the \"aha moment\" during the wireframe phase.', status: 'Completed' }
+];
 
 const reportContainer = document.body;
 
-/* =====================================================
-   GENERATE SEPARATE A4 PAGES
-===================================================== */
-
-sections.forEach(section => {
-
+// Helper to create a page
+function createPage(title, htmlContent) {
     const page = document.createElement('div');
-
     page.className = 'report-page';
-
-    // Get track specific table rows
-    let tableRows = '';
-    const taskList = [
-      { name: "Product Opportunity Assessment", desc: "Conducted comprehensive opportunity assessment for a professional learning platform, including market sizing, competitive analysis of 8 solutions, and value proposition definition. Produced assessment document concluding the opportunity was worth pursuing with clear differentiation strategy.", status: "Completed" },
-      { name: "Feature Prioritization and Roadmap", desc: "Generated 12 feature concepts, evaluated using RICE framework with sensitivity analysis, and defined v1 scope of 5 features. Created visual roadmap showing v1 features and future considerations with documented tradeoff rationale.", status: "Completed" },
-      { name: "Product Design Package with Strategic Brief", desc: "Delivered 32-screen design covering all v1 features with responsive variants, plus comprehensive product brief documenting research findings, prioritization decisions, design rationale, and proposed success metrics. Achieved SUS score of 79 in usability testing.", status: "Completed" }
-    ];
-
-    taskList.forEach(task => {
-      tableRows += `
-        <tr>
-          <td>${task.name}</td>
-          <td>${task.desc}</td>
-          <td>${task.status}</td>
-        </tr>
-      `;
-    });
-
     page.innerHTML = `
-
-        <h1>${section}</h1>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <h2>${section} Analysis</h2>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Task</th>
-
-                    <th>Description</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-               ${tableRows}
-            </tbody>
-
-        </table>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
-        <p>${sectionParagraphs[section] || sampleParagraph}</p>
-
+        <h1>${title}</h1>
+        ${htmlContent}
     `;
-
     reportContainer.appendChild(page);
+}
 
+// 1. Abstract (1 Page)
+createPage("1. Abstract", `
+    <p>${trackData.abstract} Furthermore, this comprehensive analysis substantiates the core methodologies deployed, validating the performance metrics under realistic operational constraints and establishing a robust architectural benchmark for future scalability, integration, and industry-standard deployment cycles.</p>
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Keywords</h3>
+        <p style="font-style: italic; color: #475569;">UI/UX Product Design, Vocational Training, Evaluation Metrics, Portfolio Development, Technical Deliverables, Quality Assurance.</p>
+    </div>
+`);
+
+// 2. Acknowledgement (1 Page)
+createPage("2. Acknowledgement", `
+    <p>${trackData.acknowledgement} I also extend my gratitude to the administrative support team and cloud engineers who maintained the platform systems, offering technical recommendations that facilitated consistent development progress and high-availability operations throughout the term.</p>
+    <div style="margin-top: 60px; text-align: right; color: #475569;">
+        <p>Candidate Signature</p>
+        <p style="margin-top: 40px; font-weight: bold; color: #0f172a;">{{STUDENT_NAME}}</p>
+        <p style="font-size: 12px;">Date: {{COMPLETION_DATE}}</p>
+    </div>
+`);
+
+// 3. Introduction (Page 1)
+createPage("3. Introduction", `
+    <p>${trackData.introduction}</p>
+    <p>Furthermore, this research outlines the conceptual challenges identified at the start of the program, aligning early requirements with execution metrics. This ensures a comprehensive baseline for evaluating design success and technical integration benchmarks.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Theoretical Background</h2>
+    <p>In modern industrial paradigms, these methodologies form the baseline of development, demanding that candidates master core structural patterns, theoretical constructs, and tooling specifications to execute and validate scalable software solutions efficiently.</p>
+`);
+// 3. Introduction (Page 2)
+createPage("3. Introduction (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Technical Assessment</h2>
+    <p>Understanding these paradigms requires evaluating system constraints and mapping operational behaviors. The structural configurations selected directly address key scalability bottlenecks, laying a roadmap for subsequent implementation phases.</p>
+    <p>Additionally, these tasks establish a framework for modular development, decoupling core dependencies to improve maintainability, unit testability, and deployment speed in containerized environments.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Practical Objectives</h2>
+    <p>To successfully demonstrate feasibility, the initial sprints focused on setting up environments, compiling resources, and performing localized validation tests under simulated customer scenarios.</p>
+`);
+
+// 4. Objectives (Page 1)
+createPage("4. Objectives", `
+    <p>${trackData.objectives}</p>
+    <p>The alignment of structural goals with modern standards ensures that deliverables possess industrial feasibility, satisfying rigorous compliance criteria and establishing standard engineering habits across development cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Operational Benchmarks</h2>
+    <p>To achieve these benchmarks, the evaluation process prioritized adherence to robust coding metrics, validation frameworks, structural analysis, compatibility profiles, and thorough documentation standards, ensuring candidates deliver production-quality artifacts consistently.</p>
+`);
+// 4. Objectives (Page 2)
+createPage("4. Objectives (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Key Targets</h2>
+    <p>Specific project criteria mandate verifying that all endpoints function within expected latency ranges. This includes designing fault-tolerant validation schemes, continuous runtime testing, and robust error fallback pathways.</p>
+    <p>This systematic target mapping ensures that candidates validate their designs through verifiable tests, bridging academic concepts with live production code and continuous delivery setups.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Expected Outcomes</h2>
+    <p>The primary outcomes of these objective frameworks focus on cultivating industry-ready competencies, aligning technical outputs with client briefs, and certifying academic completeness.</p>
+`);
+
+// 5. Literature Review (Page 1)
+createPage("5. Literature Review", `
+    <p>${trackData.literatureReview}</p>
+    <p>Historical references support this modeling direction, establishing that standard patterns reduce software regression rates during active integration sprints. It highlights the value of standard architectural conventions under high load.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Academic Context</h2>
+    <p>Extensive academic reviews and industry whitepapers support this synthesis, demonstrating that the architectural decisions made align directly with standard industry practices, design constraints, and established structural patterns documented in modern computer science resources.</p>
+`);
+// 5. Literature Review (Page 2)
+createPage("5. Literature Review (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Historical Evolution</h2>
+    <p>Analyzing historical paradigms reveals that iterative refinements to structural frameworks significantly reduce integration times. Case studies indicate that early validation phases mitigate the risk of late-stage configuration conflicts.</p>
+    <p>By investigating past implementations, we ensure our current workflows respect standard parameters, minimizing technical debt and maximizing performance across standard operational cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Industry Standards</h2>
+    <p>Modern compliance frameworks emphasize standardized syntax and modular patterns, encouraging clean separations of concern and decoupling database interactions from routing logic.</p>
+`);
+
+// 6. Weekly Progress (Page 1)
+createPage("6. Weekly Progress", `
+    <p>${trackData.weeklyProgress}</p>
+    <p>Each milestone was documented with comprehensive code audits, verifying execution speed, error rates, database constraints, and compliance with the initial project goals as specified in the program brief.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Execution Flow</h2>
+    <p>During the final phases, structural optimization procedures, code linting audits, hyperparameter adjustments, and pipeline evaluations were executed, confirming that all system components operate in compliance with structural designs and target milestones.</p>
+`);
+// 6. Weekly Progress (Page 2)
+createPage("6. Weekly Progress (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Milestone Status Table</h2>
+    <p>The milestones completed represent the core validation checkpoints of this track. Sprints were organized in bi-weekly increments, allowing for progressive integration, regression verification, and localized testing cycles.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Milestone Name</th>
+                <th style="padding: 8px;">Timeline</th>
+                <th style="padding: 8px;">Outcome Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Initial Sprint & Preprocessing</td>
+                <td style="padding: 8px;">Weeks 1-2</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Architecture Design & Modeling</td>
+                <td style="padding: 8px;">Weeks 3-5</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px;">Testing & Documentation Release</td>
+                <td style="padding: 8px;">Weeks 6-8</td>
+                <td style="padding: 8px; color: #15803d; font-weight: bold;">Verified</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 7. Technologies Used (Page 1)
+createPage("7. Technologies Used", `
+    <p>${trackData.technologies}</p>
+    <p>The selection process prioritized lightweight dependencies to minimize compile times and secure execution boundaries across all host configurations, reducing general latency profiles significantly.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Infrastructure Stack</h2>
+    <p>Additional system tools, code compilers, package managers, continuous integration actions, deployment servers, and monitoring endpoints were utilized to secure the environment, track deployment states, and validate runtime efficiency.</p>
+`);
+// 7. Technologies Used (Page 2)
+createPage("7. Technologies Used (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Integrated Libraries</h2>
+    <p>Utilizing high-performance frameworks enabled rapid prototyping cycles. The dependencies selected minimize overhead, provide strict type safety interfaces where possible, and support scalable execution pathways.</p>
+    <p>Continuous automated quality checks ensure that the entire stack remains stable, mitigating library version conflicts, configuration discrepancies, and security vulnerabilities.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Configuration Management</h2>
+    <p>All core settings were decoupled using environment variables, facilitating seamless shifts between local, testing, and production servers without code modifications.</p>
+`);
+
+// 8. Challenges Faced (Page 1)
+createPage("8. Challenges Faced", `
+    <p>${trackData.challenges}</p>
+    <p>Identifying bottlenecks involved rigorous profiling of heap usage, network request latencies, data validation checks, and algorithmic execution time complexities under simulated high-contention cycles.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Root Cause Analysis</h2>
+    <p>To overcome these limitations, diagnostic logging, profiling diagnostics, network request tracing, and algorithmic complexity revisions were applied systematically, ensuring that system bottlenecks were resolved without introducing structural regression or side-effects.</p>
+`);
+// 8. Challenges Faced (Page 2)
+createPage("8. Challenges Faced (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Resolved Discrepancies Table</h2>
+    <p>These challenges provided essential hands-on lessons in enterprise debugging. Resolving structural issues required applying deep diagnostics, examining database log files, and refactoring performance bottlenecks.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Challenge Area</th>
+                <th style="padding: 8px;">Technical Root Cause</th>
+                <th style="padding: 8px;">Remediation Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">System Overload</td>
+                <td style="padding: 8px;">Excessive memory consumption</td>
+                <td style="padding: 8px;">SQL-side pre-filtering</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px; font-weight: bold;">Model Overfitting</td>
+                <td style="padding: 8px;">High model variance in trees</td>
+                <td style="padding: 8px;">Regularization & Pruning</td>
+            </tr>
+        </tbody>
+    </table>
+`);
+
+// 9. Results & Discussion (Page 1)
+createPage("9. Results & Discussion", `
+    <p>${trackData.resultsAndDiscussion}</p>
+    <p>Performance charts indicate that execution times are within expected tolerances under concurrent user simulations and extreme stress scenarios, validating the architectural robustness of the design.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Telemetry Metrics</h2>
+    <p>The resulting telemetry metrics, error logs, and validation matrices confirm that the implementation exceeds minimum operational parameters, demonstrating significant performance gains under simulated loads and validating the design choices.</p>
+`);
+// 9. Results & Discussion (Page 2)
+let resultsTableRows = "";
+taskList.forEach(task => {
+  resultsTableRows += "<tr style='border-bottom: 1px solid #e2e8f0;'><td style='padding: 8px; font-weight: bold;'>" + task.name + "</td><td style='padding: 8px;'>" + task.desc + "</td><td style='padding: 8px; color: #15803d; font-weight: bold;'>" + task.status + "</td></tr>";
 });
+
+createPage("9. Results & Discussion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Deliverables Verification Matrix</h2>
+    <p>The deliverables matrix verifies that all initial objectives have been fulfilled. Every task went through automated unit testing, manual verification, and peer reviews to assure production quality.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                <th style="padding: 8px;">Deliverable Item</th>
+                <th style="padding: 8px;">Verification Standard</th>
+                <th style="padding: 8px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resultsTableRows}
+        </tbody>
+    </table>
+`);
+
+// 10. Conclusion (Page 1)
+createPage("10. Conclusion", `
+    <p>${trackData.conclusion}</p>
+    <p>The accomplishments recorded throughout this vocational training confirm the development of professional habits, standard code style conventions, version control discipline, and diagnostic precision.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Competency Certification</h2>
+    <p>Ultimately, these outcomes establish a foundation for subsequent research and development, certifying that the candidate has acquired the competencies necessary to succeed in advanced professional roles and engineering challenges.</p>
+`);
+
+// 10. Conclusion (Page 2)
+createPage("10. Conclusion (Contd.)", `
+    <h2 style="margin-bottom: 10px;">Future Directives</h2>
+    <p>Recommendations for future development include expanding local testing coverage, exploring microservice abstractions, and configuring automated cloud-monitoring triggers to detect latency regressions early.</p>
+    <p>This comprehensive performance validation establishes a clear pathway for professional deployment, demonstrating candidate capability in executing complex engineering workflows and system integrations.</p>
+    <h2 style="margin-top: 20px; margin-bottom: 10px;">Final Verdict</h2>
+    <p>The evaluation board confirms all program objectives have been met successfully, recommending the candidate for formal certification with honors.</p>
+`);
 </script>
 
 <!-- =====================================================
