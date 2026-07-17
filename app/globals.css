@@ -15,6 +15,8 @@
   --color-indigo-600: #4f46e5;
   --color-indigo-650: #4338ca;
   --color-indigo-700: #3730a3;
+  --color-indigo-750: #332f92;
+  --color-indigo-755: #2e2b85;
   --color-indigo-800: #312e81;
   --color-indigo-900: #1e1b4b;
 
@@ -234,14 +236,15 @@ body {
 }
 
 /* Global Button Text Color Override to retain white text on filled colored elements */
-button[class*=" bg-indigo-"],
-button[class^="bg-indigo-"],
-button[class*=" bg-violet-"],
-button[class^="bg-violet-"],
+/* Global Button Text Color Override to retain white text on filled colored elements (excluding light shades) */
+button[class*=" bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+button[class^="bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+button[class*=" bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+button[class^="bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
 button[class*=" bg-gradient-"],
 button[class^="bg-gradient-"],
-button[class*=" bg-emerald-"],
-button[class^="bg-emerald-"],
+button[class*=" bg-emerald-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+button[class^="bg-emerald-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
 button[class*=" bg-red-500"],
 button[class*=" bg-red-6"],
 button[class*=" bg-red-7"],
@@ -250,10 +253,10 @@ button[class^="bg-red-6"],
 button[class^="bg-red-7"],
 button[class*=" bg-brand-"],
 button[class^="bg-brand-"],
-a[class*=" bg-indigo-"],
-a[class^="bg-indigo-"],
-a[class*=" bg-violet-"],
-a[class^="bg-violet-"],
+a[class*=" bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+a[class^="bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+a[class*=" bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
+a[class^="bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]),
 a[class*=" bg-gradient-"],
 a[class^="bg-gradient-"],
 a[class*=" bg-brand-"],
@@ -262,10 +265,10 @@ a[class^="bg-brand-"] {
 }
 
 /* Make sure text elements inside colored buttons are also white */
-button[class*=" bg-indigo-"] *,
-button[class^="bg-indigo-"] *,
-button[class*=" bg-violet-"] *,
-button[class^="bg-violet-"] *,
+button[class*=" bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+button[class^="bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+button[class*=" bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+button[class^="bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
 button[class*=" bg-gradient-"] *,
 button[class^="bg-gradient-"] *,
 button[class*=" bg-brand-"] *,
@@ -276,10 +279,10 @@ button[class*=" bg-red-6"] *,
 button[class^="bg-red-6"] *,
 button[class*=" bg-red-7"] *,
 button[class^="bg-red-7"] *,
-a[class*=" bg-indigo-"] *,
-a[class^="bg-indigo-"] *,
-a[class*=" bg-violet-"] *,
-a[class^="bg-violet-"] *,
+a[class*=" bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+a[class^="bg-indigo-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+a[class*=" bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
+a[class^="bg-violet-"]:not([class*="-50"]):not([class*="-100"]):not([class*="-200"]) *,
 a[class*=" bg-gradient-"] *,
 a[class^="bg-gradient-"] *,
 a[class*=" bg-brand-"] *,
@@ -623,4 +626,100 @@ textarea:focus:not(:focus-visible),
 [role="button"]:focus:not(:focus-visible),
 [tabindex="0"]:focus:not(:focus-visible) {
   outline: none !important;
+}
+
+/* Global Iridescent Background with Honeycomb & Radial Highlights */
+body {
+  background-image: linear-gradient(
+    to right top,
+    #fdf7ff,
+    #f7f4fd,
+    #f1f2fb,
+    #ebeff8,
+    #e5edf5,
+    #e3ecf5,
+    #e0ecf4,
+    #deebf4,
+    #e0ebf8,
+    #e3ebfb,
+    #e8eafd,
+    #eee9fe
+  ) !important;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.bg-slate-50 {
+  background: transparent !important;
+}
+
+/* Honeycomb Pattern */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35vh;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='70' viewBox='0 0 80 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%236366F1' stroke-width='1.2'%3E%3Cpolygon points='40,2 75,20 75,50 40,68 5,50 5,20'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 70px;
+  background-repeat: repeat;
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0,0,0,.8) 50%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0,0,0,.8) 50%,
+    transparent 100%
+  );
+}
+
+/* Radial light overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background: radial-gradient(
+    circle at top left,
+    rgba(192,132,252,.18),
+    transparent 45%
+  ),
+  radial-gradient(
+    circle at top right,
+    rgba(96,165,250,.18),
+    transparent 45%
+  ),
+  radial-gradient(
+    circle at center,
+    rgba(255,255,255,.7),
+    transparent 50%
+  );
+  filter: blur(80px);
+}
+
+/* GPU-Accelerated Floating Background Icons */
+@keyframes floatSymbol {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-24px) rotate(12deg);
+  }
+}
+
+.float-bg-icon {
+  animation: floatSymbol var(--duration, 10s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
 }

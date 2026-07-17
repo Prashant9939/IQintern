@@ -197,7 +197,7 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
   }
 
   // Inject branding and certificate details mapping for premium certificate.html
-  const companyName = "IQIntern Vocational Training Pvt. Ltd.";
+  const companyName = "AVADS Private Limited";
   const companyTagline = "Empowering Students, Building Careers";
   const domain = "iqintern.in";
   const websiteUrl = "https://iqintern.in";
@@ -271,11 +271,38 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
   });
 
   // 4. Compile template with Handlebars
+  let compiledHtml: string;
   try {
     const template = Handlebars.compile(rendered);
-    return template(templateData);
+    compiledHtml = template(templateData);
   } catch (error) {
     console.error('Handlebars compilation error:', error);
-    return rendered;
+    compiledHtml = rendered;
   }
+
+  // 5. Inject descriptive <title> so Save/Print dialog shows "{Name} - {Doc} | AVADS"
+  const DOC_TITLE_LABELS: Record<string, string> = {
+    certificate:              'Certificate',
+    internship_certificate:   'Certificate',
+    appreciation_certificate: 'Appreciation Certificate',
+    offer_letter:             'Offer Letter',
+    marksheet:                'Marksheet',
+    assessment_marksheet:     'Marksheet',
+    attendance_sheet:         'Attendance Sheet',
+    attendance_record:        'Attendance Sheet',
+    project_report:           'Project Report',
+    internship_report:        'Internship Report',
+    receipt:                  'Payment Receipt',
+    payment_receipt:          'Payment Receipt',
+  };
+  const templateTypeKey = (templateData.templateType || templateData.cleanType || '').toLowerCase();
+  const docTitleLabel = DOC_TITLE_LABELS[templateTypeKey] || 'Document';
+  const studentDisplayName = templateData.studentName || templateData.INTERN_NAME || templateData.fullName || 'Student';
+  const descriptiveTitle = `${studentDisplayName} - ${docTitleLabel} | AVADS Private Limited`;
+  compiledHtml = compiledHtml.replace(
+    /<title>[^<]*<\/title>/i,
+    `<title>${descriptiveTitle}</title>`
+  );
+
+  return compiledHtml;
 }

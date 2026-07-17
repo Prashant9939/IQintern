@@ -42,6 +42,24 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
+const iconsPool = [GraduationCap, BookOpen, Award, ShieldCheck, FileText];
+const floatingIcons = Array.from({ length: 400 }, (_, idx) => {
+  const Icon = iconsPool[idx % iconsPool.length];
+  const top = `${(idx * 0.24) + 2}%`; // Vertically dispersed across page height
+  const left = `${((idx * 17) % 94) + 3}%`; // Distributed across full screen width
+  const size = ((idx * 3) % 12) + 16; // Subtle sizes (16px to 28px)
+  const delay = `${((idx * 0.15) % 8).toFixed(2)}s`; // Staggered delays
+  const duration = `${(((idx * 1.3) % 6) + 8).toFixed(2)}s`; // Diverse speeds
+  return {
+    icon: Icon,
+    top,
+    left,
+    size,
+    delay,
+    duration
+  };
+});
+
 export default function Home() {
   // 1. FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -198,16 +216,29 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-slate-50 text-zinc-800 overflow-x-hidden pt-12">
-      {/* Background Gradients */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-100 pointer-events-none" />
-      <div className="absolute inset-0 radial-fade pointer-events-none" />
-
-      {/* Ambient Glowing Orbs */}
-      <div className="absolute top-[5%] left-[10%] -z-10 h-[500px] w-[500px] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none animate-pulse-glow" />
-      <div className="absolute top-[40%] right-[5%] -z-10 h-[600px] w-[600px] rounded-full bg-violet-500/10 blur-[140px] pointer-events-none animate-pulse-glow" style={{ animationDelay: "-3s" }} />
-      <div className="absolute bottom-[10%] left-[20%] -z-10 h-[500px] w-[500px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none animate-pulse-glow" style={{ animationDelay: "-6s" }} />
-
+    <div className="relative min-h-screen flex flex-col text-zinc-800 overflow-x-hidden pt-12">
+      {/* Floating Ambient Trust/Education Symbols */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-20">
+        {floatingIcons.map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={idx}
+              className="absolute text-indigo-700/18 float-bg-icon"
+              style={{
+                top: item.top,
+                left: item.left,
+                // @ts-ignore
+                "--delay": item.delay,
+                // @ts-ignore
+                "--duration": item.duration,
+              }}
+            >
+              <Icon size={item.size} strokeWidth={1.6} />
+            </div>
+          );
+        })}
+      </div>
       <Navbar />
 
       <main className="flex-grow">

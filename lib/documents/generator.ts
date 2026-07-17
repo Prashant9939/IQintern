@@ -10,7 +10,7 @@ import { renderTemplate } from '@/lib/templates/template-renderer';
 import { generateAttendanceDays, getRequiredWorkingDays } from '@/lib/documents/attendance-engine';
 import { getPlatformSettings } from '@/lib/supabase/db';
 
-const TEMPLATE_VERSION = '1.0';
+const TEMPLATE_VERSION = '1.1';
 
 export interface DocumentMetadata {
   id?: string;
@@ -791,6 +791,8 @@ export async function generateDocument(
       isUnpaid: true,
       acceptanceDeadline,
       jurisdiction: 'Delhi',
+      templateType: cleanType,
+      cleanType: cleanType,
     };
 
     // 4. Load Template & Render HTML

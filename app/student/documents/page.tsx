@@ -132,9 +132,17 @@ export default function DocumentsPage() {
     const apiTemplateType = getApiTemplateType(doc.id);
     const downloadUrl = `/api/documents/download?templateType=${apiTemplateType}&studentId=${user?.id}&internshipId=${activeTrackId}&format=pdf&disposition=attachment`;
     
+    const docLabel = apiTemplateType.replace(/_/g, '-');
+    const nameSlug = (profile?.full_name || user?.email || 'student')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+    const downloadFilename = `${nameSlug}-${docLabel}.pdf`;
+
     const link = document.createElement("a");
     link.href = downloadUrl;
-    link.setAttribute("download", `${apiTemplateType}_${user?.id}.pdf`);
+    link.setAttribute("download", downloadFilename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -22,7 +22,7 @@ export const BRANDING = {
   phoneLink: "tel:+919939503289",
   address: "Sector 154, Noida, Uttar Pradesh, India",
   legal: {
-    companyName: "IQIntern Vocational Training Pvt. Ltd.",
+    companyName: "AVADS Private Limited",
   },
   domain: "iqintern.in",
   websiteUrl: "https://iqintern.in",

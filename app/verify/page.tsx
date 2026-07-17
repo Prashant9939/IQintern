@@ -12,8 +12,6 @@ import {
   Building,
   GraduationCap,
   Calendar,
-  Award,
-  ExternalLink,
   ShieldCheck,
   ChevronLeft
 } from "lucide-react";
@@ -275,19 +273,6 @@ function VerifyContent() {
 
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <a
-                  href={result.downloadUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl text-xs transition-all cursor-pointer text-center shadow-md active:scale-98"
-                >
-                  <Award className="h-4 w-4" />
-                  View Original Document (PDF)
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
             </div>
           )}
 

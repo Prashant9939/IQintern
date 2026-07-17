@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { signOut, getStoredSession } from "@/lib/supabase/auth";
+import { getStudentProfile } from "@/lib/supabase/db";
 
 const templateTitleMap: Record<string, string> = {
   offer_letter: "Internship Offer Letter",
@@ -202,8 +203,32 @@ function PreviewContent() {
   const internshipId = searchParams.get("internshipId");
 
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
 
   const documentName = templateType ? (templateTitleMap[templateType] || templateType.replace(/_/g, ' ')) : "Document";
+
+  useEffect(() => {
+    if (studentId) {
+      getStudentProfile(studentId)
+        .then((prof) => {
+          setProfile(prof);
+        })
+        .catch((err) => {
+          console.error("Failed to load profile for preview title:", err);
+        });
+    }
+  }, [studentId]);
+
+  useEffect(() => {
+    if (documentName) {
+      const originalTitle = document.title;
+      const studentName = profile?.full_name || "Student";
+      document.title = `${studentName} - ${documentName} | AVADS Private Limited`;
+      return () => {
+        document.title = originalTitle;
+      };
+    }
+  }, [documentName, profile]);
   
   // Endpoints
   const htmlPreviewUrl = `/api/documents/download?templateType=${templateType}&studentId=${studentId}&internshipId=${internshipId}&format=html`;

@@ -307,6 +307,8 @@ export async function GET(req: Request) {
       isUnpaid: true,
       acceptanceDeadline,
       jurisdiction: 'Delhi',
+      templateType: cleanType,  // used by renderer to build descriptive <title>
+      cleanType: cleanType,
     };
 
     // --- PIPELINE 1: HTML Preview ---
@@ -480,11 +482,34 @@ export async function GET(req: Request) {
       throw new Error('Could not compile or load PDF file.');
     }
 
+    // Build a human-readable filename: e.g. "shiwam-certificate.pdf"
+    const DOC_LABELS: Record<string, string> = {
+      certificate:              'certificate',
+      internship_certificate:   'certificate',
+      appreciation_certificate: 'appreciation-certificate',
+      offer_letter:             'offer-letter',
+      marksheet:                'marksheet',
+      assessment_marksheet:     'marksheet',
+      attendance_sheet:         'attendance-sheet',
+      attendance_record:        'attendance-sheet',
+      project_report:           'project-report',
+      internship_report:        'internship-report',
+      receipt:                  'receipt',
+      payment_receipt:          'receipt',
+    };
+    const docLabel = DOC_LABELS[cleanType] || cleanType.replace(/_/g, '-');
+    const nameSlug = (profile?.full_name || studentId)
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')        // spaces → hyphens
+      .replace(/[^a-z0-9-]/g, ''); // strip special chars
+    const downloadFilename = `${nameSlug}-${docLabel}.pdf`;
+
     // Return compiled/cached PDF
     return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `${disposition}; filename="${cleanType}_${studentId}.pdf"`,
+        'Content-Disposition': `${disposition}; filename="${downloadFilename}"`,
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
