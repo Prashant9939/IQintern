@@ -84,10 +84,10 @@ function VerifyContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF8] flex flex-col justify-between font-sans antialiased text-slate-800">
+    <div className="min-h-screen flex flex-col justify-between font-sans antialiased" style={{ background: '#264367' }}>
       
       {/* Decorative top bar */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600" />
+      <div className="h-1.5 w-full bg-gradient-to-r from-yellow-400 via-white to-yellow-400 opacity-40" />
       
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 max-w-4xl mx-auto w-full">
         
@@ -95,7 +95,7 @@ function VerifyContent() {
         <div className="w-full flex justify-start mb-6">
           <Link 
             href="/student/dashboard" 
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-white/50 hover:text-yellow-300 transition-colors cursor-pointer"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             Back to Dashboard
@@ -104,40 +104,40 @@ function VerifyContent() {
 
         {/* Portal Header */}
         <div className="text-center mb-8 space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-[10px] font-black uppercase tracking-wider font-mono">
             <ShieldCheck className="h-3.5 w-3.5" />
             Platform Audit Registry
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             IQ Intern Verification Portal
           </h1>
-          <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto">
+          <p className="text-white/60 text-xs sm:text-sm max-w-md mx-auto">
             Instantly verify the authenticity of certificates, offer letters, marksheets, and reports generated on the IQ Intern platform.
           </p>
         </div>
 
         {/* Lookup Box Card */}
-        <div className="w-full bg-white border border-slate-200 shadow-xs rounded-[24px] p-6 sm:p-8 space-y-6">
+        <div className="w-full border border-white/15 shadow-xs rounded-[24px] p-6 sm:p-8 space-y-6" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <label htmlFor="verify-input" className="block text-xs font-black uppercase tracking-wider text-slate-500">
+            <label htmlFor="verify-input" className="block text-xs font-black uppercase tracking-wider text-white/50">
               Enter Certificate Number / Reference ID
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-3.5 h-4.5 w-4.5 text-slate-400" />
+                <Search className="absolute left-4 top-3.5 h-4.5 w-4.5 text-white/30" />
                 <input
                   id="verify-input"
                   type="text"
                   placeholder="e.g., IQ-2026-0000125 or IQ-REF-0000872"
                   value={searchId}
                   onChange={(e) => setSearchId(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none rounded-xl text-sm font-semibold tracking-wide placeholder-slate-400 transition-all shadow-inner"
+                  className="w-full pl-11 pr-4 py-3.5 border border-white/20 focus:border-yellow-400/60 focus:outline-none rounded-xl text-sm font-semibold tracking-wide placeholder-white/30 transition-all text-white" style={{ background: 'rgba(255,255,255,0.08)' }}
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || !searchId.trim()}
-                className="inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-xl text-xs transition-all cursor-pointer shadow-md shadow-indigo-600/10 active:scale-98"
+                className="inline-flex items-center justify-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed text-slate-900 font-bold py-3.5 px-6 rounded-xl text-xs transition-all cursor-pointer shadow-md shadow-yellow-400/10 active:scale-98"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Credential"}
               </button>
@@ -148,7 +148,7 @@ function VerifyContent() {
           {loading && (
             <div className="py-12 text-center space-y-3">
               <Loader2 className="h-8 w-8 text-indigo-600 animate-spin mx-auto" />
-              <p className="text-xs text-slate-500 font-bold">Querying secure registry index...</p>
+              <p className="text-xs text-white/50 font-bold">Querying secure registry index...</p>
             </div>
           )}
 
@@ -281,7 +281,7 @@ function VerifyContent() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-6 border-t border-slate-200 bg-white text-center text-[10px] sm:text-xs text-slate-400">
+      <footer className="w-full py-6 border-t border-white/10 text-center text-[10px] sm:text-xs text-white/40" style={{ background: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-4xl mx-auto px-4 space-y-1">
           <p>© {new Date().getFullYear()} AVADS Private Limited. All rights reserved.</p>
           <p className="font-mono text-[9px] opacity-75">Secure Audit Verification Portal | SHA-256 Checksum Secured</p>
@@ -295,10 +295,10 @@ function VerifyContent() {
 export default function VerifyPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen bg-[#F8FAF8] items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center" style={{ background: '#264367' }}>
         <div className="text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent mx-auto mb-4" />
-          <p className="text-slate-500 text-sm font-bold">Initializing Verification Portal...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-yellow-400 border-t-transparent mx-auto mb-4" />
+          <p className="text-white/50 text-sm font-bold">Initializing Verification Portal...</p>
         </div>
       </div>
     }>

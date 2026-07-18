@@ -471,20 +471,21 @@ export default function Home() {
         </section>
 
         {/* HOW IT WORKS: TIMELINE UI */}
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 relative z-10 border-t border-zinc-200/60 mt-12">
+        <section className="relative z-10 mt-12" style={{ background: '#264367' }}>
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <span className="text-xs text-indigo-650 font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Interactive Journey</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            <span className="text-xs text-yellow-300 font-bold uppercase tracking-wider bg-yellow-400/20 px-3 py-1 rounded-full border border-yellow-400/40">Interactive Journey</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               The Path to Verified Credentials
             </h2>
-            <p className="text-zinc-500 text-base font-light">
+            <p className="text-white/70 text-base font-light">
               Follow our step-by-step verified curriculum pipeline to qualify and build your industry authority.
             </p>
           </div>
 
           <div className="relative max-w-5xl mx-auto space-y-8 lg:space-y-12">
             {/* Central Timeline Vertical Line */}
-            <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-indigo-500 rounded-full z-0 opacity-80" />
+            <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-yellow-400 via-white to-yellow-400 rounded-full z-0 opacity-60" />
 
             {timelineSteps.map((step, idx) => {
               const isRight = idx % 2 === 1;
@@ -497,24 +498,24 @@ export default function Home() {
                   {/* Timeline Connector Node (Middle) */}
                   <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-5 lg:top-auto z-10 flex items-center justify-center">
                     <span className="relative flex h-5 w-5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-5 w-5 bg-indigo-600 border-4 border-white shadow-md"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-5 w-5 bg-yellow-400 border-4 border-white shadow-md"></span>
                     </span>
                   </div>
 
                   {/* Timeline Card Container */}
                   <div className="w-full lg:w-[calc(50%-2rem)] pl-12 lg:pl-0">
-                    <div className="glass-card bg-white border border-indigo-100/60 rounded-2xl p-5 space-y-3 relative group hover:border-indigo-400 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 shadow-sm">
+                    <div className="rounded-2xl p-5 space-y-3 relative group hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-yellow-400/60 hover:shadow-lg hover:shadow-yellow-400/10" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}>
                       {/* Card Header */}
                       <div className="flex justify-between items-center">
-                        <span className="text-base font-black text-indigo-650 bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl px-2.5 py-0.5 font-mono border border-indigo-150 shadow-sm">{step.num}</span>
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Phase {idx + 1}</span>
+                        <span className="text-base font-black text-yellow-300 bg-yellow-400/20 rounded-xl px-2.5 py-0.5 font-mono border border-yellow-400/30 shadow-sm">{step.num}</span>
+                        <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Phase {idx + 1}</span>
                       </div>
 
                       {/* Card Content */}
                       <div>
-                        <h4 className="text-sm font-bold text-zinc-900 mb-1 group-hover:text-indigo-655 transition-colors">{step.title}</h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed font-light">{step.desc}</p>
+                        <h4 className="text-sm font-bold text-white mb-1 group-hover:text-yellow-300 transition-colors">{step.title}</h4>
+                        <p className="text-xs text-white/60 leading-relaxed font-light">{step.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -524,6 +525,7 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
           </div>
         </section>
 
@@ -916,13 +918,14 @@ export default function Home() {
         </section>
 
         {/* ACCORDION FAQ SECTION */}
-        <section id="faqs" className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 relative z-10 border-t border-zinc-200/60 mt-12">
+        <section id="faqs" className="relative z-10 mt-12" style={{ background: '#264367' }}>
+          <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center mb-12 space-y-3">
-            <span className="text-xs text-indigo-650 font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Got questions?</span>
-            <h2 className="text-3xl font-extrabold text-zinc-900 tracking-tight">
+            <span className="text-xs text-yellow-300 font-bold uppercase tracking-wider bg-yellow-400/20 px-3 py-1 rounded-full border border-yellow-400/40">Got questions?</span>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-zinc-500 text-sm font-light">
+            <p className="text-white/70 text-sm font-light">
               Everything you need to know about the IQ Intern platform and credential standards.
             </p>
           </div>
@@ -933,23 +936,29 @@ export default function Home() {
               return (
                 <div
                   key={idx}
-                  className="bg-white border border-zinc-200/80 rounded-2xl overflow-hidden shadow-xs hover:border-zinc-350 transition-colors"
+                  className="rounded-2xl overflow-hidden border transition-colors"
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    backdropFilter: 'blur(12px)',
+                    borderColor: isOpen ? 'rgba(250,204,21,0.5)' : 'rgba(255,255,255,0.15)',
+                  }}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full flex justify-between items-center p-5 text-left text-xs sm:text-sm font-bold text-zinc-800 cursor-pointer"
+                    className="w-full flex justify-between items-center p-5 text-left text-xs sm:text-sm font-bold text-white cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    {isOpen ? <ChevronUp className="h-4 w-4 text-indigo-650 shrink-0" /> : <ChevronDown className="h-4 w-4 text-zinc-400 shrink-0" />}
+                    {isOpen ? <ChevronUp className="h-4 w-4 text-yellow-300 shrink-0" /> : <ChevronDown className="h-4 w-4 text-white/40 shrink-0" />}
                   </button>
                   {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs text-zinc-500 leading-relaxed font-light border-t border-zinc-100/50 text-left">
+                    <div className="px-5 pb-5 pt-1 text-xs text-white/60 leading-relaxed font-light border-t text-left" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
                       {faq.a}
                     </div>
                   )}
                 </div>
               );
             })}
+          </div>
           </div>
         </section>
 

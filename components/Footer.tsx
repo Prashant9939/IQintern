@@ -50,7 +50,7 @@ const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function Footer() {
   return (
-    <footer className="w-full shrink-0 bg-[linear-gradient(to_right,#3a6073,#16222a)] text-slate-100 border-t border-white/10 pt-14 pb-16 mt-auto relative overflow-hidden rounded-t-[32px] md:rounded-t-[48px]">
+    <footer className="w-full shrink-0 text-slate-100 border-t border-white/10 pt-14 pb-16 mt-auto relative overflow-hidden rounded-t-[32px] md:rounded-t-[48px]" style={{ background: '#264367' }}>
       {/* Top glowing line overlay */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 

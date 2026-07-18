@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/clean-cache.js && next dev",
+    "dev": "node scripts/clean-cache.js && next dev --webpack",
     "build": "node scripts/clean-cache.js all && next build",
     "start": "next start",
     "lint": "eslint",
