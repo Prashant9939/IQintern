@@ -16,13 +16,13 @@ import {
   devToggleRole
 } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { 
-  ShieldAlert, 
-  LogOut, 
-  LayoutDashboard, 
-  LogIn, 
-  Menu, 
-  X 
+import {
+  ShieldAlert,
+  LogOut,
+  LayoutDashboard,
+  LogIn,
+  Menu,
+  X
 } from "lucide-react";
 import { BRANDING } from "@/config/branding";
 
@@ -82,24 +82,23 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${
-          isScrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${isScrolled
             ? "bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs"
             : "bg-white border-b border-transparent"
-        }`}
+          }`}
       >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          
+
           {/* Brand Logo on the Left */}
           <div className="flex items-center">
             <Link
-              href={user ? (user.role === "admin" ? "/admin/dashboard" : "/student/dashboard") : "/"}
+              href="/"
               className="group flex items-center gap-2"
               aria-label="Go to home"
             >
               <img
                 src={BRANDING.logoIcon}
-                className="h-12 w-auto object-contain group-hover:scale-105 transition-all"
+                className="h-35 w-auto object-contain group-hover:scale-105 transition-all"
                 alt={BRANDING.name}
               />
             </Link>
@@ -111,9 +110,8 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-bold py-2 transition-all duration-200 text-zinc-600 hover:text-[#F9B300] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-[#F9B300] after:transition-transform after:duration-300 hover:after:scale-x-100 ${
-                  isActive(link.href) ? "text-[#F9B300] after:scale-x-100" : ""
-                }`}
+                className={`relative text-sm font-bold py-2 transition-all duration-200 text-zinc-800 hover:text-[#F9B300] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-[#F9B300] after:transition-transform after:duration-300 hover:after:scale-x-100 ${isActive(link.href) ? "text-[#F9B300] after:scale-x-100" : ""
+                  }`}
               >
                 {link.name}
               </Link>
@@ -154,7 +152,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-6">
                 <Link
                   href="/auth/login"
-                  className="text-sm font-bold text-zinc-600 hover:text-[#F9B300] transition-colors"
+                  className="text-sm font-bold text-zinc-800 hover:text-[#F9B300] transition-colors"
                 >
                   Login
                 </Link>
@@ -204,11 +202,10 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                  isActive(link.href)
+                className={`block px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${isActive(link.href)
                     ? "bg-[#FFF9ED] text-[#FF7A00]"
                     : "text-zinc-600 hover:bg-zinc-50"
-                }`}
+                  }`}
               >
                 {link.name}
               </Link>

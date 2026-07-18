@@ -11,9 +11,13 @@ export default function Footer() {
             
             {/* Column 1: Brand (Col-span 4) */}
             <div className="lg:col-span-4 antigravity-footer-card">
-              <h3 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
-                IQ<span className="text-[#F9B300]">Intern</span>
-              </h3>
+              <Link href="/" className="inline-block mb-1">
+                <img
+                  src="/white-logo.png"
+                  alt="IQIntern"
+                  className="h-10 w-auto object-contain"
+                />
+              </Link>
               <p className="text-xs text-[#A3A3A3] font-light leading-relaxed">
                 Empowering next-gen professionals with proctored verification testing, structured domain blueprints, and instant scorecard lookups.
               </p>

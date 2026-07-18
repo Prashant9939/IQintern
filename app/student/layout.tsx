@@ -11,7 +11,8 @@ import { getCurrentUser, signOut, UserSession, devToggleRole } from "@/lib/supab
 import { getStudentPayments, getPlatformSettings } from "@/lib/supabase/db";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 import { 
   LayoutDashboard, 
   LogOut, 
@@ -165,7 +166,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     return (
       <div className="flex min-h-screen bg-[#FAFAFC] items-center justify-center">
         <div className="text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent mx-auto mb-4" />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#F9B300] border-t-transparent mx-auto mb-4" />
           <p className="text-zinc-500 text-sm font-medium">Verifying credentials...</p>
         </div>
       </div>
@@ -196,7 +197,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         <div className="flex items-center gap-6">
           <button className="relative text-zinc-400 hover:text-zinc-700 transition-colors p-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
             <Bell className="h-5 w-5 text-zinc-400" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#5B5FF7] rounded-full"></span>
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#F9B300] rounded-full"></span>
           </button>
 
           <div className="h-5 w-[1px] bg-zinc-200" />
@@ -207,7 +208,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-zinc-150"
             >
-              <div className="h-9 w-9 rounded-full bg-[#5B5FF7]/10 flex items-center justify-center text-[#5B5FF7] font-bold text-sm border border-[#5B5FF7]/20 shrink-0">
+              <div className="h-9 w-9 rounded-full bg-[#F9B300]/10 flex items-center justify-center text-[#F9B300] font-bold text-sm border border-[#F9B300]/20 shrink-0">
                 {user.full_name?.substring(0, 1) || "S"}
               </div>
               <div className="text-left hidden lg:block">
@@ -308,8 +309,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${
                   active
-                    ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white border-transparent shadow-md shadow-[#5B5FF7]/15"
-                    : "text-zinc-650 hover:bg-indigo-50/75 hover:text-indigo-700 active:bg-indigo-100/80 active:scale-95 border-transparent"
+                    ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
+                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
                 }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -360,8 +361,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${
                     active
-                      ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white shadow-md shadow-[#5B5FF7]/10"
-                      : "text-zinc-550 hover:bg-slate-50 hover:text-zinc-800 transition-colors border-transparent"
+                      ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
+                      : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
                   }`}
                 >
                   <Icon className="h-4.5 w-4.5" />
@@ -372,15 +373,15 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           </nav>
 
           {/* Upgrade Skills Bento Box Card */}
-          <div className="bg-[#EEF0FE] rounded-2xl p-5 relative overflow-hidden mt-6 shadow-xs border border-[#8F93FF]/15">
+          <div className="bg-[#FFF9ED] rounded-2xl p-5 relative overflow-hidden mt-6 shadow-xs border border-[#F9B300]/20">
             <div className="relative z-10">
-              <h4 className="text-[#5B5FF7] font-bold text-[14px]">Upgrade Your Skills</h4>
-              <p className="text-zinc-650 text-[11px] font-light mt-1 max-w-[150px]">
+              <h4 className="text-zinc-900 font-bold text-[14px]">Upgrade Your Skills</h4>
+              <p className="text-zinc-500 text-[11px] font-light mt-1 max-w-[150px]">
                 Explore advanced tracks and boost your career.
               </p>
               <Link
                 href="/student/internships"
-                className="inline-flex items-center gap-1 bg-white text-[#5B5FF7] text-[11px] font-bold px-3 py-2 rounded-lg shadow-xs hover:bg-slate-50 transition-all mt-3 w-fit"
+                className="inline-flex items-center gap-1 bg-[#F9B300] text-zinc-900 text-[11px] font-bold px-3 py-2 rounded-lg shadow-xs hover:bg-[#E6A500] transition-all mt-3 w-fit"
               >
                 Explore Tracks &rarr;
               </Link>

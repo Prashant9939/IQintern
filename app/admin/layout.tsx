@@ -5,7 +5,8 @@ import { Analytics } from "@vercel/analytics/next"
 import { getCurrentUser, signOut, UserSession, devToggleRole } from "@/lib/supabase/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 import {
   Shield,
   LayoutDashboard,
@@ -78,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="flex min-h-screen bg-[#FAFAFC] items-center justify-center">
         <div className="text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent mx-auto mb-4" />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#F9B300] border-t-transparent mx-auto mb-4" />
           <p className="text-zinc-555 text-sm font-medium">Authorizing admin access...</p>
         </div>
       </div>
@@ -107,8 +108,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 text-zinc-650 text-xs bg-indigo-50 border border-indigo-100 px-3.5 py-1.5 rounded-full">
-            <Shield className="h-3.5 w-3.5 text-[#5B5FF7]" />
+          <div className="flex items-center gap-2 text-zinc-650 text-xs bg-[#FFF9ED] border border-[#F9B300]/25 px-3.5 py-1.5 rounded-full">
+            <Shield className="h-3.5 w-3.5 text-[#F9B300]" />
             <span className="font-semibold text-zinc-850">Authenticated Administrator</span>
           </div>
 
@@ -120,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-zinc-150"
             >
-              <div className="h-9 w-9 rounded-full bg-[#5B5FF7]/10 flex items-center justify-center text-[#5B5FF7] font-bold text-sm border border-[#5B5FF7]/20 shrink-0">
+              <div className="h-9 w-9 rounded-full bg-[#F9B300]/10 flex items-center justify-center text-[#F9B300] font-bold text-sm border border-[#F9B300]/20 shrink-0">
                 A
               </div>
               <div className="text-left hidden lg:block">
@@ -211,8 +212,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${active
-                    ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white border-transparent shadow-md shadow-[#5B5FF7]/15"
-                    : "text-zinc-650 hover:bg-indigo-50/75 hover:text-indigo-700 active:bg-indigo-100/80 active:scale-95 border-transparent"
+                    ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
+                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
                   }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -232,8 +233,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${active
-                    ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white border-transparent shadow-md shadow-[#5B5FF7]/15"
-                    : "text-zinc-650 hover:bg-indigo-50/75 hover:text-indigo-700 active:bg-indigo-100/80 active:scale-95 border-transparent"
+                    ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
+                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
                   }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -281,8 +282,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${active
-                      ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white shadow-md shadow-[#5B5FF7]/10"
-                      : "text-zinc-550 hover:bg-slate-50 hover:text-zinc-800 transition-colors border-transparent"
+                      ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
+                      : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
                     }`}
                 >
                   <Icon className="h-4.5 w-4.5" />
@@ -301,8 +302,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${active
-                      ? "bg-gradient-to-r from-[#5B5FF7] to-[#7B7FFA] text-white shadow-md shadow-[#5B5FF7]/10"
-                      : "text-zinc-550 hover:bg-slate-50 hover:text-zinc-800 transition-colors border-transparent"
+                      ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
+                      : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
                     }`}
                 >
                   <Icon className="h-4.5 w-4.5" />

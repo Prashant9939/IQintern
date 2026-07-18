@@ -15,6 +15,9 @@ import {
   ShieldCheck,
   ChevronLeft
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -84,60 +87,59 @@ function VerifyContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between font-sans antialiased" style={{ background: '#264367' }}>
+    <div className="min-h-screen flex flex-col justify-between font-sans antialiased bg-slate-50">
+      <Navbar />
       
-      {/* Decorative top bar */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-yellow-400 via-white to-yellow-400 opacity-40" />
-      
-      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 max-w-4xl mx-auto w-full">
+      <main className="flex-grow flex flex-col items-center justify-center p-4 sm:p-8 max-w-4xl mx-auto w-full pt-32 pb-24">
         
-        {/* Navigation back option */}
+        {/* Navigation back option using router.back() */}
         <div className="w-full flex justify-start mb-6">
-          <Link 
-            href="/student/dashboard" 
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-white/50 hover:text-yellow-300 transition-colors cursor-pointer"
+          <button 
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-[#F9B300] transition-colors cursor-pointer"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
-            Back to Dashboard
-          </Link>
+            <span>Go Back</span>
+          </button>
         </div>
 
         {/* Portal Header */}
         <div className="text-center mb-8 space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-[10px] font-black uppercase tracking-wider font-mono">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF9ED] border border-[#FFE699] text-[#F9B300] text-[10px] font-black uppercase tracking-wider font-mono">
             <ShieldCheck className="h-3.5 w-3.5" />
             Platform Audit Registry
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            IQ Intern Verification Portal
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+            Verify Professional Credentials
           </h1>
-          <p className="text-white/60 text-xs sm:text-sm max-w-md mx-auto">
-            Instantly verify the authenticity of certificates, offer letters, marksheets, and reports generated on the IQ Intern platform.
+          <p className="text-zinc-500 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+            Instantly verify the authenticity of certificates, blueprints, marksheets, and scorecards generated on the IQIntern platform.
           </p>
         </div>
 
         {/* Lookup Box Card */}
-        <div className="w-full border border-white/15 shadow-xs rounded-[24px] p-6 sm:p-8 space-y-6" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}>
+        <div className="w-full border border-zinc-200/80 shadow-md rounded-[24px] p-6 sm:p-8 space-y-6 bg-white">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <label htmlFor="verify-input" className="block text-xs font-black uppercase tracking-wider text-white/50">
+            <label htmlFor="verify-input" className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
               Enter Certificate Number / Reference ID
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-3.5 h-4.5 w-4.5 text-white/30" />
+                <Search className="absolute left-4 top-3.5 h-4.5 w-4.5 text-zinc-400" />
                 <input
                   id="verify-input"
                   type="text"
                   placeholder="e.g., IQ-2026-0000125 or IQ-REF-0000872"
                   value={searchId}
                   onChange={(e) => setSearchId(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 border border-white/20 focus:border-yellow-400/60 focus:outline-none rounded-xl text-sm font-semibold tracking-wide placeholder-white/30 transition-all text-white" style={{ background: 'rgba(255,255,255,0.08)' }}
+                  className="w-full pl-11 pr-4 py-3.5 border border-zinc-200 focus:border-[#F9B300] focus:ring-1 focus:ring-[#F9B300] focus:outline-none rounded-xl text-sm font-semibold tracking-wide placeholder-zinc-450 transition-all text-zinc-800 bg-zinc-50"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || !searchId.trim()}
-                className="inline-flex items-center justify-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed text-slate-900 font-bold py-3.5 px-6 rounded-xl text-xs transition-all cursor-pointer shadow-md shadow-yellow-400/10 active:scale-98"
+                className="inline-flex items-center justify-center gap-1.5 bg-[#F9B300] hover:bg-[#E6A500] disabled:bg-zinc-150 disabled:text-zinc-400 disabled:cursor-not-allowed text-zinc-900 font-bold py-3.5 px-6 rounded-xl text-xs transition-all cursor-pointer shadow-xs active:scale-98"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Credential"}
               </button>
@@ -147,8 +149,8 @@ function VerifyContent() {
           {/* Loader */}
           {loading && (
             <div className="py-12 text-center space-y-3">
-              <Loader2 className="h-8 w-8 text-indigo-600 animate-spin mx-auto" />
-              <p className="text-xs text-white/50 font-bold">Querying secure registry index...</p>
+              <Loader2 className="h-8 w-8 text-[#F9B300] animate-spin mx-auto" />
+              <p className="text-xs text-zinc-500 font-bold">Querying secure registry index...</p>
             </div>
           )}
 
@@ -171,14 +173,14 @@ function VerifyContent() {
           {result && !loading && (
             <div className="space-y-6 animate-fade-in">
               {/* Verification Stamp */}
-              <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 flex items-center gap-3">
+              <div className="bg-emerald-50/70 border border-emerald-150 rounded-2xl p-4 flex items-center gap-3">
                 <CheckCircle className="h-6 w-6 text-emerald-600 shrink-0" />
                 <div className="text-left">
                   <h4 className="text-xs font-black text-emerald-950 uppercase tracking-wide">
                     Document Verified Authentically
                   </h4>
                   <p className="text-[11px] text-slate-500 font-medium">
-                    This document is registered, verified, and audited by the IQ Intern registry.
+                    This document is registered, verified, and audited by the IQIntern registry.
                   </p>
                 </div>
               </div>
@@ -280,14 +282,7 @@ function VerifyContent() {
 
       </main>
 
-      {/* Footer */}
-      <footer className="w-full py-6 border-t border-white/10 text-center text-[10px] sm:text-xs text-white/40" style={{ background: 'rgba(255,255,255,0.05)' }}>
-        <div className="max-w-4xl mx-auto px-4 space-y-1">
-          <p>© {new Date().getFullYear()} AVADS Private Limited. All rights reserved.</p>
-          <p className="font-mono text-[9px] opacity-75">Secure Audit Verification Portal | SHA-256 Checksum Secured</p>
-        </div>
-      </footer>
-
+      <Footer />
     </div>
   );
 }
@@ -295,10 +290,10 @@ function VerifyContent() {
 export default function VerifyPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center" style={{ background: '#264367' }}>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-yellow-400 border-t-transparent mx-auto mb-4" />
-          <p className="text-white/50 text-sm font-bold">Initializing Verification Portal...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#F9B300] border-t-transparent mx-auto mb-4" />
+          <p className="text-zinc-500 text-sm font-bold">Initializing Verification Portal...</p>
         </div>
       </div>
     }>

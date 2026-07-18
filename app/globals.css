@@ -783,25 +783,6 @@ body {
   overflow-x: hidden;
 }
 
-.bg-slate-50,
-.bg-zinc-50,
-.bg-indigo-50,
-.bg-violet-50,
-.bg-slate-50\/50,
-.bg-zinc-50\/50,
-.bg-indigo-50\/50,
-.bg-violet-50\/50,
-.bg-slate-50\/30,
-.bg-zinc-50\/30,
-.bg-indigo-50\/30,
-.bg-violet-50\/30,
-.bg-slate-50\/20,
-.bg-zinc-50\/20,
-.bg-indigo-50\/20,
-.bg-violet-50\/20 {
-  background: transparent !important;
-}
-
 /* Honeycomb Pattern */
 body::before {
   content: "";
