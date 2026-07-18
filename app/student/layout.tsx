@@ -79,8 +79,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       try {
         const dbStart = performance.now();
         const [pays, settings] = await Promise.all([
-          getStudentPayments(u.id),
-          getPlatformSettings()
+          getStudentPayments(u.id, true),
+          getPlatformSettings(true)
         ]);
         console.log(`[INSTRUMENTATION] Layout background payments + settings queries finished in ${(performance.now() - dbStart).toFixed(1)}ms`);
 

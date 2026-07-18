@@ -31,8 +31,8 @@ export default function PaymentPage() {
         setUser(u);
 
         const [pays, stg] = await Promise.all([
-          getStudentPayments(u.id),
-          getPlatformSettings()
+          getStudentPayments(u.id, true),
+          getPlatformSettings(true)
         ]);
         setSettings(stg);
 

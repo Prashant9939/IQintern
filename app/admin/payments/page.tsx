@@ -7,26 +7,92 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllPayments, getInternships, Internship } from "@/lib/supabase/db";
-import { Search, CreditCard, Filter, RefreshCw, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import { getAllPayments, getInternships, Internship, updatePaymentStatus, getAllProfiles, createManualPayment } from "@/lib/supabase/db";
+import { Search, CreditCard, Filter, RefreshCw, CheckCircle, AlertCircle, Clock, UserPlus, X } from "lucide-react";
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState<any[]>([]);
   const [internships, setInternships] = useState<Internship[]>([]);
+  const [studentsList, setStudentsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [trackFilter, setTrackFilter] = useState("all");
 
+  // Manual payment modal state
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    studentId: "",
+    internshipId: "general_credit_unused",
+    amount: "150",
+    status: "completed" as "pending" | "completed" | "failed"
+  });
+  const [recording, setRecording] = useState(false);
+
+  const handleStatusChange = async (paymentId: string, newStatus: any, studentId: string) => {
+    try {
+      const success = await updatePaymentStatus(paymentId, newStatus, studentId);
+      if (success) {
+        setPayments((prev) =>
+          prev.map((p) => (p.id === paymentId ? { ...p, status: newStatus } : p))
+        );
+      } else {
+        alert("Failed to update payment status.");
+      }
+    } catch (err) {
+      console.error("Error updating payment status:", err);
+      alert("Error updating payment status.");
+    }
+  };
+
+  const handleRecordPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualForm.studentId) {
+      alert("Please select a student.");
+      return;
+    }
+    setRecording(true);
+    try {
+      const amt = Number(manualForm.amount) * 100; // to paisa
+      const payRecord = await createManualPayment(
+        manualForm.studentId,
+        manualForm.internshipId,
+        amt,
+        manualForm.status
+      );
+
+      if (payRecord) {
+        alert("Payment recorded successfully!");
+        setShowManualModal(false);
+        setManualForm({
+          studentId: "",
+          internshipId: "general_credit_unused",
+          amount: "150",
+          status: "completed"
+        });
+        loadData();
+      } else {
+        alert("Failed to record manual payment.");
+      }
+    } catch (err) {
+      console.error("Error recording manual payment:", err);
+      alert("Error recording manual payment.");
+    } finally {
+      setRecording(false);
+    }
+  };
+
   const loadData = async () => {
     setLoading(true);
     try {
-      const [allPayments, allInternships] = await Promise.all([
+      const [allPayments, allInternships, allProfiles] = await Promise.all([
         getAllPayments(),
-        getInternships()
+        getInternships(),
+        getAllProfiles()
       ]);
       setPayments(allPayments);
       setInternships(allInternships);
+      setStudentsList(allProfiles.filter((p: any) => p.role === "student"));
     } catch (err) {
       console.error("Failed to load admin payments:", err);
     } finally {
@@ -195,22 +261,21 @@ export default function AdminPayments() {
                     <td className="p-4 font-light text-zinc-500">{dateStr}</td>
                     <td className="p-4 font-extrabold text-indigo-650 text-sm">₹{(pay.amount / 100).toFixed(2)}</td>
                     <td className="p-4 text-center">
-                      {pay.status === "completed" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
-                          <CheckCircle className="h-3.5 w-3.5 shrink-0" />
-                          Success
-                        </span>
-                      ) : pay.status === "failed" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200 px-2.5 py-1 text-[10px] font-bold text-red-600">
-                          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                          Failed
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-[10px] font-bold text-amber-600">
-                          <Clock className="h-3.5 w-3.5 shrink-0 animate-pulse" />
-                          Pending
-                        </span>
-                      )}
+                      <select
+                        value={pay.status}
+                        onChange={(e) => handleStatusChange(pay.id, e.target.value as any, pay.student_id)}
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold outline-none cursor-pointer border ${
+                          pay.status === "completed"
+                            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                            : pay.status === "failed"
+                            ? "bg-red-50 border-red-200 text-red-600"
+                            : "bg-amber-50 border-amber-200 text-amber-600"
+                        }`}
+                      >
+                        <option value="pending" className="bg-white text-amber-700">Pending</option>
+                        <option value="completed" className="bg-white text-emerald-700">Completed</option>
+                        <option value="failed" className="bg-white text-red-700">Failed</option>
+                      </select>
                     </td>
                   </tr>
                 );

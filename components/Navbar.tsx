@@ -16,13 +16,22 @@ import {
   devToggleRole
 } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { ShieldAlert, LogOut, LayoutDashboard, LogIn, UserPlus } from "lucide-react";
+import { 
+  ShieldAlert, 
+  LogOut, 
+  LayoutDashboard, 
+  LogIn, 
+  Menu, 
+  X 
+} from "lucide-react";
 import { BRANDING } from "@/config/branding";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
   const [supabaseConfigured, setSupabaseConfigured] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,6 +42,19 @@ export default function Navbar() {
     setSupabaseConfigured(isSupabaseConfigured());
   }, [pathname]);
 
+  // Monitor scroll for shadow and blur transitions
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleLogout = async () => {
     await signOut();
     setUser(null);
@@ -40,130 +62,174 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: "Home", href: "/" },
+    { name: "Programs", href: "/internships" },
+    { name: "Learning Journey", href: "/#journey" },
+    { name: "Certification", href: "/verify" },
     { name: "About", href: "/about" },
-    { name: "Internships", href: "/internships" },
+    { name: "FAQ", href: "/#faqs" },
     { name: "Contact", href: "/contact" },
   ];
 
   const isActive = (href: string) => {
     if (!pathname) return false;
     if (href === "/") return pathname === "/";
+    if (href.startsWith("/#")) {
+      return pathname === "/" && typeof window !== "undefined" && window.location.hash === href.substring(1);
+    }
     return pathname.startsWith(href);
   };
 
-  const handleVerifyScroll = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (pathname === "/") {
-      const el = document.getElementById("verify");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.location.href = "/#verify";
-    }
-  };
-
   return (
-    <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
-      <nav className="glass-navbar rounded-2xl shadow-md border border-white/20">
-        <div className="mx-auto max-w-7xl px-3 md:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo on the left */}
-            <div className="flex items-center">
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs"
+            : "bg-white border-b border-transparent"
+        }`}
+      >
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          
+          {/* Brand Logo on the Left */}
+          <div className="flex items-center">
+            <Link
+              href={user ? (user.role === "admin" ? "/admin/dashboard" : "/student/dashboard") : "/"}
+              className="group flex items-center gap-2"
+              aria-label="Go to home"
+            >
+              <img
+                src={BRANDING.logoIcon}
+                className="h-12 w-auto object-contain group-hover:scale-105 transition-all"
+                alt={BRANDING.name}
+              />
+            </Link>
+          </div>
+
+          {/* Desktop Nav Links (Hidden on Mobile/Tablet < md) */}
+          <nav className="hidden md:flex items-center space-x-8 lg:space-x-10">
+            {navLinks.map((link) => (
               <Link
-                href={user ? (user.role === "admin" ? "/admin/dashboard" : "/student/dashboard") : "/"}
-                className="group flex items-center gap-2"
-                aria-label="Go to home"
+                key={link.name}
+                href={link.href}
+                className={`relative text-sm font-bold py-2 transition-all duration-200 text-zinc-600 hover:text-[#F9B300] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-[#F9B300] after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                  isActive(link.href) ? "text-[#F9B300] after:scale-x-100" : ""
+                }`}
               >
-                <img
-                  src={BRANDING.logoIcon}
-                  className="h-12 w-auto object-contain group-hover:scale-105 transition-all"
-                  alt={BRANDING.name}
-                />
+                {link.name}
               </Link>
-            </div>
+            ))}
+          </nav>
 
-            {/* Desktop Nav Links (Hidden on Mobile/Tablet < md) */}
-            <div className="hidden md:flex items-center space-x-1">
-              {navLinks.map((link) => (
+          {/* Desktop Auth / Controls (Hidden on Mobile/Tablet < md) */}
+          <div className="hidden md:flex items-center space-x-4">
+            {!supabaseConfigured && user && (
+              <button
+                onClick={devToggleRole}
+                title="Mock Mode: Click to switch Admin / Student role"
+                className="flex items-center gap-1.5 rounded-full border border-[#FFE699] bg-[#FFF9ED] px-3 py-1 text-xs font-bold text-[#F9B300] hover:bg-[#FFE699] transition-all cursor-pointer shadow-xs"
+              >
+                <ShieldAlert className="h-3.5 w-3.5 text-[#F9B300]" />
+                Role: {user.role === "admin" ? "Admin" : "Student"}
+              </button>
+            )}
+
+            {user ? (
+              <div className="flex items-center space-x-3">
                 <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 ${
-                    isActive(link.href)
-                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
-                      : "text-zinc-600 hover:bg-indigo-50 hover:text-indigo-700"
-                  }`}
+                  href={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
+                  className="flex items-center gap-1.5 rounded-xl bg-zinc-50 border border-zinc-200 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-zinc-100 transition-all shadow-xs"
                 >
-                  {link.name}
+                  <LayoutDashboard className="h-4 w-4 text-[#F9B300]" />
+                  Dashboard
                 </Link>
-              ))}
-            </div>
-
-            {/* Desktop Auth / User Controls (Hidden on Mobile/Tablet < md) */}
-            <div className="hidden md:flex items-center space-x-4">
-              {!supabaseConfigured && user && (
                 <button
-                  onClick={devToggleRole}
-                  title="Mock Mode: Click to switch Admin / Student role"
-                  className="flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-all cursor-pointer"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 rounded-xl border border-red-200 hover:border-red-300 hover:bg-red-50/50 px-4 py-2 text-xs font-bold text-red-500 transition-all cursor-pointer"
                 >
-                  <ShieldAlert className="h-3.5 w-3.5 text-amber-600 animate-pulse" />
-                  Role: {user.role === "admin" ? "Admin" : "Student"}
+                  <LogOut className="h-4 w-4" />
+                  Logout
                 </button>
-              )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-6">
+                <Link
+                  href="/auth/login"
+                  className="text-sm font-bold text-zinc-600 hover:text-[#F9B300] transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="flex items-center gap-1.5 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-5 py-2.5 text-sm font-bold text-zinc-900 shadow-xs transition-all active:scale-98"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
 
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <Link
-                    href={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
-                    className="flex items-center gap-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200/60 border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-650 hover:text-indigo-800 transition-all shadow-sm"
-                  >
-                    <LayoutDashboard className="h-4 w-4 text-indigo-500" />
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-1.5 rounded-xl border border-red-200 hover:border-red-300 hover:bg-red-50/50 px-4 py-2 text-sm font-semibold text-red-500 hover:text-red-650 transition-all cursor-pointer"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </button>
-                </div>
+          {/* Mobile Menu Trigger & Controls */}
+          <div className="flex md:hidden items-center gap-3">
+            {!supabaseConfigured && user && (
+              <button
+                onClick={devToggleRole}
+                title="Mock Mode: Click to switch Admin / Student role"
+                className="flex items-center gap-1 bg-[#FFF9ED] border border-[#FFE699] px-2 py-0.5 rounded text-[10px] font-bold text-[#F9B300]"
+              >
+                Role: {user.role === "admin" ? "Admin" : "Student"}
+              </button>
+            )}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-lg hover:bg-zinc-100 text-zinc-650 transition-colors focus:outline-none"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
               ) : (
-                <div className="flex items-center space-x-4">
-                  <Link
-                    href="/auth/login"
-                    className="flex items-center gap-1.5 text-sm font-semibold text-zinc-650 hover:text-indigo-600 transition-colors"
-                  >
-                    <LogIn className="h-4.5 w-4.5" />
-                    Login
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 hover:from-indigo-700 hover:to-violet-650 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 active:scale-98 transition-all"
-                  >
-                    <UserPlus className="h-4.5 w-4.5" />
-                    Register Now
-                  </Link>
-                </div>
+                <Menu className="h-6 w-6" />
               )}
-            </div>
+            </button>
+          </div>
 
-            {/* Mobile Controls (Visible ONLY on Mobile/Tablet < md) */}
-            <div className="flex md:hidden items-center space-x-1.5">
+        </div>
+      </header>
+
+      {/* Mobile Drawer Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed top-20 left-0 right-0 bg-white border-b border-zinc-200 shadow-lg z-45 animate-slide-down">
+          <div className="px-4 pt-4 pb-6 space-y-3.5 bg-white text-left">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                  isActive(link.href)
+                    ? "bg-[#FFF9ED] text-[#FF7A00]"
+                    : "text-zinc-600 hover:bg-zinc-50"
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+
+            <div className="border-t border-zinc-100 pt-4 flex flex-col gap-3">
               {user ? (
                 <>
                   <Link
                     href={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
-                    className="flex h-11 items-center justify-center rounded-xl bg-zinc-100 border border-zinc-250 px-3 text-xs font-semibold text-zinc-700 transition-all active:scale-98 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
-                    aria-label="Access your student dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex h-11 items-center justify-center rounded-xl bg-zinc-50 border border-zinc-200 px-4 text-sm font-bold text-zinc-700 transition-all hover:bg-zinc-100"
                   >
                     Dashboard
                   </Link>
                   <button
-                    onClick={handleLogout}
-                    className="flex h-11 items-center justify-center rounded-xl border border-red-200 bg-red-50/30 px-3 text-xs font-semibold text-red-500 cursor-pointer transition-all active:scale-98 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                    aria-label="Log out of your account"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex h-11 items-center justify-center rounded-xl border border-red-200 bg-red-50/20 px-4 text-sm font-bold text-red-500 cursor-pointer hover:bg-red-50 transition-all"
                   >
                     Logout
                   </button>
@@ -172,24 +238,24 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/auth/login"
-                    className="flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 px-3 text-xs font-semibold text-zinc-700 transition-all active:scale-98 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
-                    aria-label="Log in to your student portal account"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 px-4 text-sm font-bold text-zinc-700 transition-all"
                   >
                     Login
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 px-3 text-xs font-bold text-white transition-all active:scale-98 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
-                    aria-label="Create a new student account"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex h-11 items-center justify-center rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-4 text-sm font-bold text-zinc-900 transition-all shadow-xs"
                   >
-                    Register
+                    Get Started
                   </Link>
                 </>
               )}
             </div>
           </div>
         </div>
-      </nav>
-    </div>
+      )}
+    </>
   );
 }

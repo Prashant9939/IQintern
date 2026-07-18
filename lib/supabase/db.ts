@@ -2139,6 +2139,66 @@ function getMockPaidInternshipIds(userId: string): string[] {
     .map((p) => p.internship_id);
 }
 
+export async function createManualPayment(
+  userId: string,
+  internshipId: string,
+  amount: number,
+  status: "pending" | "completed" | "failed" = "completed"
+): Promise<Payment | null> {
+  invalidateCacheKey("student_payments_");
+  invalidateCacheKey("paid_internship_ids_");
+  
+  const paymentData = {
+    student_id: userId,
+    internship_id: internshipId,
+    amount,
+    status,
+    razorpay_order_id: `manual-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+    razorpay_payment_id: `manual-pay-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+  };
+
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .insert(paymentData)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (err) {
+      console.warn("createManualPayment failed, using fallback:", err);
+      return createManualPaymentMock(userId, internshipId, amount, status, paymentData.razorpay_order_id, paymentData.razorpay_payment_id);
+    }
+  } else {
+    return createManualPaymentMock(userId, internshipId, amount, status, paymentData.razorpay_order_id, paymentData.razorpay_payment_id);
+  }
+}
+
+function createManualPaymentMock(
+  userId: string,
+  internshipId: string,
+  amount: number,
+  status: "pending" | "completed" | "failed",
+  orderId: string,
+  paymentId: string
+): Payment {
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  const newPayment: Payment = {
+    id: `pay-${Math.random().toString(36).substr(2, 9)}`,
+    student_id: userId,
+    internship_id: internshipId,
+    amount,
+    status,
+    razorpay_order_id: orderId,
+    razorpay_payment_id: paymentId,
+    created_at: new Date().toISOString(),
+  };
+  list.push(newPayment);
+  setMockStorage("mock_payments", list);
+  return newPayment;
+}
+
 export async function createPaymentRecord(
   userId: string,
   internshipId: string,
@@ -2250,10 +2310,53 @@ function verifyAndCompletePaymentMock(
   return false;
 }
 
-export async function getStudentPayments(userId: string): Promise<Payment[]> {
+export async function updatePaymentStatus(
+  paymentId: string,
+  status: "pending" | "completed" | "failed",
+  studentId: string
+): Promise<boolean> {
+  invalidateCacheKey("student_payments_");
+  invalidateCacheKey("paid_internship_ids_");
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      const { error } = await supabase
+        .from("payments")
+        .update({ status })
+        .eq("id", paymentId);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.warn("updatePaymentStatus failed, falling back to mock:", err);
+      return updatePaymentStatusMock(paymentId, status);
+    }
+  } else {
+    return updatePaymentStatusMock(paymentId, status);
+  }
+}
+
+function updatePaymentStatusMock(
+  paymentId: string,
+  status: "pending" | "completed" | "failed"
+): boolean {
+  if (typeof window === "undefined") return true;
+  const list = getMockStorage<Payment[]>("mock_payments", []);
+  const idx = list.findIndex((p) => p.id === paymentId);
+  if (idx !== -1) {
+    list[idx] = {
+      ...list[idx],
+      status
+    };
+    setMockStorage("mock_payments", list);
+    return true;
+  }
+  return false;
+}
+export async function getStudentPayments(userId: string, bypassCache = false): Promise<Payment[]> {
   const cacheKey = `student_payments_${userId}`;
-  const cached = getCachedData<Payment[]>(cacheKey);
-  if (cached) return cached;
+  if (!bypassCache) {
+    const cached = getCachedData<Payment[]>(cacheKey);
+    if (cached) return cached;
+  }
 
   if (isSupabaseConfigured() && supabase) {
     try {
@@ -2435,7 +2538,7 @@ export interface PlatformSettings {
   holidays?: Array<{ date: string; name: string }>;
 }
 
-export async function getPlatformSettings(): Promise<PlatformSettings> {
+export async function getPlatformSettings(bypassCache = false): Promise<PlatformSettings> {
   const defaultValue: PlatformSettings = { 
     assessment_fee: 150, 
     payments_enabled: true, 
@@ -2453,8 +2556,10 @@ export async function getPlatformSettings(): Promise<PlatformSettings> {
     ]
   };
   const cacheKey = "platform_settings";
-  const cached = getCachedData<PlatformSettings>(cacheKey);
-  if (cached) return cached;
+  if (!bypassCache) {
+    const cached = getCachedData<PlatformSettings>(cacheKey);
+    if (cached) return cached;
+  }
 
   if (isSupabaseConfigured() && supabase) {
     try {

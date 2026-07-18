@@ -1,241 +1,162 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin } from "lucide-react";
 import { BRANDING } from "@/config/branding";
-
-// Inline SVG brand icons since lucide-react deprecated them in v0.400+
-const LinkedInIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
-const GitHubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
-
-const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-  </svg>
-);
 
 export default function Footer() {
   return (
-    <footer className="w-full shrink-0 text-slate-100 border-t border-white/10 pt-14 pb-16 mt-auto relative overflow-hidden rounded-t-[32px] md:rounded-t-[48px]" style={{ background: '#264367' }}>
-      {/* Top glowing line overlay */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-      {/* Background radial glow */}
-      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 left-0 h-80 w-80 rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
-          {/* Brand Info Column */}
-          <div className="lg:col-span-4 space-y-5">
-            <Link href="/" className="flex items-center gap-2.5 font-bold text-xl text-white group w-fit">
-              <img
-                src="/white-logo.png"
-                className="h-14 w-auto object-contain group-hover:scale-105 transition-all"
-              />
-            </Link>
-
-            <p className="text-sm text-slate-200 font-light leading-relaxed max-w-sm">
-              Empowering candidates with tamper-proof practical credentials verified by secure database systems.
-            </p>
-
-            {/* Glowing Student Counter Badge */}
-            <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 px-3.5 py-1.5 rounded-full mt-2 shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-              </span>
-              <span className="text-[11px] font-bold text-emerald-300 uppercase tracking-wider">
-                24,000+ Students Enrolled
-              </span>
+    <div className="antigravity-footer-container">
+      <footer className="antigravity-footer-main">
+        <div className="mx-auto max-w-7xl w-full">
+          {/* Footer Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-12 text-left">
+            
+            {/* Column 1: Brand (Col-span 4) */}
+            <div className="lg:col-span-4 antigravity-footer-card">
+              <h3 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+                IQ<span className="text-[#F9B300]">Intern</span>
+              </h3>
+              <p className="text-xs text-[#A3A3A3] font-light leading-relaxed">
+                Empowering next-gen professionals with proctored verification testing, structured domain blueprints, and instant scorecard lookups.
+              </p>
+              <div className="flex gap-3">
+                {/* Twitter */}
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="antigravity-social-btn"
+                  aria-label="Twitter"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                  </svg>
+                </a>
+                {/* LinkedIn */}
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="antigravity-social-btn"
+                  aria-label="LinkedIn"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                  </svg>
+                </a>
+                {/* Instagram */}
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="antigravity-social-btn"
+                  aria-label="Instagram"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  </svg>
+                </a>
+              </div>
             </div>
-          </div>
 
-          {/* Quick Links Column */}
-          <div className="lg:col-span-2 lg:col-start-5 space-y-4 text-left">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+            {/* Column 2: Quick Links (Col-span 2) */}
+            <div className="lg:col-span-2 antigravity-footer-card">
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Quick Links</h4>
+              <div className="flex flex-col gap-3">
+                <Link href="/" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
                   Home
                 </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                <Link href="/about" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
                   About Us
                 </Link>
-              </li>
-              <li>
-                <Link href="/internships" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Internships
+                <Link href="/internships" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
+                  Internship Tracks
                 </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/verify" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+                <Link href="/verify" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
                   Verify Certificate
                 </Link>
-              </li>
-            </ul>
-          </div>
+                <Link href="/contact" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
+                  Contact Us
+                </Link>
+              </div>
+            </div>
 
-          {/* Company Column */}
-          <div className="lg:col-span-2 space-y-4 text-left">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Company
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/privacy-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms-and-conditions" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Refund Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/cancellation-policy" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Cancellation Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Resources Column */}
-          <div className="lg:col-span-2 space-y-4 text-left">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Resources
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/#faqs" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
+            {/* Column 3: Resources (Col-span 2) */}
+            <div className="lg:col-span-2 antigravity-footer-card">
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Resources</h4>
+              <div className="flex flex-col gap-3">
+                <Link href="/#faqs" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
                   FAQs
                 </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-[15px] font-normal text-slate-200 hover:text-white transition-colors duration-200">
-                  Support
+                <Link href="/contact" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
+                  Support Center
                 </Link>
-              </li>
-              <li>
-                <span className="text-[15px] font-normal text-slate-400 cursor-not-allowed">
-                  Blogs
+                <span className="text-xs text-[#555] cursor-not-allowed">
+                  Blog
                 </span>
-              </li>
-            </ul>
+                <Link href="/internships" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
+                  Career Paths
+                </Link>
+                <Link href="/verify" className="antigravity-footer-link text-xs text-[#A3A3A3] hover:text-[#F9B300] no-underline">
+                  Scorecard Guide
+                </Link>
+              </div>
+            </div>
+
+            {/* Column 4: Contact (Col-span 4) */}
+            <div className="lg:col-span-4 antigravity-footer-card text-left space-y-4">
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Contact</h4>
+              <div className="space-y-3.5 text-xs text-[#A3A3A3]">
+                <div className="flex items-start gap-2.5">
+                  <svg className="w-4 h-4 text-[#F9B300] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  <a href="mailto:support.iqintern@gmail.com" className="hover:text-[#F9B300] transition-colors truncate">
+                    support.iqintern@gmail.com
+                  </a>
+                </div>
+                
+                <div className="flex items-start gap-2.5">
+                  <svg className="w-4 h-4 text-[#F9B300] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                  <a href="tel:+919939503289" className="hover:text-[#F9B300] transition-colors">
+                    +91 9939503289
+                  </a>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <svg className="w-4 h-4 text-[#F9B300] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>
+                    Sector 154, Noida,<br />Uttar Pradesh, India
+                  </span>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          {/* Contact Column */}
-          <div className="lg:col-span-2 space-y-4 text-left">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              Contact
-            </h4>
-            <ul className="space-y-3.5 text-[15px] text-slate-200 font-normal">
-              <li className="flex items-center gap-2.5">
-                <Mail className="h-4.5 w-4.5 text-sky-200 shrink-0" />
-                <a href={`mailto:${BRANDING.emails.support}`} className="hover:text-white transition-colors duration-200 truncate">
-                  {BRANDING.emails.support}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="h-4.5 w-4.5 text-sky-200 shrink-0" />
-                <a href={BRANDING.phoneLink} className="hover:text-white transition-colors duration-200">
-                  {BRANDING.phone}
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin className="h-4.5 w-4.5 text-sky-200 shrink-0 mt-0.5" />
-                <span className="text-slate-200">{BRANDING.address}</span>
-              </li>
-            </ul>
+          {/* Bottom copyright bar */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-[#262626] pt-8 mt-8 text-xs text-[#A3A3A3]">
+            <div>
+              © 2026 {BRANDING.name}. All rights reserved.
+            </div>
+            <div className="flex gap-5">
+              <Link href="/privacy-policy" className="hover:text-[#F9B300] transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-and-conditions" className="hover:text-[#F9B300] transition-colors">
+                Terms & Conditions
+              </Link>
+              <Link href="/refund-policy" className="hover:text-[#F9B300] transition-colors">
+                Refund Policy
+              </Link>
+            </div>
           </div>
         </div>
-
-        {/* Bottom Bar: Copyright & Socials */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5 pt-8 mt-16">
-          <div className="text-slate-300 text-sm tracking-tight text-center md:text-left">
-            © 2026 {BRANDING.name}. All rights reserved.
-          </div>
-
-          {/* Social Icons */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
-              title="LinkedIn"
-            >
-              <LinkedInIcon className="h-5 w-5" />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
-              title="GitHub"
-            >
-              <GitHubIcon className="h-5 w-5" />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-300 hover:text-white hover:scale-110 transition-all duration-200"
-              title="Twitter"
-            >
-              <TwitterIcon className="h-5 w-5" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   );
 }
