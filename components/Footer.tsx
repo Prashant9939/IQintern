@@ -13,7 +13,7 @@ export default function Footer() {
             <div className="lg:col-span-4 antigravity-footer-card">
               <Link href="/" className="inline-block mb-1">
                 <img
-                  src="/logo-full.png"
+                  src="/white-logo.png"
                   alt="IQIntern"
                   className="h-34 w-auto object-contain"
                 />

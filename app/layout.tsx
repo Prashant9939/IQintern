@@ -9,9 +9,18 @@ export const metadata: Metadata = {
   title: `${BRANDING.name} | Internship Evaluation Platform`,
   description: "Accelerate your career with verified professional internship evaluation scorecards.",
   icons: {
-    icon: BRANDING.logoIcon,
-    shortcut: BRANDING.logoIcon,
-    apple: BRANDING.logoIcon,
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-64x64.png", sizes: "64x64", type: "image/png" },
+    ],
+    shortcut: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
+    other: [
+      { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
+      { rel: "icon", url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
   },
   verification: {
     google: "TZ6-qTsG5N28OpBI5m0m10TbW48IrPgU1N6Icy8Nxzc",

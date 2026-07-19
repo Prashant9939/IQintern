@@ -83,7 +83,8 @@ export default function Login() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         :root {
             --brand-primary: #F5A623;
             --brand-dark: #0F172A;
@@ -389,14 +390,14 @@ export default function Login() {
       `}} />
 
       <div className="login-page-container">
-        
+
         {/* Top Header */}
         <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0 relative z-10">
           <Link href="/" className="flex items-center gap-2 cursor-pointer">
             <img
               src="/logo-full.png"
               alt="IQIntern"
-              className="h-10 w-auto object-contain"
+              className="h-31 w-auto object-contain"
             />
           </Link>
           <Link href="/auth/register" className="text-sm font-bold text-[var(--brand-primary)] hover:underline transition-colors cursor-pointer">
@@ -482,9 +483,9 @@ export default function Login() {
                       className="has-icon"
                     />
                     <label htmlFor="password">Security Password</label>
-                    <button 
-                      type="button" 
-                      onClick={() => setShowPassword(!showPassword)} 
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors focus:outline-none"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}

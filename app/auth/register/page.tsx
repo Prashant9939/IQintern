@@ -333,10 +333,12 @@ export default function Register() {
       
       {/* Top Header */}
       <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0">
-        <Link href="/" className="flex items-center gap-2 font-bold text-zinc-900 cursor-pointer">
-          <span className="text-2xl font-extrabold tracking-tight text-zinc-900 flex items-center gap-1">
-            IQ<span className="text-[#F9B300]">Intern</span>
-          </span>
+        <Link href="/" className="flex items-center gap-2 cursor-pointer">
+          <img
+            src="/logo-full.png"
+            alt="IQIntern"
+            className="h-31 w-auto object-contain"
+          />
         </Link>
         <Link href="/auth/login" className="text-xs font-bold text-[#FF7A00] hover:text-[#E66E00] transition-colors cursor-pointer">
           Already registered? Sign In →

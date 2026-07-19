@@ -82,6 +82,7 @@ export default function Navbar() {
   return (
     <>
       <header
+        style={{ willChange: "transform", transform: "translateZ(0)" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${isScrolled
           ? "bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs"
           : "bg-white border-b border-transparent"

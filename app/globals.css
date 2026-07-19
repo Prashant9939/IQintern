@@ -153,6 +153,10 @@
 
 html {
   font-size: 17px;
+  /* Smooth native scroll throughout the entire page */
+  scroll-behavior: smooth;
+  /* Prevent overscroll bounce from causing layout thrash */
+  overscroll-behavior: none;
 }
 
 @media (min-width: 768px) {
@@ -777,53 +781,53 @@ body {
       #FFF0E0,
       #FFF7ED,
       #FFFFFF) !important;
-  background-attachment: scroll;
+  /* fixed: prevents gradient from repainting on scroll */
+  background-attachment: fixed;
+  background-size: cover;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  /* Promote body to its own compositing layer to avoid scroll repaint */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
-/* Honeycomb Pattern */
+/* Honeycomb Pattern — GPU-isolated to avoid scroll repaint */
 body::before {
   content: "";
-  position: absolute;
+  /* fixed positioning takes this out of the document scroll flow entirely */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 35vh;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.08;
+  opacity: 0.07;
   background-image: url("data:image/svg+xml,%3Csvg width='80' height='70' viewBox='0 0 80 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23F9B300' stroke-width='1.2'%3E%3Cpolygon points='40,2 75,20 75,50 40,68 5,50 5,20'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 80px 70px;
   background-repeat: repeat;
-  mask-image: linear-gradient(to bottom,
-      black 0%,
-      rgba(0, 0, 0, .8) 50%,
-      transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom,
-      black 0%,
-      rgba(0, 0, 0, .8) 50%,
-      transparent 100%);
+  /* Fade via opacity gradient on a wrapper div rather than mask-image to avoid GPU composite cost */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+  /* Keep on its own GPU layer */
+  will-change: transform;
 }
 
-/* Radial light overlay */
+/* Radial light overlay — GPU-isolated, no blur filter (main scroll jank fix) */
 body::after {
   content: "";
-  position: absolute;
+  /* fixed: stays still during scroll, never triggers repaint */
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -2;
-  background: radial-gradient(circle at top left,
-      rgba(249, 179, 0, 0.12),
-      transparent 45%),
-    radial-gradient(circle at top right,
-      rgba(255, 122, 0, 0.12),
-      transparent 45%),
-    radial-gradient(circle at center,
-      rgba(255, 255, 255, 0.6),
-      transparent 50%);
-  filter: blur(80px);
+  /* Replaced filter:blur(80px) with a soft radial gradient — same visual, zero scroll cost */
+  background:
+    radial-gradient(ellipse 80% 60% at top left, rgba(249, 179, 0, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at top right, rgba(255, 122, 0, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at center, rgba(255, 255, 255, 0.5) 0%, transparent 65%);
+  will-change: transform;
 }
 
 /* GPU-Accelerated Floating Background Icons */
@@ -873,10 +877,9 @@ body::after {
 }
 
 .antigravity-footer-card {
-  background: rgba(255, 255, 255, 0.03) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  /* Removed backdrop-filter: blur() — it creates expensive GPU layers during scroll */
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
   border-radius: 16px !important;
   padding: 28px !important;
   display: flex;
