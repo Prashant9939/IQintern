@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { loginUser } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import {
-  Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Eye, EyeOff
+  AlertCircle, CheckCircle, Eye, EyeOff
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -82,155 +82,445 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 font-sans antialiased">
-      
-      {/* Top Header */}
-      <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0">
-        <Link href="/" className="flex items-center gap-2 cursor-pointer">
-          <img
-            src="/logo-full.png"
-            alt="IQIntern"
-            className="h-10 w-auto object-contain"
-          />
-        </Link>
-        <Link href="/auth/register" className="text-xs font-bold text-[#FF7A00] hover:text-[#E66E00] transition-colors cursor-pointer">
-          Create an Account →
-        </Link>
-      </header>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        :root {
+            --brand-primary: #F5A623;
+            --brand-dark: #0F172A;
+            --brand-light: #F8FAFC;
+            --text-main: #1E293B;
+            --text-secondary: #64748B;
+            --border-ui: #E2E8F0;
+            --border-focus: #F5A623;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-      {/* Main Form Area */}
-      <main className="flex-grow flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[460px] flex flex-col">
-          
-          {/* Card */}
-          <div className="bg-white border border-zinc-200 shadow-md rounded-[24px] p-6 sm:p-8 flex flex-col w-full relative">
-            <form onSubmit={handleLogin} className="flex flex-col space-y-4">
-              
-              {/* Form Title */}
-              <div className="pb-4 border-b border-zinc-150 mb-2 shrink-0 text-left">
-                <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">
-                  Welcome Back
-                </h2>
-                <p className="text-[11px] text-zinc-500 font-medium mt-0.5">
-                  Enter credentials to access your proctored evaluation dashboard
-                </p>
-              </div>
+        .login-page-container {
+            background-color: var(--brand-light);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
 
-              {/* Mock Mode Development Helper Banner */}
-              {isMockMode && (
-                <div className="mb-2 flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 text-xs text-amber-800 font-medium shrink-0">
-                  <div className="flex items-start gap-2.5">
-                    <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
-                    <div>
-                      <strong className="font-bold block text-amber-900">Developer Mock Mode Active</strong>
-                      <span className="text-[11px] text-amber-700 leading-relaxed block mt-0.5">
-                        The client is running in Mock Mode because Supabase credentials are not loaded in your browser. Restart your local Next.js dev server after adding `.env.local` to connect to Supabase.
-                      </span>
+        .login-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .premium-shape {
+            position: absolute;
+            top: -130px;
+            right: -130px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(15,23,42,.04), rgba(245,166,35,.04));
+            pointer-events: none;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 500px;
+            min-height: 580px;
+            overflow: hidden;
+            display: flex;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,251,245,.96));
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,.85);
+            box-shadow: 0 2px 10px rgba(255,255,255,.70), 0 20px 60px rgba(15,23,42,.08), 0 12px 35px rgba(245,166,35,.06), 0 0 30px rgba(245,166,35,.03);
+        }
+
+        .wrapper::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(255,255,255,.15), transparent 30%, rgba(255,255,255,.10));
+        }
+
+        .wrapper::after {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            top: -180px;
+            right: -150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,166,35,.08), transparent 70%);
+            filter: blur(60px);
+            pointer-events: none;
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(245,166,35,.08), transparent 35%), radial-gradient(circle at bottom left, rgba(99,102,241,.05), transparent 35%);
+            pointer-events: none;
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            opacity: .025;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .premium-glow {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            top: -50px;
+            right: -50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,166,35,.15), transparent 70%);
+            filter: blur(30px);
+            pointer-events: none;
+        }
+
+        .login-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-form-zone {
+            max-width: 380px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            letter-spacing: -0.75px;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .floating-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .floating-field input {
+            width: 100%;
+            height: 56px;
+            padding: 18px 16px 6px 16px;
+            border: 1.5px solid var(--border-ui);
+            border-radius: 12px;
+            background: #ffffff;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--brand-dark);
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .floating-field input.has-icon {
+            padding-right: 44px;
+        }
+
+        .floating-field label {
+            position: absolute;
+            left: 16px;
+            top: 18px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .floating-field input:focus,
+        .floating-field input:not(:placeholder-shown) {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.1);
+        }
+
+        .floating-field input:focus ~ label,
+        .floating-field input:not(:placeholder-shown) ~ label {
+            top: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--brand-primary);
+        }
+
+        .utilities {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .remember-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .remember-toggle input {
+            accent-color: var(--brand-primary);
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .forgot-link {
+            color: var(--brand-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 52px;
+            background: var(--brand-dark);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-btn:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+        
+        .submit-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .social-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin: 24px 0;
+            font-weight: 500;
+        }
+
+        .social-divider::before, .social-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-ui);
+        }
+        .social-divider:not(:empty)::before { margin-right: 12px; }
+        .social-divider:not(:empty)::after { margin-left: 12px; }
+
+        .register-btn {
+            width: 100%;
+            height: 52px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-ui);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--brand-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .register-btn:hover {
+            background: var(--brand-light);
+            border-color: #cbd5e1;
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                max-width: 480px;
+                height: auto;
+                min-height: auto;
+            }
+            .login-panel {
+                padding: 40px 24px;
+            }
+            .main-form-zone {
+                margin: 20px 0;
+            }
+        }
+      `}} />
+
+      <div className="login-page-container">
+        
+        {/* Top Header */}
+        <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0 relative z-10">
+          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+            <img
+              src="/logo-full.png"
+              alt="IQIntern"
+              className="h-10 w-auto object-contain"
+            />
+          </Link>
+          <Link href="/auth/register" className="text-sm font-bold text-[var(--brand-primary)] hover:underline transition-colors cursor-pointer">
+            Create an Account →
+          </Link>
+        </header>
+
+        <main className="login-content-wrapper">
+          <div className="wrapper">
+            <div className="premium-shape"></div>
+            <div className="logo-leaf"></div>
+            <div className="mesh-gradient"></div>
+            <div className="premium-glow"></div>
+            <div className="noise"></div>
+
+            <section className="login-panel">
+              <div className="main-form-zone">
+                <header>
+                  <h1 className="header-title">Account Login</h1>
+                  <p className="header-subtitle">
+                    Access your professional evaluations hub.
+                  </p>
+                </header>
+
+                {isMockMode && (
+                  <div className="mb-4 flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-800 font-medium">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+                      <div>
+                        <strong className="font-bold block text-amber-900">Developer Mock Mode Active</strong>
+                        <span className="text-[11px] text-amber-700 leading-relaxed block mt-0.5">
+                          Running in Mock Mode. Restart your Next.js server after adding `.env.local` to connect to Supabase.
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex justify-end gap-2 mt-1">
                     <button
                       type="button"
                       onClick={handleClearMockData}
-                      className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm shadow-amber-600/10 active:scale-95 transition-all cursor-pointer"
+                      className="mt-1 px-3 py-1.5 text-[10px] font-bold uppercase bg-amber-600 hover:bg-amber-700 text-white rounded-lg self-end"
                     >
                       Clear Mock DB
                     </button>
                   </div>
-                </div>
-              )}
-
-              {/* Error/Success Messages Inside Card */}
-              <AnimatePresence mode="wait">
-                {error && (
-                  <motion.div key="error-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-start gap-2.5 rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-xs text-red-650 font-semibold shrink-0 text-left">
-                    <AlertCircle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
-                    <span>{error}</span>
-                  </motion.div>
                 )}
-                {success && (
-                  <motion.div key="success-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-start gap-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3 text-xs text-emerald-600 font-semibold shrink-0 text-left">
-                    <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
-                    <span>{success}</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
-              {/* Form Fields */}
-              <div className="space-y-4">
-                <div className="flex flex-col gap-1 text-left">
-                  <label htmlFor="email" className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Email Address or Phone Number *</label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
+                <AnimatePresence mode="wait">
+                  {error && (
+                    <motion.div key="error-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="mb-4 flex items-start gap-2.5 rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-xs text-red-600 font-semibold shrink-0 text-left">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+                      <span>{error}</span>
+                    </motion.div>
+                  )}
+                  {success && (
+                    <motion.div key="success-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="mb-4 flex items-start gap-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3 text-xs text-emerald-600 font-semibold shrink-0 text-left">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+                      <span>{success}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <form onSubmit={handleLogin}>
+                  <div className="floating-field">
                     <input
+                      type="email"
                       id="email"
-                      type="text"
+                      placeholder=" "
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      className="w-full pl-11 pr-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-450"
-                      placeholder="Enter email address or phone number"
+                      autoComplete="email"
                     />
+                    <label htmlFor="email">Corporate Email Address</label>
                   </div>
-                </div>
 
-                <div className="flex flex-col gap-1 text-left">
-                  <div className="flex justify-between items-center px-1 mb-0.5">
-                    <label htmlFor="password" className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider">Password *</label>
-                  </div>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
+                  <div className="floating-field">
                     <input
-                      id="password"
                       type={showPassword ? "text" : "password"}
+                      id="password"
+                      placeholder=" "
                       required
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className="w-full pl-11 pr-11 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:bg-white focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-450"
-                      placeholder="••••••••"
+                      className="has-icon"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer focus:outline-none">
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <label htmlFor="password">Security Password</label>
+                    <button 
+                      type="button" 
+                      onClick={() => setShowPassword(!showPassword)} 
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
-                  <div className="flex justify-end mt-1.5 px-1">
-                    <Link href="/auth/forgot-password" className="text-[10px] text-[#FF7A00] hover:text-[#E66E00] font-bold uppercase tracking-wide focus:outline-none">
-                      Forgot Password?
+
+                  <div className="utilities">
+                    <label className="remember-toggle">
+                      <input type="checkbox" />
+                      Keep me signed in
+                    </label>
+                    <Link href="/auth/forgot-password" className="forgot-link">
+                      Forgot?
                     </Link>
                   </div>
-                </div>
+
+                  <button type="submit" disabled={loading} className="submit-btn">
+                    {loading ? "Verifying..." : "Sign In"}
+                  </button>
+
+                  <div className="social-divider">New Here</div>
+
+                  <Link href="/auth/register" className="register-btn">
+                    Register Now
+                  </Link>
+                </form>
               </div>
-
-              {/* Actions */}
-              <div className="pt-2 shrink-0">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 h-[56px] rounded-[14px] bg-[#F9B300] hover:bg-[#E6A500] disabled:bg-zinc-150 disabled:text-zinc-400 disabled:cursor-not-allowed px-6 text-sm font-extrabold text-zinc-800 transition-all cursor-pointer shadow-xs active:scale-95"
-                >
-                  {loading ? "Verifying Session..." : "Sign In"}
-                  <ArrowRight className="h-4.5 w-4.5 stroke-[3.5]" />
-                </button>
-              </div>
-            </form>
-
-            {/* Mobile Register Link */}
-            <div className="mt-5 pt-4 border-t border-zinc-100 text-center text-xs md:hidden shrink-0">
-              <span className="text-zinc-500 font-medium">New to IQIntern? </span>
-              <Link href="/auth/register" className="text-[#FF7A00] hover:text-[#E66E00] font-bold transition-colors">
-                Create an Account
-              </Link>
-            </div>
-
+            </section>
           </div>
+        </main>
+
+        {/* Desktop-only Footer */}
+        <div className="hidden md:block w-full z-10 relative">
+          <Footer />
         </div>
-      </main>
-
-      {/* Desktop-only Footer */}
-      <div className="hidden md:block w-full">
-        <Footer />
       </div>
-
-    </div>
+    </>
   );
 }
