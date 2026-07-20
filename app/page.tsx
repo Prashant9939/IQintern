@@ -50,11 +50,11 @@ import { useState } from "react";
 const iconsPool = [GraduationCap, BookOpen, Award, ShieldCheck, FileText];
 const floatingIcons = Array.from({ length: 20 }, (_, idx) => {
   const Icon = iconsPool[idx % iconsPool.length];
-  const top = `${(idx * 4.8) + 2}%`; 
-  const left = `${((idx * 23) % 94) + 3}%`; 
-  const size = ((idx * 3) % 8) + 16; 
-  const delay = `${((idx * 0.2) % 6).toFixed(2)}s`; 
-  const duration = `${(((idx * 1.5) % 8) + 10).toFixed(2)}s`; 
+  const top = `${(idx * 4.8) + 2}%`;
+  const left = `${((idx * 23) % 94) + 3}%`;
+  const size = ((idx * 3) % 8) + 16;
+  const delay = `${((idx * 0.2) % 6).toFixed(2)}s`;
+  const duration = `${(((idx * 1.5) % 8) + 10).toFixed(2)}s`;
   return {
     icon: Icon,
     top,
@@ -110,7 +110,7 @@ export default function Home() {
     },
     {
       num: "03",
-      badge: "120 hr",
+      badge: "120 Hours",
       badgeColor: "bg-blue-500/20 text-blue-300",
       title: "Structured Curriculum Study",
       desc: "Secure registration pipeline setup through integrated gateway payment structures.",
@@ -118,7 +118,7 @@ export default function Home() {
     },
     {
       num: "04",
-      badge: "120 Hours",
+      badge: "Training",
       badgeColor: "bg-blue-500/20 text-blue-300",
       title: "Hands-on Project Builds",
       desc: "Dive into rigorous training modules, framework templates, and benchmark modules.",
@@ -239,9 +239,9 @@ export default function Home() {
         {/* 1. HERO SECTION */}
         <section className="mx-auto max-w-7xl px-4 pt-32 pb-20 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-16 min-h-[70vh]">
-            
+
             {/* Left Column: Rebranded Heading & CTAs */}
-            <div className="flex-grow lg:w-1/2 text-left space-y-7 animate-slide-up">
+            <div className="flex-grow lg:w-1/2 text-center justify-center space-y-7 animate-slide-up">
               <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FFE699] bg-[#FFF9ED] px-4 py-1.5 text-xs font-bold text-[#F9B300] shadow-xs">
                 <Sparkles className="h-3.5 w-3.5 text-[#F9B300]" />
                 <span>Professional Training & Evaluation Hub</span>
@@ -252,11 +252,11 @@ export default function Home() {
                 <span className="text-[#FF7A00]">Accelerate Your Career.</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-zinc-500 font-light leading-relaxed max-w-xl">
+              <p className="mx-auto max-w-xl text-center text-base sm:text-lg text-zinc-500 font-light leading-relaxed">
                 Ditch basic attendance certificates. Enroll in industry-aligned professional training paths, validate your domain skills through timed assessments, and build verifiable credentials.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                 <Link
                   href="/auth/register"
                   className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-8 py-4 text-sm font-bold text-zinc-900 transition-all cursor-pointer shadow-sm active:scale-98"
@@ -273,66 +273,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Flat Mockup Preview */}
-            <div className="w-full lg:w-1/2 flex justify-center animate-slide-up" style={{ animationDelay: "150ms" }}>
-              <div className="relative w-full max-w-lg aspect-[4/3] bg-white border border-zinc-200 rounded-3xl shadow-xl overflow-hidden animate-float">
-                {/* Header of Mockup */}
-                <div className="flex h-12 items-center justify-between px-5 border-b border-zinc-200 bg-[#FFF9ED]">
-                  <div className="flex gap-1.5">
-                    <span className="h-3 w-3 rounded-full bg-zinc-200" />
-                    <span className="h-3 w-3 rounded-full bg-zinc-200" />
-                    <span className="h-3 w-3 rounded-full bg-zinc-200" />
-                  </div>
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">IQIntern Console</span>
-                  <span className="h-5 px-3 rounded-full bg-white border border-[#E9D8B4] flex items-center justify-center text-[9px] text-[#FF7A00] font-extrabold uppercase">Verified View</span>
-                </div>
 
-                {/* Dashboard grid */}
-                <div className="p-6 grid grid-cols-3 gap-5 h-[calc(100%-3rem)] bg-white text-left">
-                  {/* Left Mini Sidebar */}
-                  <div className="col-span-1 border-r border-zinc-100 pr-4 space-y-3.5 text-[10px] font-bold text-zinc-500">
-                    <div className="p-2.5 rounded-xl bg-[#F9B300] text-zinc-900 flex items-center gap-1.5 shadow-xs">
-                      <BarChart2 className="h-3.5 w-3.5" />
-                      <span>Overview</span>
-                    </div>
-                    <div className="p-2.5 rounded-xl hover:bg-[#FFF9ED] flex items-center gap-1.5 transition-all cursor-pointer hover:text-zinc-800">
-                      <Briefcase className="h-3.5 w-3.5 text-[#FF7A00]" />
-                      <span>Programs</span>
-                    </div>
-                    <div className="p-2.5 rounded-xl hover:bg-[#FFF9ED] flex items-center gap-1.5 transition-all cursor-pointer hover:text-zinc-800">
-                      <Award className="h-3.5 w-3.5 text-[#FF7A00]" />
-                      <span>Credentials</span>
-                    </div>
-                  </div>
-
-                  {/* Right Core Data */}
-                  <div className="col-span-2 space-y-4">
-                    <div className="p-4 bg-[#FFF9ED] border border-[#F3E8D1] rounded-2xl space-y-1">
-                      <p className="text-[8px] font-extrabold text-[#FF7A00] uppercase tracking-wider">Candidate Progress</p>
-                      <p className="text-xs font-black text-zinc-900">Rahul Sharma</p>
-                    </div>
-
-                    <div className="p-4 border border-zinc-200 rounded-2xl space-y-2.5 bg-white">
-                      <div className="flex justify-between text-[9px] font-extrabold">
-                        <span className="text-zinc-500">Full Stack Track</span>
-                        <span className="text-[#F9B305] font-black">78% Complete</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#FF7A00] w-[78%] rounded-full" />
-                      </div>
-                    </div>
-
-                    <div className="p-3 border border-[#E9D8B4] bg-[#FFF9ED] rounded-2xl flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <p className="text-[8px] font-extrabold text-zinc-500 uppercase">Assessment ID</p>
-                        <p className="text-[10px] font-black text-zinc-800 font-mono">TR-2026-REACT</p>
-                      </div>
-                      <span className="h-5.5 px-2.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-250 text-[8px] font-bold flex items-center justify-center shrink-0 uppercase">Passed</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
           </div>
         </section>
@@ -358,7 +299,7 @@ export default function Home() {
         </section>        {/* 3. TRAINING JOURNEY SECTION */}
         <section className="bg-[#122244] text-white py-20 border-y border-blue-900/40 relative z-10 selection:bg-blue-500 selection:text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             {/* Heading */}
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
@@ -380,9 +321,8 @@ export default function Home() {
                 return (
                   <div
                     key={idx}
-                    className={`mb-12 flex justify-between items-center w-full group relative ${
-                      isLeft ? "md:flex-row-reverse" : ""
-                    }`}
+                    className={`mb-12 flex justify-between items-center w-full group relative ${isLeft ? "md:flex-row-reverse" : ""
+                      }`}
                   >
                     {/* Spacer for desktop layout */}
                     <div className="order-1 w-5/12 hidden md:block"></div>
@@ -413,7 +353,7 @@ export default function Home() {
             {/* Footer CTA Box */}
             <div className="mt-16 bg-[#1a2d54] border border-blue-900/60 rounded-2xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
               <h3 className="text-3xl md:text-4xl font-bold mb-4 text-white">Start Your Internship Journey Today</h3>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
                 <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
                   <strong>UGC-aligned</strong>
@@ -468,155 +408,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. PROFESSIONAL TRAINING PROGRAMS SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200">
-          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
-            <span className="text-xs text-[#F9B300] font-bold uppercase tracking-wider bg-[#FFF9ED] px-3 py-1 rounded-full border border-[#FFE699]">Domain Certifications</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              Professional Training Programs
-            </h2>
-            <p className="text-zinc-500 text-sm font-light">
-              Choose your career track. Complete conceptual builds and pass verified requirements to unlock credentials.
-            </p>
-          </div>
 
-          {/* Category Tabs */}
-          <div className="flex justify-center mb-10">
-            <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 p-1.5 rounded-2xl max-w-full overflow-x-auto shadow-xs">
-              {["Engineering", "Development", "Data & AI", "Security", "Business", "Design"].map((cat) => {
-                const isActive = activeTrackCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => {
-                      setActiveTrackCategory(cat);
-                      setIsExpanded(false);
-                    }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer whitespace-nowrap border ${isActive
-                        ? "bg-white text-[#FF7A00] shadow-xs border-zinc-200/80"
-                        : "text-zinc-500 hover:text-zinc-800 hover:bg-white border-transparent"
-                      }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Featured & List Programs */}
-          {(() => {
-            const activeCategoryTracks = tracks.filter(track => {
-              if (activeTrackCategory === "Business") {
-                return track.category === "Business" || track.category === "Management";
-              }
-              return track.category === activeTrackCategory;
-            });
-            const featuredTrack = activeCategoryTracks[0];
-            const relatedTracks = activeCategoryTracks.slice(1);
-
-            return (
-              <div className="space-y-8">
-                {featuredTrack && (
-                  <div className="max-w-4xl mx-auto">
-                    <div className="group relative rounded-3xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md hover:border-[#FF7A00]/30 text-left">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                        <div className="space-y-4 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-150 rounded-full px-2.5 py-0.5 uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                              <Check className="h-3 w-3 stroke-[3]" />
-                              Vetted Curriculum
-                            </span>
-                            <span className="text-[10px] font-extrabold text-[#FF7A00] bg-[#FFF3EB] border border-[#FFE0CC] rounded-full px-2.5 py-0.5 uppercase tracking-wider">
-                              Popular Program
-                            </span>
-                          </div>
-
-                          <h3 className="text-xl sm:text-2xl font-black text-zinc-900 group-hover:text-[#FF7A00] transition-colors">
-                            {featuredTrack.title}
-                          </h3>
-
-                          {/* Metadata */}
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-zinc-100 pt-4 text-xs font-light text-zinc-500">
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0">
-                                <Clock className="h-4 w-4 text-[#F9B300]" />
-                              </div>
-                              <div className="text-left">
-                                <span className="text-[9px] text-zinc-400 font-extrabold uppercase block">Duration</span>
-                                <strong className="text-zinc-700 font-bold">{featuredTrack.duration}</strong>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0">
-                                <GraduationCap className="h-4 w-4 text-[#FF7A00]" />
-                              </div>
-                              <div className="text-left">
-                                <span className="text-[9px] text-zinc-400 font-extrabold uppercase block">Level</span>
-                                <strong className="text-zinc-700 font-bold">{featuredTrack.level}</strong>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0">
-                                <Sparkles className="h-4 w-4 text-[#FF7A00]" />
-                              </div>
-                              <div className="text-left">
-                                <span className="text-[9px] text-zinc-400 font-extrabold uppercase block">Deliverables</span>
-                                <strong className="text-zinc-700 font-bold">{featuredTrack.projects}</strong>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center items-stretch md:items-end gap-3 shrink-0 w-full md:w-auto">
-                          <Link
-                            href="/auth/register"
-                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-6 py-3.5 text-xs font-bold text-zinc-900 shadow-sm transition-all text-center"
-                          >
-                            Enroll in Track
-                            <ArrowRight className="h-3.5 w-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {relatedTracks.length > 0 && (
-                  <div className="max-w-4xl mx-auto mt-6">
-                    <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest text-left mb-3 px-2">
-                      Additional {activeTrackCategory} Programs
-                    </h4>
-
-                    <div className="bg-white border border-zinc-200 rounded-2xl p-2 shadow-xs space-y-1 text-left">
-                      {relatedTracks.slice(0, 1).map((track, rIdx) => renderTrackRow(track, rIdx))}
-
-                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
-                        <div className="space-y-1 pt-1 border-t border-zinc-100 mt-1">
-                          {relatedTracks.slice(1).map((track, rIdx) => renderTrackRow(track, rIdx + 1))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {relatedTracks.length > 1 && (
-                      <div className="flex justify-center mt-6">
-                        <button
-                          onClick={() => setIsExpanded(!isExpanded)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-500 hover:text-zinc-800 text-xs font-bold shadow-xs transition-all cursor-pointer"
-                        >
-                          <span>{isExpanded ? "Show Less" : `Explore ${relatedTracks.length - 1} More Program${relatedTracks.length > 2 ? "s" : ""}`}</span>
-                          <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-        </section>
 
         {/* 5. LEARNING OUTCOMES SECTION */}
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/20">
