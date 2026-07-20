@@ -1,7 +1,8 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
 import { BRANDING } from "@/config/branding";

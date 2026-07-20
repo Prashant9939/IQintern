@@ -155,8 +155,6 @@ html {
   font-size: 17px;
   /* Smooth native scroll throughout the entire page */
   scroll-behavior: smooth;
-  /* Prevent overscroll bounce from causing layout thrash */
-  overscroll-behavior: none;
 }
 
 @media (min-width: 768px) {
@@ -787,9 +785,6 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  /* Promote body to its own compositing layer to avoid scroll repaint */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
 }
 
 /* Honeycomb Pattern — GPU-isolated to avoid scroll repaint */
@@ -810,8 +805,6 @@ body::before {
   /* Fade via opacity gradient on a wrapper div rather than mask-image to avoid GPU composite cost */
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-  /* Keep on its own GPU layer */
-  will-change: transform;
 }
 
 /* Radial light overlay — GPU-isolated, no blur filter (main scroll jank fix) */
@@ -827,7 +820,6 @@ body::after {
     radial-gradient(ellipse 80% 60% at top left, rgba(249, 179, 0, 0.10) 0%, transparent 60%),
     radial-gradient(ellipse 80% 60% at top right, rgba(255, 122, 0, 0.10) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at center, rgba(255, 255, 255, 0.5) 0%, transparent 65%);
-  will-change: transform;
 }
 
 /* GPU-Accelerated Floating Background Icons */
@@ -846,7 +838,6 @@ body::after {
 .float-bg-icon {
   animation: floatSymbol var(--duration, 10s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
-  will-change: transform;
 }
 
 /* ==========================================

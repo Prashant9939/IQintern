@@ -7,7 +7,8 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 import {
   Award,
   ShieldCheck,
@@ -37,16 +38,19 @@ import {
   FolderOpen,
   Lock,
   Eye,
-  Download
+  Download,
+  User,
+  SlidersHorizontal,
+  Bookmark
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 // Subtle ambient icon backgrounds for a modern premium feel
 const iconsPool = [GraduationCap, BookOpen, Award, ShieldCheck, FileText];
-const floatingIcons = Array.from({ length: 80 }, (_, idx) => {
+const floatingIcons = Array.from({ length: 20 }, (_, idx) => {
   const Icon = iconsPool[idx % iconsPool.length];
-  const top = `${(idx * 1.2) + 2}%`; 
+  const top = `${(idx * 4.8) + 2}%`; 
   const left = `${((idx * 23) % 94) + 3}%`; 
   const size = ((idx * 3) % 8) + 16; 
   const delay = `${((idx * 0.2) % 6).toFixed(2)}s`; 
@@ -88,13 +92,54 @@ export default function Home() {
   ];
 
   const journeySteps = [
-    { num: "01", title: "Diagnostic Onboarding", desc: "Establish your profile stream and verify credentials in under 2 minutes." },
-    { num: "02", title: "Track Selection", desc: "Choose from 25+ structured, industry-mapped professional curriculums." },
-    { num: "03", title: "Structured Curriculum Study", desc: "Dive into rigorous design frameworks, references, and benchmark guidelines." },
-    { num: "04", title: "Hands-on Project Builds", desc: "Apply learnings by completing robust practical codebases and operational templates." },
-    { num: "05", title: "Secure Timed Evaluations", desc: "Take standard timed MCQ assessments protected by tab-switching check algorithms." },
-    { num: "06", title: "Credential Verification", desc: "Pass with 40% or higher to generate secure, verifiable PDF certificates instantly." },
-    { num: "07", title: "Recruiter Engagement", desc: "Expose your verified scorecard metrics to corporate recruitment channels." }
+    {
+      num: "01",
+      badge: "< 2 Mins",
+      badgeColor: "bg-blue-500/20 text-blue-300",
+      title: "Easy Registration",
+      desc: "Establish your profile stream and verify credentials in under 2 minutes.",
+      icon: User
+    },
+    {
+      num: "02",
+      badge: "Tracks",
+      badgeColor: "bg-blue-500/20 text-blue-300",
+      title: "Secure Payment",
+      desc: "Pay securely via RazorPay with multiple payment options and instant confirmation.",
+      icon: SlidersHorizontal
+    },
+    {
+      num: "03",
+      badge: "120 hr",
+      badgeColor: "bg-blue-500/20 text-blue-300",
+      title: "Structured Curriculum Study",
+      desc: "Secure registration pipeline setup through integrated gateway payment structures.",
+      icon: CreditCard
+    },
+    {
+      num: "04",
+      badge: "120 Hours",
+      badgeColor: "bg-blue-500/20 text-blue-300",
+      title: "Hands-on Project Builds",
+      desc: "Dive into rigorous training modules, framework templates, and benchmark modules.",
+      icon: Bookmark
+    },
+    {
+      num: "05",
+      badge: "60 Mins",
+      badgeColor: "bg-blue-500/20 text-blue-300",
+      title: "Secure Timed Evaluations",
+      desc: "Take standard timed MCQ assessments protected by tab-switching check algorithms.",
+      icon: FileText
+    },
+    {
+      num: "06",
+      badge: "Instant",
+      badgeColor: "bg-emerald-500/20 text-emerald-350",
+      title: "Instant Certification",
+      desc: "Pass with 40% or higher to generate secure, verifiable PDF certificates instantly.",
+      icon: Award
+    }
   ];
 
   const mentors = [
@@ -310,58 +355,116 @@ export default function Home() {
               );
             })}
           </div>
-        </section>
+        </section>        {/* 3. TRAINING JOURNEY SECTION */}
+        <section className="bg-[#122244] text-white py-20 border-y border-blue-900/40 relative z-10 selection:bg-blue-500 selection:text-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* Heading */}
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+                The Professional <span className="text-amber-400">Training Journey</span>
+              </h2>
+              <p className="text-gray-300 mt-3 max-w-2xl mx-auto text-sm md:text-base opacity-80">
+                Follow our step-by-step vocational pipeline to qualify, validate your skills, and earn your verified credentials.
+              </p>
+            </div>
 
-        {/* 3. TRAINING JOURNEY SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <span className="text-xs text-[#FF7A00] font-bold uppercase tracking-wider bg-[#FFF3EB] px-3 py-1 rounded-full border border-[#FFE0CC]">Interactive Pathway</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              The Professional Training Journey
-            </h2>
-            <p className="text-zinc-500 text-sm font-light">
-              Follow our step-by-step vocational pipeline to qualify, validate your skills, and earn your verified credentials.
-            </p>
-          </div>
+            {/* Interactive Vertical Timeline */}
+            <div className="relative wrap overflow-hidden p-0 md:py-10 h-full">
+              {/* Center Line */}
+              <div className="absolute border-opacity-30 border-blue-400 h-[calc(100%-120px)] border left-[22px] md:left-1/2 -translate-x-1/2"></div>
 
-          <div className="relative max-w-5xl mx-auto space-y-8 lg:space-y-12">
-            {/* Timeline Vertical Line */}
-            <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-4 bottom-4 w-0.5 bg-zinc-200 rounded-full z-0 opacity-80" />
+              {journeySteps.map((step, idx) => {
+                const isLeft = idx % 2 === 1;
+                const Icon = step.icon;
+                return (
+                  <div
+                    key={idx}
+                    className={`mb-12 flex justify-between items-center w-full group relative ${
+                      isLeft ? "md:flex-row-reverse" : ""
+                    }`}
+                  >
+                    {/* Spacer for desktop layout */}
+                    <div className="order-1 w-5/12 hidden md:block"></div>
 
-            {journeySteps.map((step, idx) => {
-              const isRight = idx % 2 === 1;
-              return (
-                <div
-                  key={idx}
-                  className={`relative flex flex-col lg:flex-row items-start lg:items-center justify-between w-full ${isRight ? "lg:flex-row-reverse" : ""}`}
-                >
-                  {/* Timeline Connector Node (Middle) */}
-                  <div className="absolute left-[20px] lg:left-1/2 -translate-x-1/2 top-5 lg:top-auto z-10 flex items-center justify-center">
-                    <span className="relative flex h-5 w-5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF7A00] opacity-40"></span>
-                      <span className="relative inline-flex rounded-full h-5 w-5 bg-white border-4 border-[#FF7A00] shadow-sm"></span>
-                    </span>
-                  </div>
+                    {/* Step Icon Node */}
+                    <div className="z-20 flex items-center order-1 bg-[#1a2d54] border-2 border-blue-400/60 shadow-[0_0_12px_rgba(96,165,250,0.3)] w-11 h-11 rounded-xl justify-center text-amber-400 absolute left-0 md:left-1/2 md:-translate-x-1/2">
+                      <Icon className="h-4.5 w-4.5" />
+                    </div>
 
-                  {/* Timeline Card Container */}
-                  <div className="w-full lg:w-[calc(50%-2rem)] pl-12 lg:pl-0">
-                    <div className="rounded-2xl p-5 border border-zinc-200 hover:border-[#FF7A00]/40 bg-white hover:shadow-md transition-all duration-300 space-y-3 text-left">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-[#FF7A00] bg-[#FFF3EB] rounded-xl px-2.5 py-0.5 border border-[#FFE0CC] font-mono">{step.num}</span>
-                        <span className="text-[9px] font-extrabold text-zinc-400 uppercase tracking-widest">Phase {idx + 1}</span>
+                    {/* Timeline Card */}
+                    <div className="order-1 bg-[#1a2d54]/60 border border-blue-900/50 rounded-xl shadow-xl w-full md:w-[44%] px-6 py-6 ml-14 md:ml-0 hover:border-blue-400/40 transition-all duration-300 text-left">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-amber-400/80 font-medium tracking-wider uppercase">
+                          Phase {idx + 1}
+                        </span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${step.badgeColor}`}>
+                          {step.badge}
+                        </span>
                       </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-zinc-800 mb-1">{step.title}</h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed font-light">{step.desc}</p>
-                      </div>
+                      <h3 className="font-bold text-white text-xl mb-1">{step.title}</h3>
+                      <p className="text-base text-gray-400 leading-relaxed font-light">{step.desc}</p>
                     </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* Spacer for desktop layout alignment */}
-                  <div className="hidden lg:block w-[calc(50%-2rem)]" />
+            {/* Footer CTA Box */}
+            <div className="mt-16 bg-[#1a2d54] border border-blue-900/60 rounded-2xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
+              <h3 className="text-3xl md:text-4xl font-bold mb-4 text-white">Start Your Internship Journey Today</h3>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
+                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
+                  <strong>UGC-aligned</strong>
+                  <br />
+                  Certificate
                 </div>
-              );
-            })}
+                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
+                  <strong>Flexible</strong>
+                  <br />
+                  Duration
+                </div>
+                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
+                  <strong>10+ Subjects</strong>
+                  <br />
+                  Curriculum
+                </div>
+                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
+                  <strong>Anywhere</strong>
+                  <br />
+                  Access
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+                <Link
+                  href="/auth/register"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#122244] font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-colors inline-flex justify-center items-center gap-2 text-sm"
+                >
+                  Register Now <ArrowRight className="h-4 w-4 text-[#122244]" />
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-transparent border border-gray-500 text-white font-bold rounded-xl hover:bg-white/5 transition-colors text-sm"
+                >
+                  View Membership Plans
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4 text-emerald-400" /> Instant Offer Letter
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4 text-emerald-400" /> Automated Certificate
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4 text-emerald-400" /> Digital Signature
+                </span>
+              </div>
+            </div>
+
           </div>
         </section>
 
