@@ -38,11 +38,11 @@ Certificates of Completion or Certificates of Excellence are awarded solely at o
   for (let i = 1; i <= 35; i++) {
     const randomSection = sections[i % sections.length];
     paragraphs.push(
-      \`<section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Section \${i}: Comprehensive Provision and Stipulations</h2>
-        <p className="mb-4">\${randomSection}</p>
-        <p className="mb-4">\${sections[(i + 1) % sections.length]}</p>
-      </section>\`
+      `<section className="mb-8">
+        <h2 className="text-xl font-bold mb-4">Section ${i}: Comprehensive Provision and Stipulations</h2>
+        <p className="mb-4">${randomSection}</p>
+        <p className="mb-4">${sections[(i + 1) % sections.length]}</p>
+      </section>`
     );
   }
 

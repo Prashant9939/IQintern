@@ -107,8 +107,9 @@ export async function sendWelcomeEmail({ email, fullName, userId }: WelcomeEmail
     }
 
     return { success: true, messageId: info.messageId, previewUrl };
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Failed to send welcome email to ${email}:`, error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     // 7. Log failure to database (if configured)
     if (studentId && isSupabaseConfigured() && supabase) {
@@ -118,7 +119,7 @@ export async function sendWelcomeEmail({ email, fullName, userId }: WelcomeEmail
           recipient_email: email,
           subject,
           status: 'failed',
-          error_message: error.message,
+          error_message: errorMessage,
           template_name: templateName,
         });
       } catch (logErr) {
@@ -126,6 +127,6 @@ export async function sendWelcomeEmail({ email, fullName, userId }: WelcomeEmail
       }
     }
 
-    return { success: false, error: error.message };
+    return { success: false, error: errorMessage };
   }
 }

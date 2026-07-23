@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Search,
   CheckCircle,
@@ -19,6 +18,24 @@ import Navbar from "@/components/Navbar";
 import dynamic from "next/dynamic";
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 
+interface VerificationResult {
+  success: boolean;
+  verificationId: string;
+  documentType: string;
+  generatedAt: string;
+  status?: string;
+  candidate?: {
+    name?: string;
+    registrationNumber?: string;
+    course?: string;
+    semester?: string | number;
+    college?: string;
+  };
+  internship?: {
+    title?: string;
+  };
+}
+
 function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -29,10 +46,16 @@ function VerifyContent() {
   const initialId = certificate || reference || queryId;
 
   const [searchId, setSearchId] = useState(initialId);
+  const [prevInitialId, setPrevInitialId] = useState(initialId);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<VerificationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [verifiedTime, setVerifiedTime] = useState("");
+
+  if (initialId !== prevInitialId) {
+    setPrevInitialId(initialId);
+    setSearchId(initialId);
+  }
 
   const fetchVerification = async (idToVerify: string) => {
     if (!idToVerify.trim()) return;
@@ -50,7 +73,7 @@ function VerifyContent() {
       } else {
         setError(data.error || "Document not found or invalid verification ID.");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while contacting the verification server.");
     } finally {
       setLoading(false);
@@ -59,7 +82,6 @@ function VerifyContent() {
 
   useEffect(() => {
     if (initialId) {
-      setSearchId(initialId);
       fetchVerification(initialId);
     }
   }, [initialId]);
@@ -194,7 +216,7 @@ function VerifyContent() {
                   </div>
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wide">
                     <FileText className="h-3 w-3" />
-                    {documentTypeMap[result.documentType] || result.documentType.replace(/_/g, ' ')}
+                    {(result.documentType && documentTypeMap[result.documentType]) || result.documentType?.replace(/_/g, ' ') || 'Document'}
                   </span>
                 </div>
 
@@ -204,19 +226,19 @@ function VerifyContent() {
                   <div className="space-y-4">
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Student Name</span>
-                      <span className="text-sm font-black text-slate-900">{result.candidate.name}</span>
+                      <span className="text-sm font-black text-slate-900">{result.candidate?.name || 'N/A'}</span>
                     </div>
 
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Registration ID</span>
-                      <span className="text-xs font-mono font-bold text-slate-700 mt-0.5 block">{result.candidate.registrationNumber || 'N/A'}</span>
+                      <span className="text-xs font-mono font-bold text-slate-700 mt-0.5 block">{result.candidate?.registrationNumber || 'N/A'}</span>
                     </div>
 
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Course / Degree</span>
                       <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mt-0.5">
                         <GraduationCap className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                        {result.candidate.course} (Semester {result.candidate.semester})
+                        {result.candidate?.course || 'N/A'} {result.candidate?.semester ? `(Semester ${result.candidate.semester})` : ''}
                       </span>
                     </div>
 
@@ -224,7 +246,7 @@ function VerifyContent() {
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">College / University</span>
                       <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mt-0.5">
                         <Building className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                        {result.candidate.college}
+                        {result.candidate?.college || 'N/A'}
                       </span>
                     </div>
                   </div>
@@ -233,13 +255,13 @@ function VerifyContent() {
                   <div className="space-y-4">
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Internship Name</span>
-                      <span className="text-sm font-black text-slate-900">{result.internship.title}</span>
+                      <span className="text-sm font-black text-slate-900">{result.internship?.title || 'N/A'}</span>
                     </div>
 
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Document Type</span>
                       <span className="text-xs font-bold text-slate-700 mt-0.5 block">
-                        {documentTypeMap[result.documentType] || result.documentType.replace(/_/g, ' ')}
+                        {(result.documentType && documentTypeMap[result.documentType]) || result.documentType?.replace(/_/g, ' ') || 'Document'}
                       </span>
                     </div>
 
@@ -252,7 +274,7 @@ function VerifyContent() {
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Issue Date</span>
                       <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mt-0.5">
                         <Calendar className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                        {new Date(result.generatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {result.generatedAt ? new Date(result.generatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}
                       </span>
                     </div>
                   </div>

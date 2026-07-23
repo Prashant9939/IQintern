@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: 'Rubik', sans-serif;
+  --font-sans: 'Inter', 'Rubik', sans-serif;
+  --font-display: 'Outfit', sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
   /* =========================
@@ -152,23 +153,22 @@
 }
 
 html {
-  font-size: 17px;
+  font-size: 16px;
   /* Smooth native scroll throughout the entire page */
   scroll-behavior: smooth;
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 
 html,
 body {
-  overflow-x: hidden;
   width: 100%;
-  /* Do NOT add overflow: hidden here — it prevents iOS Safari scroll lock from working.
-     Scroll locking is handled in JS via position:fixed on body. */
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -178,8 +178,8 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -782,7 +782,7 @@ body {
   /* fixed: prevents gradient from repainting on scroll */
   background-attachment: fixed;
   background-size: cover;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   overflow-x: hidden;
 }
@@ -795,7 +795,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 35vh;
+  height: 20vh;
   pointer-events: none;
   z-index: -1;
   opacity: 0.07;
@@ -803,8 +803,8 @@ body::before {
   background-size: 80px 70px;
   background-repeat: repeat;
   /* Fade via opacity gradient on a wrapper div rather than mask-image to avoid GPU composite cost */
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
 }
 
 /* Radial light overlay — GPU-isolated, no blur filter (main scroll jank fix) */
@@ -855,15 +855,14 @@ body::after {
   background-color: #111111 !important;
   color: #ffffff !important;
   border-top: 1px solid rgba(249, 179, 0, 0.25) !important;
-  border-radius: 48px 48px 0 0 !important;
+  border-radius: 36px 36px 0 0 !important;
   border-left: 0 !important;
   border-right: 0 !important;
   border-bottom: 0 !important;
-  padding: 60px 24px 40px 24px !important;
+  padding: 40px 24px 28px 24px !important;
   width: 100% !important;
   margin: 0 !important;
   box-shadow: 0 -25px 60px -15px rgba(0, 0, 0, 0.6) !important;
-  margin-bottom: -20px !important;
   position: relative;
 }
 
@@ -872,10 +871,10 @@ body::after {
   background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid rgba(255, 255, 255, 0.07) !important;
   border-radius: 16px !important;
-  padding: 28px !important;
+  padding: 20px !important;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   box-sizing: border-box;
 }
 
@@ -910,4 +909,108 @@ body::after {
   border-color: #F9B300 !important;
   transform: translateY(-3px) scale(1.1) !important;
   box-shadow: 0 5px 15px rgba(249, 179, 0, 0.4) !important;
+}
+
+/* ==========================================
+   EXACT TYPOGRAPHY SYSTEM UTILITIES
+   ========================================== */
+
+/* Hero Display: Outfit 72px / 800 weight / 75.6px line-height / -1.8px letter-spacing */
+.text-hero-display {
+  font-family: var(--font-display), 'Outfit', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 75.6px;
+  letter-spacing: -1.8px;
+}
+
+@media (max-width: 768px) {
+  .text-hero-display {
+    font-size: 42px;
+    line-height: 46px;
+    letter-spacing: -1px;
+  }
+}
+
+/* Section-level Heading: Inter 36px / 700 weight / 40px line-height */
+.text-section-heading {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+@media (max-width: 768px) {
+  .text-section-heading {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}
+
+/* Card Heading: Inter 20px / 700 weight / 28px line-height / -0.5px letter-spacing */
+.text-card-heading {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: -0.5px;
+}
+
+/* Subheading: Inter 18px / 600 weight / 28px line-height */
+.text-subheading {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+/* Body Default: Inter 16px / 400 weight / 24px line-height */
+.text-body-default {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+/* Body Relaxed: Inter 16px / 400 weight / 26px line-height */
+.text-body-relaxed {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+}
+
+/* Label Medium: Inter 14px / 600 weight / 20px line-height */
+.text-label-medium {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+/* Label Default: Inter 14px / 400 weight / 20px line-height */
+.text-label-default {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+/* Caption: Inter 12px / 600 weight / 16px line-height / 0.6px letter-spacing */
+.text-caption {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+}
+
+/* Eyebrow: Inter 10px / 700 weight / 15px line-height / 0.5px letter-spacing */
+.text-eyebrow {
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }

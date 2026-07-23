@@ -11,16 +11,18 @@ interface YearComboboxProps {
 }
 
 function YearCombobox({ value, onChange, years, placeholder }: YearComboboxProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(value || "");
+  const [prevValue, setPrevValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
-  // Sync initial and external changes to value
-  useEffect(() => {
+  // Sync external changes to value during render
+  if (value !== prevValue) {
+    setPrevValue(value);
     setSearchTerm(value || "");
-  }, [value]);
+  }
 
   const filteredYears = useMemo(() => {
     if (!searchTerm || searchTerm === value) return years;
@@ -183,13 +185,19 @@ export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSele
   const [day, setDay] = useState(initialParts.day);
   const [month, setMonth] = useState(initialParts.month);
   const [year, setYear] = useState(initialParts.year);
+  const [prevParts, setPrevParts] = useState(initialParts);
 
-  // Sync local states if the parent component sets value externally
-  useEffect(() => {
+  // Sync local states during render if parent component sets value externally
+  if (
+    initialParts.day !== prevParts.day ||
+    initialParts.month !== prevParts.month ||
+    initialParts.year !== prevParts.year
+  ) {
+    setPrevParts(initialParts);
     setDay(initialParts.day);
     setMonth(initialParts.month);
     setYear(initialParts.year);
-  }, [initialParts]);
+  }
 
   // Programmatically generate year range (Current year down to 1950)
   const years = useMemo(() => {
@@ -236,12 +244,10 @@ export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSele
     return 31;
   }, [month, year]);
 
-  // Auto-rollback invalid day values if month/year boundary changes
-  useEffect(() => {
-    if (day && parseInt(day) > maxDays) {
-      setDay(maxDays.toString().padStart(2, "0"));
-    }
-  }, [maxDays, day]);
+  // Auto-rollback invalid day values if month/year boundary changes (performed during render)
+  if (day && parseInt(day, 10) > maxDays) {
+    setDay(maxDays.toString().padStart(2, "0"));
+  }
 
   // Send updates back to the parent form when selection changes
   useEffect(() => {
@@ -250,7 +256,7 @@ export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSele
     } else {
       onChange("");
     }
-  }, [day, month, year]);
+  }, [day, month, year, onChange]);
 
   const daysList = useMemo(() => {
     const list = [];
@@ -267,7 +273,7 @@ export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSele
         <select
           value={day}
           onChange={(e) => setDay(e.target.value)}
-          className="w-full pl-3 pr-8 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 font-semibold cursor-pointer appearance-none focus:bg-white"
+          className="w-full pl-3 pr-8 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 font-semibold cursor-pointer appearance-none focus:bg-white"
           aria-label="Select Day of Birth"
         >
           <option value="">Day</option>
@@ -285,7 +291,7 @@ export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSele
         <select
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="w-full pl-3 pr-8 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#7C3AED] focus:ring-[4px] focus:ring-[#7C3AED]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 font-semibold cursor-pointer appearance-none focus:bg-white"
+          className="w-full pl-3 pr-8 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 font-semibold cursor-pointer appearance-none focus:bg-white"
           aria-label="Select Month of Birth"
         >
           <option value="">Month</option>

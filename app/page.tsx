@@ -142,13 +142,6 @@ export default function Home() {
     }
   ];
 
-  const mentors = [
-    { name: "Srinivas Chary", role: "Principal Cloud Engineer", company: "ex-AWS", initial: "SC" },
-    { name: "Arjun Mehta", role: "Senior ML Research Lead", company: "ex-Google", initial: "AM" },
-    { name: "Dr. Neha Sen", role: "Head of Systems Curriculum", company: "ex-Microsoft", initial: "NS" },
-    { name: "Rohan Das", role: "Product Director", company: "ex-Meta", initial: "RD" }
-  ];
-
   const caseStudies = [
     {
       student: "Priya Patel",
@@ -211,7 +204,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col text-zinc-800 overflow-x-hidden pt-12 bg-white">
       {/* Subtle Floating Ambient Icons */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-20 opacity-30">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0 opacity-30">
         {floatingIcons.map((item, idx) => {
           const Icon = item.icon;
           return (
@@ -221,11 +214,9 @@ export default function Home() {
               style={{
                 top: item.top,
                 left: item.left,
-                // @ts-ignore
                 "--delay": item.delay,
-                // @ts-ignore
                 "--duration": item.duration,
-              }}
+              } as React.CSSProperties}
             >
               <Icon size={item.size} strokeWidth={1.2} />
             </div>
@@ -235,85 +226,78 @@ export default function Home() {
 
       <Navbar />
 
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         {/* 1. HERO SECTION */}
-        <section className="mx-auto max-w-7xl px-4 pt-32 pb-20 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-16 min-h-[70vh]">
-
-            {/* Left Column: Rebranded Heading & CTAs */}
-            <div className="flex-grow lg:w-1/2 text-center justify-center space-y-7 animate-slide-up">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FFE699] bg-[#FFF9ED] px-4 py-1.5 text-xs font-bold text-[#F9B300] shadow-xs">
+        <section className="mx-auto max-w-7xl px-4 pt-14 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-8 min-h-[50vh]">
+            <div className="flex-grow lg:w-1/2 text-center justify-center space-y-4 animate-slide-up">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FFE699] bg-[#FFF9ED] px-3.5 py-1 text-xs font-bold text-[#F9B300] shadow-xs">
                 <Sparkles className="h-3.5 w-3.5 text-[#F9B300]" />
                 <span>Professional Training & Evaluation Hub</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-zinc-900 leading-[1.08]">
+              <h1 className="text-hero-display text-zinc-900">
                 Acquire Verified Skills. <br />
                 <span className="text-[#FF7A00]">Accelerate Your Career.</span>
               </h1>
 
-              <p className="mx-auto max-w-xl text-center text-base sm:text-lg text-zinc-500 font-light leading-relaxed">
+              <p className="mx-auto max-w-xl text-center text-sm sm:text-base text-zinc-500 font-light leading-relaxed">
                 Ditch basic attendance certificates. Enroll in industry-aligned professional training paths, validate your domain skills through timed assessments, and build verifiable credentials.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
                 <Link
                   href="/auth/register"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-8 py-4 text-sm font-bold text-zinc-900 transition-all cursor-pointer shadow-sm active:scale-98"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-7 py-3 text-xs sm:text-sm font-bold text-zinc-900 transition-all cursor-pointer shadow-sm active:scale-98"
                 >
                   Explore Programs
-                  <ArrowRight className="h-4.5 w-4.5" />
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 px-8 py-4 text-sm font-bold text-zinc-700 transition-all shadow-xs cursor-pointer active:scale-98"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 px-7 py-3 text-xs sm:text-sm font-bold text-zinc-700 transition-all shadow-xs cursor-pointer active:scale-98"
                 >
                   Speak With Advisor
                 </Link>
               </div>
             </div>
-
-
-
           </div>
         </section>
 
         {/* 2. TRUST METRICS SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10 border-y border-zinc-200 bg-[#FFF9ED]/30">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 relative z-10 border-y border-zinc-200 bg-[#FFF9ED]/30">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, idx) => {
               const Icon = stat.icon;
               return (
-                <div key={idx} className="flex flex-col items-center justify-center text-center p-4 space-y-2">
-                  <div className="h-10 w-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center shadow-xs">
-                    <Icon className={`h-5 w-5 ${stat.color}`} />
+                <div key={idx} className="flex flex-col items-center justify-center text-center p-3 space-y-1.5">
+                  <div className="h-9 w-9 rounded-full bg-white border border-zinc-200 flex items-center justify-center shadow-xs">
+                    <Icon className={`h-4.5 w-4.5 ${stat.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-3xl font-black text-zinc-900 tracking-tight">{stat.value}</h3>
+                    <h3 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">{stat.value}</h3>
                     <p className="text-xs text-zinc-500 font-light mt-0.5">{stat.label}</p>
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>        {/* 3. TRAINING JOURNEY SECTION */}
-        <section className="bg-[#122244] text-white py-20 border-y border-blue-900/40 relative z-10 selection:bg-blue-500 selection:text-white">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        </section>
 
-            {/* Heading */}
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+        {/* 3. TRAINING JOURNEY SECTION */}
+        <section className="bg-[#122244] text-white py-10 sm:py-12 border-y border-blue-900/40 relative z-10 selection:bg-blue-500 selection:text-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10 space-y-2">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                 The Professional <span className="text-amber-400">Training Journey</span>
               </h2>
-              <p className="text-gray-300 mt-3 max-w-2xl mx-auto text-sm md:text-base opacity-80">
+              <p className="text-gray-300 max-w-2xl mx-auto text-xs md:text-sm opacity-80">
                 Follow our step-by-step vocational pipeline to qualify, validate your skills, and earn your verified credentials.
               </p>
             </div>
 
-            {/* Interactive Vertical Timeline */}
-            <div className="relative wrap overflow-hidden p-0 md:py-10 h-full">
-              {/* Center Line */}
-              <div className="absolute border-opacity-30 border-blue-400 h-[calc(100%-120px)] border left-[22px] md:left-1/2 -translate-x-1/2"></div>
+            <div className="relative wrap overflow-hidden p-0 md:py-6 h-full">
+              <div className="absolute top-6 bottom-6 border-l border-blue-400/30 left-[22px] md:left-1/2 -translate-x-1/2"></div>
 
               {journeySteps.map((step, idx) => {
                 const isLeft = idx % 2 === 1;
@@ -321,144 +305,85 @@ export default function Home() {
                 return (
                   <div
                     key={idx}
-                    className={`mb-12 flex justify-between items-center w-full group relative ${isLeft ? "md:flex-row-reverse" : ""
-                      }`}
+                    className={`mb-8 flex justify-between items-center w-full group relative ${isLeft ? "md:flex-row-reverse" : ""}`}
                   >
-                    {/* Spacer for desktop layout */}
                     <div className="order-1 w-5/12 hidden md:block"></div>
-
-                    {/* Step Icon Node */}
-                    <div className="z-20 flex items-center order-1 bg-[#1a2d54] border-2 border-blue-400/60 shadow-[0_0_12px_rgba(96,165,250,0.3)] w-11 h-11 rounded-xl justify-center text-amber-400 absolute left-0 md:left-1/2 md:-translate-x-1/2">
-                      <Icon className="h-4.5 w-4.5" />
+                    <div className="z-20 flex items-center order-1 bg-[#1a2d54] border-2 border-blue-400/60 shadow-[0_0_12px_rgba(96,165,250,0.3)] w-10 h-10 rounded-xl justify-center text-amber-400 absolute left-0 md:left-1/2 md:-translate-x-1/2">
+                      <Icon className="h-4 w-4" />
                     </div>
-
-                    {/* Timeline Card */}
-                    <div className="order-1 bg-[#1a2d54]/60 border border-blue-900/50 rounded-xl shadow-xl w-full md:w-[44%] px-6 py-6 ml-14 md:ml-0 hover:border-blue-400/40 transition-all duration-300 text-left">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs text-amber-400/80 font-medium tracking-wider uppercase">
-                          Phase {idx + 1}
-                        </span>
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${step.badgeColor}`}>
-                          {step.badge}
-                        </span>
+                    <div className="order-1 bg-[#1a2d54]/60 border border-blue-900/50 rounded-xl shadow-xl w-full md:w-[45%] px-5 py-5 ml-12 md:ml-0 hover:border-blue-400/40 transition-all duration-300 text-left">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-xs text-amber-400/80 font-medium tracking-wider uppercase">Phase {idx + 1}</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${step.badgeColor}`}>{step.badge}</span>
                       </div>
-                      <h3 className="font-bold text-white text-xl mb-1">{step.title}</h3>
-                      <p className="text-base text-gray-400 leading-relaxed font-light">{step.desc}</p>
+                      <h3 className="font-bold text-white text-lg mb-1">{step.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">{step.desc}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Footer CTA Box */}
-            <div className="mt-16 bg-[#1a2d54] border border-blue-900/60 rounded-2xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
-              <h3 className="text-3xl md:text-4xl font-bold mb-4 text-white">Start Your Internship Journey Today</h3>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
-                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
-                  <strong>UGC-aligned</strong>
-                  <br />
-                  Certificate
-                </div>
-                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
-                  <strong>Flexible</strong>
-                  <br />
-                  Duration
-                </div>
-                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
-                  <strong>10+ Subjects</strong>
-                  <br />
-                  Curriculum
-                </div>
-                <div className="bg-[#122244]/60 p-3 rounded-xl text-xs sm:text-sm text-gray-300">
-                  <strong>Anywhere</strong>
-                  <br />
-                  Access
-                </div>
+            <div className="mt-10 bg-[#1a2d54] border border-blue-900/60 rounded-2xl p-6 md:p-8 text-center shadow-2xl relative overflow-hidden">
+              <h3 className="text-2xl md:text-3xl font-bold mb-3 text-white">Start Your Internship Journey Today</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mb-6">
+                <div className="bg-[#122244]/60 p-2.5 rounded-xl text-xs text-gray-300"><strong>UGC-aligned</strong><br />Certificate</div>
+                <div className="bg-[#122244]/60 p-2.5 rounded-xl text-xs text-gray-300"><strong>Flexible</strong><br />Duration</div>
+                <div className="bg-[#122244]/60 p-2.5 rounded-xl text-xs text-gray-300"><strong>10+ Subjects</strong><br />Curriculum</div>
+                <div className="bg-[#122244]/60 p-2.5 rounded-xl text-xs text-gray-300"><strong>Anywhere</strong><br />Access</div>
               </div>
-
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-                <Link
-                  href="/auth/register"
-                  className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#122244] font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-colors inline-flex justify-center items-center gap-2 text-sm"
-                >
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-4">
+                <Link href="/auth/register" className="w-full sm:w-auto px-7 py-3 bg-white text-[#122244] font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-colors inline-flex justify-center items-center gap-2 text-xs sm:text-sm">
                   Register Now <ArrowRight className="h-4 w-4 text-[#122244]" />
                 </Link>
-                <Link
-                  href="/auth/register"
-                  className="w-full sm:w-auto px-8 py-3.5 bg-transparent border border-gray-500 text-white font-bold rounded-xl hover:bg-white/5 transition-colors text-sm"
-                >
+                <Link href="/auth/register" className="w-full sm:w-auto px-7 py-3 bg-transparent border border-gray-500 text-white font-bold rounded-xl hover:bg-white/5 transition-colors text-xs sm:text-sm">
                   View Membership Plans
                 </Link>
               </div>
-
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4 text-emerald-400" /> Instant Offer Letter
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4 text-emerald-400" /> Automated Certificate
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4 text-emerald-400" /> Digital Signature
-                </span>
+              <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs text-gray-400">
+                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-400" /> Instant Offer Letter</span>
+                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-400" /> Automated Certificate</span>
+                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5 text-emerald-400" /> Digital Signature</span>
               </div>
             </div>
-
           </div>
         </section>
 
-
-
         {/* 5. LEARNING OUTCOMES SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/20">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/20">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-2">
             <span className="text-xs text-[#FF7A00] font-bold uppercase tracking-wider bg-[#FFF3EB] px-3 py-1 rounded-full border border-[#FFE0CC]">Vetted Outcomes</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 tracking-tight">
               Verified Learning Outcomes
             </h2>
-            <p className="text-zinc-550 text-sm font-light">
+            <p className="text-zinc-500 text-xs sm:text-sm font-light">
               Compare conventional course certificates with IQIntern's metric-driven skill verification values.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Conventional Course Card */}
-            <div className="bg-white border border-zinc-200 rounded-3xl p-6 sm:p-8 space-y-6 text-left">
-              <h3 className="text-sm font-black text-red-500 uppercase tracking-wider flex items-center gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="bg-white border border-zinc-200 rounded-2xl p-5 sm:p-6 space-y-4 text-left">
+              <h3 className="text-xs sm:text-sm font-black text-red-500 uppercase tracking-wider flex items-center gap-2">
                 Conventional Course Attendance
               </h3>
-              <ul className="space-y-4">
-                {[
-                  "Theory-heavy lessons without strict project code requirements.",
-                  "Zero validation testing — certificates sent for purely watching video lists.",
-                  "Assessments are simple, non-proctored, and vulnerable to plagiarised submissions.",
-                  "Generic files without details on grades, project structures, or scores.",
-                  "Requires manual verification emails causing long onboarding placement delays."
-                ].map((item, idx) => (
-                  <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-zinc-500 leading-relaxed font-light">
-                    <span className="h-5 w-5 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0 text-red-500 font-bold text-[10px]">✕</span>
+              <ul className="space-y-3">
+                {["Theory-heavy lessons without strict project code requirements.", "Zero validation testing — certificates sent for purely watching video lists.", "Assessments are simple, non-proctored, and vulnerable to plagiarised submissions.", "Generic files without details on grades, project structures, or scores.", "Requires manual verification emails causing long onboarding placement delays."].map((item, idx) => (
+                  <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-zinc-500 leading-relaxed font-light">
+                    <span className="h-4.5 w-4.5 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0 text-red-500 font-bold text-[9px] mt-0.5">✕</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* IQIntern Verified Outcome Card */}
-            <div className="bg-white border border-[#E9D8B4] rounded-3xl p-6 sm:p-8 space-y-6 text-left shadow-xs">
-              <h3 className="text-sm font-black text-emerald-600 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white border border-[#E9D8B4] rounded-2xl p-5 sm:p-6 space-y-4 text-left shadow-xs">
+              <h3 className="text-xs sm:text-sm font-black text-emerald-600 uppercase tracking-wider flex items-center gap-2">
                 The IQIntern Evaluation Standard
               </h3>
-              <ul className="space-y-4">
-                {[
-                  "Mandatory hands-on projects showing actual functional deployments.",
-                  "Curriculum designed on practical parameters vetted by tech leaders.",
-                  "Secure timed evaluations utilizing protection controls against tab-switching.",
-                  "Immutable online certificates verified instantly via ID lookup databases.",
-                  "Comprehensive performance scorecards displaying detailed grading metrics."
-                ].map((item, idx) => (
-                  <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-zinc-805 leading-relaxed font-semibold">
-                    <span className="h-5 w-5 rounded-full bg-emerald-50 border border-emerald-150 flex items-center justify-center shrink-0 text-emerald-600 font-bold text-xs">✓</span>
+              <ul className="space-y-3">
+                {["Mandatory hands-on projects showing actual functional deployments.", "Curriculum designed on practical parameters vetted by tech leaders.", "Secure timed evaluations utilizing protection controls against tab-switching.", "Immutable online certificates verified instantly via ID lookup databases.", "Comprehensive performance scorecards displaying detailed grading metrics."].map((item, idx) => (
+                  <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-zinc-800 leading-relaxed font-semibold">
+                    <span className="h-4.5 w-4.5 rounded-full bg-emerald-50 border border-emerald-150 flex items-center justify-center shrink-0 text-emerald-600 font-bold text-[10px] mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -468,108 +393,99 @@ export default function Home() {
         </section>
 
         {/* 6. WHY CHOOSE IQINTERN SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200">
-          <div className="flex flex-col lg:flex-row items-center gap-12 bg-white border border-zinc-200 rounded-3xl p-6 sm:p-10">
-            <div className="lg:w-7/12 space-y-5 text-left">
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10 border-b border-zinc-200">
+          <div className="flex flex-col lg:flex-row items-center gap-8 bg-white border border-zinc-200 rounded-3xl p-5 sm:p-8">
+            <div className="lg:w-7/12 space-y-4 text-left">
               <span className="text-xs text-[#FF7A00] font-bold uppercase tracking-wider block">Skill Validation</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight leading-snug">
                 Why Professional Verification is Essential
               </h2>
-              <p className="text-zinc-550 text-xs sm:text-sm leading-relaxed font-light">
+              <p className="text-zinc-500 text-xs sm:text-sm leading-relaxed font-light">
                 Generic training listings fail to convince modern recruiters. IQIntern shifts the placement search by delivering proctored, metric-driven verification scores that detail actual technical achievements, building trust instantly.
               </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold pt-2">
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <span className="h-2 w-2 rounded-full bg-[#FF7A00]" />
-                  <span>Proctored Assessment Protections</span>
-                </div>
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <span className="h-2 w-2 rounded-full bg-[#FF7A00]" />
-                  <span>Live Verification Lookup Portals</span>
-                </div>
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <span className="h-2 w-2 rounded-full bg-[#F9B300]" />
-                  <span>Deep Grade Analytics Breakdown</span>
-                </div>
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <span className="h-2 w-2 rounded-full bg-[#F9B300]" />
-                  <span>Structured Practical Blueprints</span>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold pt-1">
+                <div className="flex items-center gap-2 text-zinc-700"><span className="h-2 w-2 rounded-full bg-[#FF7A00]" />Proctored Assessment Protections</div>
+                <div className="flex items-center gap-2 text-zinc-700"><span className="h-2 w-2 rounded-full bg-[#FF7A00]" />Live Verification Lookup Portals</div>
+                <div className="flex items-center gap-2 text-zinc-700"><span className="h-2 w-2 rounded-full bg-[#F9B300]" />Deep Grade Analytics Breakdown</div>
+                <div className="flex items-center gap-2 text-zinc-700"><span className="h-2 w-2 rounded-full bg-[#F9B300]" />Structured Practical Blueprints</div>
               </div>
             </div>
-
-            <div className="lg:w-5/12 w-full bg-[#FFF9ED] border border-[#E9D8B4] p-6 rounded-2xl space-y-4 text-left">
+            <div className="lg:w-5/12 w-full bg-[#FFF9ED] border border-[#E9D8B4] p-5 rounded-2xl space-y-3 text-left">
               <h4 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Placement Acceleration Solutions</h4>
-              <div className="space-y-3 text-xs text-zinc-650 font-light leading-relaxed">
-                <p>
-                  <strong>Curriculum Rigor:</strong> Unlike generic portals, we focus exclusively on live deployment builds, code review rules, and proctored timed testing.
-                </p>
-                <p>
-                  <strong>Trust Factor:</strong> Scorecards allow recruiters to verify candidates directly, reducing background review back-and-forth processes.
-                </p>
+              <div className="space-y-2 text-xs text-zinc-500 font-light leading-relaxed">
+                <p><strong>Curriculum Rigor:</strong> Unlike generic portals, we focus exclusively on live deployment builds, code review rules, and proctored timed testing.</p>
+                <p><strong>Trust Factor:</strong> Scorecards allow recruiters to verify candidates directly, reducing background review back-and-forth processes.</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 7. INDUSTRY MENTORS AND FACULTY SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-            <span className="text-xs text-[#FF7A00] font-bold uppercase tracking-wider bg-[#FFF3EB] px-3 py-1 rounded-full border border-[#FFE0CC]">Expert Guidance</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              Curriculum Advisory & Industry Mentors
+        {/* 7. EVERYTHING YOU'LL UNLOCK SECTION (REPLACED MENTORS) */}
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/10">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-2">
+            <span className="text-xs text-[#F9B300] font-bold uppercase tracking-wider bg-[#FFF9ED] px-3 py-1 rounded-full border border-[#FFE699]">Premium Badge</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 tracking-tight">
+              Everything You'll <span className="text-[#FF7A00]">Unlock</span> at IQIntern
             </h2>
-            <p className="text-zinc-550 text-sm font-light">
-              Learn curriculum blueprints designed and vetted by professionals from top global tech organizations.
+            <p className="text-zinc-500 text-xs sm:text-sm font-light leading-relaxed">
+              Build industry-ready skills, complete assessments, and receive professionally generated internship documents designed for academic and career growth.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {mentors.map((mentor, mIdx) => (
-              <div key={mIdx} className="bg-white border border-zinc-200 rounded-2xl p-5 space-y-4 text-center hover:border-[#FF7A00]/30 hover:shadow-xs transition-all duration-300">
-                <div className="h-14 w-14 rounded-full bg-[#FFF9ED] border border-[#E9D8B4] text-[#F9B300] font-bold text-lg flex items-center justify-center mx-auto">
-                  {mentor.initial}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {[
+              { icon: FileText, title: "Internship Offer Letter", desc: "Instant generation after enrollment with premium digital verification." },
+              { icon: GraduationCap, title: "Industry-Aligned Training", desc: "Learn through structured internship programs designed for real-world skills." },
+              { icon: Sparkles, title: "AI-Based Skill Assessment", desc: "Get evaluated through automated assessments and detailed performance reports." },
+              { icon: ShieldCheck, title: "Premium Certification", desc: "Verifiable certificates with QR codes and unique certificate IDs." },
+              { icon: FolderOpen, title: "Internship Documentation", desc: "Attendance sheet, marksheet, internship report, and completion documents." },
+              { icon: Eye, title: "Lifetime Certificate Verification", desc: "Public certificate verification portal for colleges, recruiters, and employers." }
+            ].map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
+                <div key={idx} className="bg-white border border-zinc-200 rounded-2xl p-5 space-y-3 text-left hover:border-[#F9B300]/30 hover:shadow-xs transition-all duration-300 group">
+                  <div className="h-10 w-10 rounded-xl bg-[#FFF9ED] border border-[#E9D8B4] text-[#F9B300] flex items-center justify-center shrink-0 group-hover:bg-[#F9B300] group-hover:text-white group-hover:border-transparent transition-all duration-300">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-zinc-900">{feature.title}</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-light">{feature.desc}</p>
                 </div>
-                <div className="space-y-0.5">
-                  <h4 className="text-sm font-bold text-zinc-900">{mentor.name}</h4>
-                  <p className="text-[10px] text-zinc-450 uppercase tracking-wider font-extrabold">{mentor.role}</p>
-                  <span className="inline-block text-[9px] bg-zinc-50 border border-zinc-150 px-2 py-0.5 rounded text-zinc-500 mt-1 font-bold">
-                    {mentor.company}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
+          <p className="text-center mt-8 text-xs text-zinc-400 font-light">
+            Trusted by <span className="text-zinc-900 font-bold">students across India.</span>
+          </p>
         </section>
 
         {/* 8. STUDENT TRANSFORMATION TIMELINE SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/10">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10 border-b border-zinc-200 bg-[#FFF9ED]/10">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-2">
             <span className="text-xs text-[#F9B300] font-bold uppercase tracking-wider bg-[#FFF9ED] px-3 py-1 rounded-full border border-[#FFE699]">Transformation Maps</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 tracking-tight">
               Student Career Transformations
             </h2>
-            <p className="text-zinc-550 text-sm font-light">
+            <p className="text-zinc-500 text-xs sm:text-sm font-light">
               Real cases showing candidate placement acceleration before and after completing their evaluations.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 max-w-5xl mx-auto text-left">
             {caseStudies.map((study, idx) => (
-              <div key={idx} className="bg-white border border-zinc-200 rounded-3xl p-6 sm:p-8 space-y-5 hover:border-[#FF7A00]/25 transition-all">
-                <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
-                  <h3 className="text-base font-black text-zinc-900">{study.student}</h3>
+              <div key={idx} className="bg-white border border-zinc-200 rounded-2xl p-5 sm:p-6 space-y-4 hover:border-[#FF7A00]/25 transition-all">
+                <div className="flex justify-between items-center border-b border-zinc-100 pb-2.5">
+                  <h3 className="text-sm sm:text-base font-black text-zinc-900">{study.student}</h3>
                   <span className="text-[10px] font-extrabold text-[#FF7A00] bg-[#FFF3EB] border border-[#FFE0CC] px-2.5 py-0.5 rounded-full uppercase">
                     {study.tag}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
-                  <div className="p-4 bg-red-50/20 border border-red-100 rounded-xl space-y-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
+                  <div className="p-3.5 bg-red-50/20 border border-red-100 rounded-xl space-y-1">
                     <p className="font-extrabold text-red-600 uppercase tracking-widest text-[9px]">Struggle / Before</p>
                     <p className="text-zinc-500 font-light">{study.before}</p>
                   </div>
-                  <div className="p-4 bg-emerald-50/20 border border-emerald-150 rounded-xl space-y-1">
+                  <div className="p-3.5 bg-emerald-50/20 border border-emerald-150 rounded-xl space-y-1">
                     <p className="font-extrabold text-emerald-700 uppercase tracking-widest text-[9px]">Placement / After</p>
                     <p className="text-zinc-800 font-semibold">{study.after}</p>
                   </div>
@@ -580,23 +496,22 @@ export default function Home() {
         </section>
 
         {/* 9. TESTIMONIALS SECTION */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 relative z-10 border-b border-zinc-200">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10 border-b border-zinc-200">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-2">
             <span className="text-xs text-[#FF7A00] font-bold uppercase tracking-wider bg-[#FFF3EB] px-3 py-1 rounded-full border border-[#FFE0CC]">Stakeholder Reviews</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 tracking-tight">
               Trusted by Candidates & Administrators
             </h2>
-            <p className="text-[#555555] text-sm font-light">
+            <p className="text-zinc-500 text-xs sm:text-sm font-light">
               Read how candidates and placement offices leverage our metric-driven vocational certifications.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {/* Student Review */}
-            <div className="bg-white border-l-4 border-[#F9B300] border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-6 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
-              <div className="space-y-4 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            <div className="bg-white border-l-4 border-[#F9B300] border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-5 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
+              <div className="space-y-3 text-left">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#FFF9ED] border border-[#E9D8B4] flex items-center justify-center text-[#F9B300] font-bold text-xs">P</div>
+                  <div className="h-7 w-7 rounded-full bg-[#FFF9ED] border border-[#E9D8B4] flex items-center justify-center text-[#F9B300] font-bold text-xs">P</div>
                   <div>
                     <h5 className="text-xs font-bold text-zinc-900">Priya Patel</h5>
                     <p className="text-[9px] text-zinc-400 font-medium">Software Engineer</p>
@@ -606,14 +521,13 @@ export default function Home() {
                   &ldquo;The curriculum blueprints were incredibly thorough. Completing the projects and passing the tab-protected timed evaluations gave me a verified scorecard that got my application approved without delay.&rdquo;
                 </p>
               </div>
-              <span className="text-[10px] font-bold text-[#F9B300] block mt-4 uppercase tracking-wider text-left">✓ Verified Alumna</span>
+              <span className="text-[10px] font-bold text-[#F9B300] block mt-3 uppercase tracking-wider text-left">✓ Verified Alumna</span>
             </div>
 
-            {/* Faculty Review */}
-            <div className="bg-white border-l-4 border-[#FF7A00] border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-6 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
-              <div className="space-y-4 text-left">
+            <div className="bg-white border-l-4 border-[#FF7A00] border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-5 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
+              <div className="space-y-3 text-left">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#FFF3EB] border border-[#FFE0CC] flex items-center justify-center text-[#FF7A00] font-bold text-xs">R</div>
+                  <div className="h-7 w-7 rounded-full bg-[#FFF3EB] border border-[#FFE0CC] flex items-center justify-center text-[#FF7A00] font-bold text-xs">R</div>
                   <div>
                     <h5 className="text-xs font-bold text-zinc-900">Prof. Rajesh Kumar</h5>
                     <p className="text-[9px] text-zinc-400 font-medium">Placement Hub Coordinator</p>
@@ -623,14 +537,13 @@ export default function Home() {
                   &ldquo;Monitoring candidate learning assessments has never been simpler. The proctored scoring dashboards protect our compliance logs while giving placements team clear, verifiable details of student competence.&rdquo;
                 </p>
               </div>
-              <span className="text-[10px] font-bold text-[#FF7A00] block mt-4 uppercase tracking-wider text-left">✓ Verified Coordinator</span>
+              <span className="text-[10px] font-bold text-[#FF7A00] block mt-3 uppercase tracking-wider text-left">✓ Verified Coordinator</span>
             </div>
 
-            {/* Recruiter Review */}
-            <div className="bg-white border-l-4 border-emerald-500 border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-6 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
-              <div className="space-y-4 text-left">
+            <div className="bg-[#fff] border-l-4 border-emerald-500 border-y border-r border-zinc-200 rounded-r-2xl rounded-l-md p-5 flex flex-col justify-between hover:shadow-xs transition-shadow bg-zinc-50/10">
+              <div className="space-y-3 text-left">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-emerald-50 border border-emerald-250 flex items-center justify-center text-emerald-600 font-bold text-xs">M</div>
+                  <div className="h-7 w-7 rounded-full bg-emerald-50 border border-emerald-250 flex items-center justify-center text-emerald-600 font-bold text-xs">M</div>
                   <div>
                     <h5 className="text-xs font-bold text-zinc-900">Meera Sen</h5>
                     <p className="text-[9px] text-zinc-400 font-medium">Director, Talent Acquisition</p>
@@ -640,31 +553,24 @@ export default function Home() {
                   &ldquo;Credential fraud is a primary concern in volume sourcing. Scannable verification dashboard links solve verification delays instantly. Excellent standard that details score outcomes.&rdquo;
                 </p>
               </div>
-              <span className="text-[10px] font-bold text-emerald-600 block mt-4 uppercase tracking-wider text-left">✓ Verified Partner</span>
+              <span className="text-[10px] font-bold text-emerald-600 block mt-3 uppercase tracking-wider text-left">✓ Verified Partner</span>
             </div>
           </div>
         </section>
 
         {/* 10. CTA SECTION */}
-        <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 relative z-10">
-          <div className="rounded-3xl border border-[#E9D8B4] bg-[#FFF9ED] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">
-            <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">Accelerate Your Technical Readiness</h2>
-              <p className="text-sm sm:text-base text-zinc-500 leading-relaxed font-light">
+        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 relative z-10">
+          <div className="rounded-3xl border border-[#E9D8B4] bg-[#FFF9ED] p-6 sm:p-10 text-center relative overflow-hidden shadow-xs">
+            <div className="max-w-2xl mx-auto space-y-4 relative z-10">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-zinc-900">Accelerate Your Technical Readiness</h2>
+              <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed font-light">
                 Join IQIntern today, attempt proctored evaluations, and download verified performance credentials to accelerate your corporate recruitment journey.
               </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                <Link
-                  href="/auth/register"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-8 py-3.5 text-xs font-bold text-zinc-900 transition-all cursor-pointer shadow-sm active:scale-95"
-                >
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+                <Link href="/auth/register" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-[#F9B300] hover:bg-[#E6A500] px-7 py-3 text-xs font-bold text-zinc-900 transition-all cursor-pointer shadow-sm active:scale-95">
                   Create Account
                 </Link>
-                <Link
-                  href="/contact"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-zinc-250 bg-white hover:bg-zinc-50 px-8 py-3.5 text-xs font-bold text-zinc-700 transition-all cursor-pointer active:scale-95"
-                >
+                <Link href="/contact" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 px-7 py-3 text-xs font-bold text-zinc-700 transition-all cursor-pointer active:scale-95">
                   Contact Advisors
                 </Link>
               </div>
@@ -673,7 +579,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* 11. PREMIUM FOOTER */}
       <Footer />
     </div>
   );

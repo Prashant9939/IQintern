@@ -37,7 +37,7 @@ export function generateAttendanceDays(
   holidaysList: string[]
 ): { dates: Date[]; startDate: Date; endDate: Date } {
   const dates: Date[] = [];
-  let currentDate = new Date(baseDate.getTime());
+  const currentDate = new Date(baseDate.getTime());
 
   if (mode === 'start_date') {
     // Start Date Mode: Loop forward

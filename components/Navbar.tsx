@@ -82,9 +82,9 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${isScrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-zinc-200/80 shadow-xs"
-          : "bg-white border-b border-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-16 flex items-center ${isScrolled
+            ? "bg-white/90 backdrop-blur-md border-b border-zinc-300 shadow-xs"
+            : "bg-white border-b border-zinc-300"
           }`}
       >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -98,7 +98,7 @@ export default function Navbar() {
             >
               <img
                 src={BRANDING.logoIcon}
-                className="h-31 w-auto object-contain group-hover:scale-105 transition-all"
+                className="h-20 w-auto object-contain group-hover:scale-105 transition-all"
                 alt={BRANDING.name}
               />
             </Link>

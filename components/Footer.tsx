@@ -15,7 +15,7 @@ export default function Footer() {
                 <img
                   src="/white-logo.png"
                   alt="IQIntern"
-                  className="h-34 w-auto object-contain"
+                  className="h-21 w-auto object-contain"
                 />
               </Link>
               <p className="text-xs text-[#A3A3A3] font-light leading-relaxed">

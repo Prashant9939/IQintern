@@ -1657,7 +1657,9 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
         const fileName = files[code];
         if (typeof window === "undefined") {
           try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const fs = require("fs");
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const path = require("path");
             const filePath = path.join(process.cwd(), "public", "templates", "default", fileName);
             if (fs.existsSync(filePath)) {
@@ -2504,7 +2506,9 @@ async function getDefaultTemplateHtmlForSeeding(code: string): Promise<string> {
 
   if (typeof window === "undefined") {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fs = require("fs");
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const path = require("path");
       const filePath = path.join(rootDir, "public", "templates", "default", fileName);
       if (fs.existsSync(filePath)) {

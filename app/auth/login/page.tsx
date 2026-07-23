@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { loginUser } from "@/lib/supabase/auth";
-import { isSupabaseConfigured } from "@/lib/supabase/client";
+
+import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import {
   AlertCircle, CheckCircle, Eye, EyeOff
 } from "lucide-react";
@@ -12,7 +13,7 @@ import dynamic from "next/dynamic";
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -44,12 +45,50 @@ export default function Login() {
     }
   }, []);
 
+  const isEmail = (value: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+
+  const isPhoneNumber = (value: string): boolean => {
+    // Requires exactly 10 digits, first digit 6-9 (standard Indian mobile format)
+    return /^[6-9][0-9]{9}$/.test(value);
+  };
+
+  // Returns true only if the identifier looks like *either* a valid
+  // email address or a valid phone number.
+  const isValidIdentifier = (value: string): boolean => {
+    return isEmail(value) || isPhoneNumber(value);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Please fill out all fields.");
+
+    const loginIdentifier = identifier.trim();
+
+    // Validate Email / Mobile Number
+    if (!loginIdentifier) {
+      setError("Please enter your email address or mobile number.");
       return;
     }
+
+    if (!isValidIdentifier(loginIdentifier)) {
+      // Give a more specific hint depending on what they typed.
+      if (/^\d+$/.test(loginIdentifier)) {
+        setError("Please enter a valid 10-digit mobile number.");
+      } else if (loginIdentifier.includes("@")) {
+        setError("Please enter a valid email address (e.g. name@example.com).");
+      } else {
+        setError("Please enter a valid email address or 10-digit mobile number.");
+      }
+      return;
+    }
+
+    // Validate Password
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setSuccess("");
@@ -58,16 +97,49 @@ export default function Login() {
     const loginStart = performance.now();
 
     try {
+      let finalEmail = loginIdentifier;
+
+      // If the user entered a phone number, fetch the associated email address.
+      if (isPhoneNumber(loginIdentifier)) {
+        if (!supabase) {
+          throw new Error("Supabase configuration is missing.");
+        }
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("email")
+          .eq("phone", loginIdentifier)
+          .single();
+
+        if (error || !data?.email) {
+          throw new Error("No account found with this mobile number.");
+        }
+
+        finalEmail = data.email;
+      }
+
+      // Authenticate the user.
       const apiStart = performance.now();
-      const res = await loginUser(email, password);
-      console.log(`[INSTRUMENTATION] loginUser request finished in ${(performance.now() - apiStart).toFixed(1)}ms`);
+      const res = await loginUser(finalEmail, password);
+
+      console.log(
+        `[INSTRUMENTATION] loginUser request finished in ${(performance.now() - apiStart).toFixed(1)}ms`
+      );
 
       setSuccess("Logged in successfully! Redirecting...");
 
       console.log(`[INSTRUMENTATION] Redirecting user immediately: role=${res.user.role}`);
+
+      // Force WhatsApp popup after login.
       if (typeof window !== "undefined") {
         sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
       }
+
+      console.log(
+        `[INSTRUMENTATION] Total login flow completed in ${(performance.now() - loginStart).toFixed(1)}ms`
+      );
+
+      // Role-based redirection.
       if (res.user.role === "admin") {
         window.location.href = "/admin/dashboard";
       } else {
@@ -99,9 +171,15 @@ export default function Login() {
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
         .login-page-container {
-            background-color: var(--brand-light);
+            background:
+            linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #fff8ef 50%,
+            #f8fafc 100%
+            );
             color: var(--text-main);
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
@@ -111,12 +189,12 @@ export default function Login() {
         }
 
         .login-content-wrapper {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+              flex-grow: 1;
+              display: flex;
+              align-items: flex-start;
+              justify-content: center;
+              padding: 10px 20px 20px;
+          }
 
         .premium-shape {
             position: absolute;
@@ -130,20 +208,38 @@ export default function Login() {
         }
 
         .wrapper {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 500px;
-            min-height: 580px;
-            overflow: hidden;
-            display: flex;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,251,245,.96));
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,.85);
-            box-shadow: 0 2px 10px rgba(255,255,255,.70), 0 20px 60px rgba(15,23,42,.08), 0 12px 35px rgba(245,166,35,.06), 0 0 30px rgba(245,166,35,.03);
-        }
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 540px;
+
+    /* Automatically adjust height */
+    height: auto;
+    min-height: auto;
+
+    margin-top: -15px;
+
+    overflow: hidden;
+    display: flex;
+    border-radius: 24px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.97),
+        rgba(255,251,245,.96)
+    );
+
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    border: 1px solid rgba(255,255,255,.85);
+
+    box-shadow:
+        0 2px 10px rgba(255,255,255,.70),
+        0 20px 60px rgba(15,23,42,.08),
+        0 12px 35px rgba(245,166,35,.06),
+        0 0 30px rgba(245,166,35,.03);
+}
 
         .wrapper::before {
             content: "";
@@ -196,7 +292,7 @@ export default function Login() {
 
         .login-panel {
             flex: 1;
-            padding: 40px;
+            padding: 32px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -232,7 +328,7 @@ export default function Login() {
 
         .floating-field input {
             width: 100%;
-            height: 56px;
+            height: 60px;
             padding: 18px 16px 6px 16px;
             border: 1.5px solid var(--border-ui);
             border-radius: 12px;
@@ -389,22 +485,31 @@ export default function Login() {
         }
       `}} />
 
+
+
       <div className="login-page-container">
 
         {/* Top Header */}
-        <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0 relative z-10">
-          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+        <header className="w-full px-6 md:px-10 lg:px-14 pt-2 pb-1 flex items-center justify-between relative z-10">
+
+          {/* Logo */}
+          <Link href="/" className="flex items-center cursor-pointer">
             <img
               src="/logo-full.png"
               alt="IQIntern"
-              className="h-31 w-auto object-contain"
+              className="h-[90px] md:h-[95px] lg:h-[100px]"
             />
           </Link>
-          <Link href="/auth/register" className="text-sm font-bold text-[var(--brand-primary)] hover:underline transition-colors cursor-pointer">
+
+          {/* Create Account CTA */}
+          <Link
+            href="/auth/register"
+            className="text-base font-semibold text-[var(--brand-primary)] hover:underline transition-all duration-200 cursor-pointer"
+          >
             Create an Account →
           </Link>
-        </header>
 
+        </header>
         <main className="login-content-wrapper">
           <div className="wrapper">
             <div className="premium-shape"></div>
@@ -416,7 +521,7 @@ export default function Login() {
             <section className="login-panel">
               <div className="main-form-zone">
                 <header>
-                  <h1 className="header-title">Account Login</h1>
+                  <h1 className="header-title">Welcome Back!</h1>
                   <p className="header-subtitle">
                     Access your professional evaluations hub.
                   </p>
@@ -461,15 +566,18 @@ export default function Login() {
                 <form onSubmit={handleLogin}>
                   <div className="floating-field">
                     <input
-                      type="email"
-                      id="email"
+                      type="text"
+                      id="identifier"
                       placeholder=" "
                       required
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      autoComplete="email"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      autoComplete="username"
                     />
-                    <label htmlFor="email">Corporate Email Address</label>
+
+                    <label htmlFor="identifier">
+                      Email Address or Mobile Number
+                    </label>
                   </div>
 
                   <div className="floating-field">
@@ -498,7 +606,7 @@ export default function Login() {
                       Keep me signed in
                     </label>
                     <Link href="/auth/forgot-password" className="forgot-link">
-                      Forgot?
+                      Forgot Password
                     </Link>
                   </div>
 
@@ -506,7 +614,7 @@ export default function Login() {
                     {loading ? "Verifying..." : "Sign In"}
                   </button>
 
-                  <div className="social-divider">New Here</div>
+                  <div className="social-divider">Don't have an account?</div>
 
                   <Link href="/auth/register" className="register-btn">
                     Register Now
@@ -518,8 +626,10 @@ export default function Login() {
         </main>
 
         {/* Desktop-only Footer */}
-        <div className="hidden md:block w-full z-10 relative">
-          <Footer />
+        <div className="text-center py-3 text-xs text-zinc-500">
+
+          Secure Authentication Portal
+
         </div>
       </div>
     </>

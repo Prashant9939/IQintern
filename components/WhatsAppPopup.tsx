@@ -28,7 +28,9 @@ export default function WhatsAppPopup() {
   useEffect(() => {
     // Suppress the popup on any authentication page (like login/register)
     if (pathname && pathname.startsWith("/auth")) {
-      setIsOpen(false);
+      if (isOpen) {
+        setIsOpen(false);
+      }
       return;
     }
 
@@ -38,7 +40,7 @@ export default function WhatsAppPopup() {
       sessionStorage.removeItem("iqintern_show_whatsapp_popup_force");
       sessionStorage.removeItem("iqintern_whatsapp_popup_session_dismissed");
       localStorage.removeItem("iqintern_whatsapp_popup_dismissed_at");
-      
+
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 1500);
@@ -153,7 +155,7 @@ export default function WhatsAppPopup() {
                 <div>
                   {/* IQIntern Logo */}
                   <div className="flex items-center gap-2 mb-6">
-                    <img src={BRANDING.logoFull} alt={BRANDING.name} className="h-12 w-auto object-contain" />
+                    <img src={BRANDING.logoFull} alt={BRANDING.name} className="h-24 w-auto object-contain" />
                   </div>
 
                   {/* Heading */}

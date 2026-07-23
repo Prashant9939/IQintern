@@ -53,8 +53,9 @@ export async function sendEmail({ to, subject, html, studentId }: EmailOptions) 
     }
 
     return { success: true, messageId: info.messageId, previewUrl };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to send email:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     if (isSupabaseConfigured() && supabase) {
       await supabase.from("email_logs").insert({
@@ -65,6 +66,6 @@ export async function sendEmail({ to, subject, html, studentId }: EmailOptions) 
       });
     }
 
-    return { success: false, error: error.message };
+    return { success: false, error: errorMessage };
   }
 }
