@@ -11,6 +11,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
+const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false }); // <-- ADD THIS
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -59,7 +60,6 @@ export default function Login() {
   const isValidIdentifier = (value: string): boolean => {
     return isEmail(value) || isPhoneNumber(value);
   };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -105,13 +105,29 @@ export default function Login() {
           throw new Error("Supabase configuration is missing.");
         }
 
+        // FIX: Handle potential country code variations in the database
+        // Users type "9876543210", but DB might have "919876543210" or "+919876543210"
+        const phoneVariations = [
+          loginIdentifier,                 // e.g., 9876543210
+          `91${loginIdentifier}`,           // e.g., 919876543210
+          `+91${loginIdentifier}`           // e.g., +919876543210
+        ];
+
+        // Create an OR query to check all possible formats simultaneously
+        const orConditions = phoneVariations.map(p => `phone.eq.${p}`).join(',');
+
         const { data, error } = await supabase
           .from("profiles")
           .select("email")
-          .eq("phone", loginIdentifier)
-          .single();
+          .or(orConditions)
+          .maybeSingle(); // maybeSingle prevents crashing if multiple formats somehow exist
 
-        if (error || !data?.email) {
+        if (error) {
+          console.error("Supabase phone lookup error:", error);
+          throw new Error("An error occurred while looking up your phone number.");
+        }
+
+        if (!data?.email) {
           throw new Error("No account found with this mobile number.");
         }
 
@@ -153,6 +169,7 @@ export default function Login() {
     }
   };
 
+
   return (
     <>
       <style dangerouslySetInnerHTML={{
@@ -193,7 +210,7 @@ export default function Login() {
               display: flex;
               align-items: flex-start;
               justify-content: center;
-              padding: 10px 20px 20px;
+              padding: 95px 20px 20px;
           }
 
         .premium-shape {
@@ -485,31 +502,11 @@ export default function Login() {
         }
       `}} />
 
-
+      <Navbar />
 
       <div className="login-page-container">
 
-        {/* Top Header */}
-        <header className="w-full px-6 md:px-10 lg:px-14 pt-2 pb-1 flex items-center justify-between relative z-10">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center cursor-pointer">
-            <img
-              src="/logo-full.png"
-              alt="IQIntern"
-              className="h-[90px] md:h-[95px] lg:h-[100px]"
-            />
-          </Link>
-
-          {/* Create Account CTA */}
-          <Link
-            href="/auth/register"
-            className="text-base font-semibold text-[var(--brand-primary)] hover:underline transition-all duration-200 cursor-pointer"
-          >
-            Create an Account →
-          </Link>
-
-        </header>
         <main className="login-content-wrapper">
           <div className="wrapper">
             <div className="premium-shape"></div>
@@ -631,6 +628,7 @@ export default function Login() {
           Secure Authentication Portal
 
         </div>
+        <Footer />
       </div>
     </>
   );
