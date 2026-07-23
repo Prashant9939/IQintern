@@ -2,16 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { loginUser } from "@/lib/supabase/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 
-import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import {
-  AlertCircle, CheckCircle, Eye, EyeOff
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
+
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
-const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false }); // <-- ADD THIS
+
+const Footer = dynamic(() => import("@/components/Footer"), {
+  ssr: false,
+});
+
+const Navbar = dynamic(() => import("@/components/Navbar"), {
+  ssr: false,
+});
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -31,8 +41,14 @@ export default function Login() {
       localStorage.removeItem("mock_profiles");
       localStorage.removeItem("iqintern_session");
       sessionStorage.removeItem("iqintern_session");
-      document.cookie = "iqintern_session=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-      alert("Local mock database cleared successfully! Reloading page...");
+
+      document.cookie =
+        "iqintern_session=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+
+      alert(
+        "Local mock database cleared successfully! Reloading page..."
+      );
+
       window.location.reload();
     }
   };
@@ -40,26 +56,33 @@ export default function Login() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
+
       if (params.get("reason") === "timeout") {
         setError("You have been logged out due to inactivity.");
       }
     }
   }, []);
+  // ==========================================
+  // CLIENT-SIDE VALIDATION FUNCTIONS
+  // ==========================================
 
   const isEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   };
 
   const isPhoneNumber = (value: string): boolean => {
-    // Requires exactly 10 digits, first digit 6-9 (standard Indian mobile format)
+    // Requires exactly 10 digits and starts from 6-9
     return /^[6-9][0-9]{9}$/.test(value);
   };
 
-  // Returns true only if the identifier looks like *either* a valid
-  // email address or a valid phone number.
+  // Returns true if the value is a valid email OR phone number.
   const isValidIdentifier = (value: string): boolean => {
     return isEmail(value) || isPhoneNumber(value);
   };
+  // ==========================================
+  // LOGIN HANDLER (PASSES RAW INPUT TO BACKEND)
+  // ==========================================
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -67,18 +90,25 @@ export default function Login() {
 
     // Validate Email / Mobile Number
     if (!loginIdentifier) {
-      setError("Please enter your email address or mobile number.");
+      setError(
+        "Please enter your email address or mobile number."
+      );
       return;
     }
 
     if (!isValidIdentifier(loginIdentifier)) {
-      // Give a more specific hint depending on what they typed.
       if (/^\d+$/.test(loginIdentifier)) {
-        setError("Please enter a valid 10-digit mobile number.");
+        setError(
+          "Please enter a valid 10-digit mobile number."
+        );
       } else if (loginIdentifier.includes("@")) {
-        setError("Please enter a valid email address (e.g. name@example.com).");
+        setError(
+          "Please enter a valid email address (e.g. name@example.com)."
+        );
       } else {
-        setError("Please enter a valid email address or 10-digit mobile number.");
+        setError(
+          "Please enter a valid email address or 10-digit mobile number."
+        );
       }
       return;
     }
@@ -93,67 +123,23 @@ export default function Login() {
     setError("");
     setSuccess("");
 
-    console.log("[INSTRUMENTATION] Login button clicked. Timing started...");
-    const loginStart = performance.now();
-
     try {
-      let finalEmail = loginIdentifier;
-
-      // If the user entered a phone number, fetch the associated email address.
-      if (isPhoneNumber(loginIdentifier)) {
-        if (!supabase) {
-          throw new Error("Supabase configuration is missing.");
-        }
-
-        // FIX: Handle potential country code variations in the database
-        // Users type "9876543210", but DB might have "919876543210" or "+919876543210"
-        const phoneVariations = [
-          loginIdentifier,                 // e.g., 9876543210
-          `91${loginIdentifier}`,           // e.g., 919876543210
-          `+91${loginIdentifier}`           // e.g., +919876543210
-        ];
-
-        // Create an OR query to check all possible formats simultaneously
-        const orConditions = phoneVariations.map(p => `phone.eq.${p}`).join(',');
-
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("email")
-          .or(orConditions)
-          .maybeSingle(); // maybeSingle prevents crashing if multiple formats somehow exist
-
-        if (error) {
-          console.error("Supabase phone lookup error:", error);
-          throw new Error("An error occurred while looking up your phone number.");
-        }
-
-        if (!data?.email) {
-          throw new Error("No account found with this mobile number.");
-        }
-
-        finalEmail = data.email;
-      }
-
-      // Authenticate the user.
-      const apiStart = performance.now();
-      const res = await loginUser(finalEmail, password);
-
-      console.log(
-        `[INSTRUMENTATION] loginUser request finished in ${(performance.now() - apiStart).toFixed(1)}ms`
+      // Pass RAW input directly to the backend.
+      const res = await loginUser(
+        loginIdentifier,
+        password
       );
 
-      setSuccess("Logged in successfully! Redirecting...");
+      setSuccess(
+        "Logged in successfully! Redirecting..."
+      );
 
-      console.log(`[INSTRUMENTATION] Redirecting user immediately: role=${res.user.role}`);
-
-      // Force WhatsApp popup after login.
       if (typeof window !== "undefined") {
-        sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
+        sessionStorage.setItem(
+          "iqintern_show_whatsapp_popup_force",
+          "true"
+        );
       }
-
-      console.log(
-        `[INSTRUMENTATION] Total login flow completed in ${(performance.now() - loginStart).toFixed(1)}ms`
-      );
 
       // Role-based redirection.
       if (res.user.role === "admin") {
@@ -162,12 +148,16 @@ export default function Login() {
         window.location.href = "/student/dashboard";
       }
     } catch (err: any) {
-      console.error("[INSTRUMENTATION] Login request failed:", err);
-      setError(err.message || "An error occurred during sign in.");
+      // Backend will return the exact error message.
+      setError(
+        err.message ||
+        "An error occurred during sign in."
+      );
     } finally {
       setLoading(false);
     }
   };
+
 
 
   return (

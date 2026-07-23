@@ -11,11 +11,11 @@ export default function Footer() {
 
             {/* Column 1: Brand (Col-span 4) */}
             <div className="lg:col-span-4 antigravity-footer-card">
-              <Link href="/" className="inline-block mb-1">
+              <Link href="/" className="inline-block">
                 <img
                   src="/white-logo.png"
                   alt="IQIntern"
-                  className="h-21 w-auto object-contain"
+                  className="h-28 w-auto object-contain"
                 />
               </Link>
               <p className="text-xs text-[#A3A3A3] font-light leading-relaxed">

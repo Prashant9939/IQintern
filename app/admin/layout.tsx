@@ -102,7 +102,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href={logoHref} className="flex items-center gap-2.5 group">
             <img
               src="/logo-icon.png"
-              className="h-9 w-auto object-contain group-hover:scale-105 transition-all"
+              className="h-20 w-auto object-contain group-hover:scale-105 transition-all"
             />
           </Link>
         </div>
@@ -212,8 +212,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${active
-                    ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
-                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
+                  ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
+                  : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
                   }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -233,8 +233,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${active
-                    ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
-                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
+                  ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
+                  : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
                   }`}
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -282,8 +282,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${active
-                      ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
-                      : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
+                    ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
+                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
                     }`}
                 >
                   <Icon className="h-4.5 w-4.5" />
@@ -302,8 +302,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${active
-                      ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
-                      : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
+                    ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
+                    : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
                     }`}
                 >
                   <Icon className="h-4.5 w-4.5" />

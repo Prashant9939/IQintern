@@ -155,7 +155,7 @@ export default function WhatsAppPopup() {
                 <div>
                   {/* IQIntern Logo */}
                   <div className="flex items-center gap-2 mb-6">
-                    <img src={BRANDING.logoFull} alt={BRANDING.name} className="h-24 w-auto object-contain" />
+                    <img src={BRANDING.logoFull} alt={BRANDING.name} className="h-32 w-auto object-contain" />
                   </div>
 
                   {/* Heading */}

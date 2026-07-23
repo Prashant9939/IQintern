@@ -1,5 +1,5 @@
 "use client";
-
+import "./register.css";
 import { useState, useEffect } from "react";
 import { signUpUser, loginUser } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
@@ -17,7 +17,7 @@ import dynamic from "next/dynamic";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 const DateOfBirthSelector = dynamic(() => import("@/components/DateOfBirthSelector"), { ssr: false });
-
+const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
 export default function Register() {
   const [step, setStep] = useState(1);
   const [universities, setUniversities] = useState<University[]>([]);
@@ -167,22 +167,17 @@ export default function Register() {
   const passwordStrength = getPasswordStrength(formData.password);
 
   return (
+
+
     // Added min-h-screen to ensure footer stays at the bottom
-    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-white via-orange-50 to-slate-50 font-sans antialiased">
+    <div className="register-page-container">
+      <Navbar />
 
-      {/* FIXED: Added relative z-50 to prevent form layers from blocking clicks */}
-      <header className="relative z-50 w-full px-4 sm:px-8 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center cursor-pointer">
-          <img src="/logo-full.png" alt="IQIntern" className="h-20 sm:h-22 md:h-24 w-auto object-contain" />
-        </Link>
-        <Link href="/auth/login" className="text-xs sm:text-sm md:text-base font-semibold text-[#FF7A00] hover:text-[#E66E00] transition-all duration-200 cursor-pointer">
-          Already registered? Sign In →
-        </Link>
-      </header>
 
-      <main className="flex-grow flex items-start pt-2 justify-center px-4 py-4 sm:py-6">
-        <div className="w-full max-w-[650px] flex flex-col">
-          <div className="bg-white border border-zinc-200 shadow-xl shadow-black/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col w-full relative">
+
+      <main className="register-content-wrapper">
+        <div className="w-full max-w-[700px] flex flex-col relative z-0">
+          <div className="bg-white border border-zinc-200 shadow-xl shadow-black/5 rounded-[24px] p-5 sm:p-7 flex flex-col w-full relative z-0">
             <form onSubmit={handleRegister} className="flex flex-col">
 
               {/* Step Indicator */}

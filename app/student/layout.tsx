@@ -13,10 +13,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
-import { 
-  LayoutDashboard, 
-  LogOut, 
-  Menu, 
+import {
+  LayoutDashboard,
+  LogOut,
+  Menu,
   X,
   Award,
   Briefcase,
@@ -120,7 +120,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             window.location.href = "/student/complete-profile";
             return;
           }
-          
+
           if (u.profile_completed && pathname === "/student/complete-profile") {
             window.location.href = "/student/dashboard";
             return;
@@ -187,9 +187,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       <header className="hidden md:flex h-18 items-center justify-between px-8 border-b border-zinc-150/85 bg-white shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <Link href={logoHref} className="flex items-center gap-2.5 group">
-            <img 
-              src="/logo-icon.png" 
-              className="h-9 w-auto object-contain group-hover:scale-105 transition-all" 
+            <img
+              src="/logo-icon.png"
+              className="h-20 w-auto object-contain group-hover:scale-105 transition-all"
             />
           </Link>
         </div>
@@ -204,7 +204,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
           {/* Profile Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-zinc-150"
             >
@@ -220,8 +220,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
             {userDropdownOpen && (
               <div className="absolute right-0 top-[calc(100%+8px)] w-48 bg-white border border-zinc-200/80 rounded-xl shadow-lg py-1.5 z-50 animate-fade-in">
-                <Link 
-                  href="/student/profile" 
+                <Link
+                  href="/student/profile"
                   onClick={() => setUserDropdownOpen(false)}
                   className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-slate-50 hover:text-zinc-900 transition-colors"
                 >
@@ -254,9 +254,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       {/* Mobile Sticky Header */}
       <header className="sticky top-0 z-30 md:hidden flex h-16 w-full items-center justify-between border-b border-zinc-200/80 bg-white/95 backdrop-blur px-4 shadow-sm shrink-0">
         <Link href={logoHref} className="flex items-center gap-2 font-bold text-zinc-900">
-          <img 
-            src="/logo-icon.png" 
-            className="h-10 w-auto object-contain" 
+          <img
+            src="/logo-icon.png"
+            className="h-10 w-auto object-contain"
           />
         </Link>
         <button
@@ -270,7 +270,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
       {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-zinc-900/50 backdrop-blur-sm md:hidden transition-opacity duration-300"
           onClick={() => setMobileMenuOpen(false)}
         />
@@ -284,9 +284,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       `}>
         <div className="flex h-16 items-center justify-between px-6 border-b border-zinc-200/60 shrink-0">
           <Link href={logoHref} className="flex items-center gap-2 font-bold text-zinc-800" onClick={() => setMobileMenuOpen(false)}>
-            <img 
-              src="/logo-icon.png" 
-              className="h-9 w-auto object-contain" 
+            <img
+              src="/logo-icon.png"
+              className="h-9 w-auto object-contain"
             />
           </Link>
           <button
@@ -307,11 +307,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${
-                  active
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl border transition-all cursor-pointer ${active
                     ? "bg-[#F9B300] text-zinc-900 border-transparent shadow-md shadow-[#F9B300]/20 font-bold"
                     : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 active:bg-amber-100/80 active:scale-95 border-transparent"
-                }`}
+                  }`}
               >
                 <Icon className="h-4.5 w-4.5" />
                 {item.name}
@@ -346,10 +345,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
       {/* Main Workspace Layout (Full Screen) */}
       <div className="w-full flex-1 flex min-h-0 overflow-hidden">
-        
+
         {/* Left Sidebar (Desktop) */}
         <aside className="hidden md:flex w-[260px] flex-col border-r border-zinc-150/85 bg-white shrink-0 justify-between p-6 sticky top-18 h-[calc(100vh-4.5rem)] overflow-y-auto">
-          
+
           {/* Sidebar Navigation */}
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -359,11 +358,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${
-                    active
+                  className={`flex items-center gap-3 px-4 py-3 text-[14px] font-semibold rounded-xl transition-all cursor-pointer ${active
                       ? "bg-[#F9B300] text-zinc-900 shadow-md shadow-[#F9B300]/20 font-bold"
                       : "text-zinc-600 hover:bg-amber-50/80 hover:text-zinc-900 transition-colors border-transparent"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-4.5 w-4.5" />
                   {item.name}
@@ -389,11 +387,11 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             {/* Illustration inline SVG */}
             <div className="absolute right-[-10px] bottom-[-10px] opacity-90 pointer-events-none">
               <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 15L15 32.5L50 50L85 32.5L50 15Z" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round"/>
-                <path d="M15 32.5V57.5L50 75L85 57.5V32.5" fill="#B4B7FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round"/>
-                <path d="M50 50V75" stroke="#5B5FF7" strokeWidth="3"/>
-                <path d="M85 32.5L85 62.5" stroke="#5B5FF7" strokeWidth="3" strokeLinecap="round"/>
-                <circle cx="85" cy="62.5" r="5" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="2"/>
+                <path d="M50 15L15 32.5L50 50L85 32.5L50 15Z" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M15 32.5V57.5L50 75L85 57.5V32.5" fill="#B4B7FF" stroke="#5B5FF7" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M50 50V75" stroke="#5B5FF7" strokeWidth="3" />
+                <path d="M85 32.5L85 62.5" stroke="#5B5FF7" strokeWidth="3" strokeLinecap="round" />
+                <circle cx="85" cy="62.5" r="5" fill="#8F93FF" stroke="#5B5FF7" strokeWidth="2" />
               </svg>
             </div>
           </div>

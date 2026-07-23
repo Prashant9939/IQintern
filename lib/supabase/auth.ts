@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -5,10 +6,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { supabase, isSupabaseConfigured } from "./client";
-import { 
-  serverSignUpUser, 
-  serverLoginUser, 
-  seedAdminAccount, 
+import {
+  serverSignUpUser,
+  serverLoginUser,
+  seedAdminAccount,
   createAdminUser as serverCreateAdminUser,
   serverVerifyEmailAndPhone,
   serverResetPassword
@@ -226,7 +227,7 @@ export async function loginUser(emailOrPhone: string, password: string) {
         throw new Error(res.error || "Wrong credentials");
       }
       const user = res.user;
-      
+
       const session: UserSession = {
         id: user.id,
         email: user.email,
@@ -420,9 +421,9 @@ export async function createAdminUser(
 export function devToggleRole() {
   const current = getStoredSession();
   if (!current) return;
-  
+
   const newRole: "student" | "admin" = current.role === "admin" ? "student" : "admin";
-  
+
   if (typeof window !== "undefined") {
     if (current.role === "admin") {
       sessionStorage.setItem("admin_student_view_active", "true");
@@ -444,6 +445,7 @@ export function devToggleRole() {
   }
 
   if (typeof window !== "undefined") {
+    window.location.reload();
     window.location.href = newRole === "admin" ? "/admin/dashboard" : "/student/dashboard";
   }
 }
@@ -489,20 +491,20 @@ export async function getCurrentUser(): Promise<UserSession | null> {
         .select("id, email, full_name, phone_number, role, profile_completed, department_stream")
         .eq("id", session.id)
         .single();
-        
+
       if (error || !user) {
         setStoredSession(null);
         setCachedVerifiedUser(null);
         return null;
       }
-      
+
       let expectedRole = user.role;
       if (user.role === "admin") {
         if (typeof window !== "undefined" && sessionStorage.getItem("admin_student_view_active") === "true") {
           expectedRole = session.role;
         }
       }
-      
+
       if (session.role !== expectedRole) {
         setStoredSession(null);
         setCachedVerifiedUser(null);
@@ -538,7 +540,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
         setCachedVerifiedUser(null);
         return null;
       }
-      
+
       const validatedUser: UserSession = {
         id: user.id,
         email: user.email,
@@ -749,4 +751,3 @@ function recordLoginAttempt(identifier: string, success: boolean): void {
     localStorage.setItem(key, JSON.stringify(state));
   }
 }
-
