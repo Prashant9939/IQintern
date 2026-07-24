@@ -116,30 +116,11 @@ export function validatePhoneNumber(phone: string): boolean {
   return phoneRegex.test(phone.replace(/[\s-]/g, ""));
 }
 
+
 export async function signUpUser(
-  email: string,
-  password: string,
-  fullName: string,
-  phoneNumber: string,
-  college: string,
-  university: string,
-  course: string,
-  semester: string,
-  address: string,
-  documentId: string,
-  departmentStream: string,
-  batch: string,
-  rollNumber: string,
-  registrationNumber: string,
-  emergencyContactName: string,
-  emergencyContactNumber: string,
-  emergencyContactRelation: string,
-  agreedTerms: boolean,
-  agreedUpdates: boolean,
-  dateOfBirth: string
-) {
+  email: string, password: string, fullName: string, phoneNumber: string, college: string, university: string, course: string, semester: string, documentId: string, departmentStream: string, batch: string, rollNumber: string, registrationNumber: string, emergencyContactName: string, emergencyContactNumber: string, emergencyContactRelation: string, emergencyContactRelationn: string, agreedTerms: boolean, agreedUpdates: boolean, dateOfBirth: string) {
   // Input Validations
-  if (!email || !password || !fullName || !phoneNumber || !college || !university || !course || !semester || !address || !departmentStream || !batch || !rollNumber || !registrationNumber || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation || !dateOfBirth) {
+  if (!email || !password || !fullName || !phoneNumber || !college || !university || !course || !semester || !departmentStream || !batch || !rollNumber || !registrationNumber || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation || !dateOfBirth) {
     throw new Error("All fields are required.");
   }
   const sanitizedEmail = email.trim().replace(/['"\\;%_]/g, "");
@@ -165,10 +146,10 @@ export async function signUpUser(
 
   if (isSupabaseConfigured() && supabase) {
     try {
-      const res = await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+      const res = await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
       if (!res.success) {
         if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
-          return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+          return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
         }
         throw new Error(res.error || "Registration failed.");
       }
@@ -177,12 +158,12 @@ export async function signUpUser(
       console.warn("Supabase custom signup failed, falling back to mock registration:", err);
       // If table profiles doesn't exist, we fall back to mock signup so the UI works
       if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
-        return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+        return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
       }
       throw err;
     }
   } else {
-    return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, address, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
+    return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
   }
 }
 
@@ -572,7 +553,7 @@ function signUpMockUser(
   university: string,
   course: string,
   semester: string,
-  address: string,
+
   documentId: string,
   departmentStream: string,
   batch: string,
@@ -620,7 +601,6 @@ function signUpMockUser(
     department_stream: departmentStream,
     roll_number: rollNumber,
     registration_number: registrationNumber,
-    full_address: address,
     document_id: documentId,
     emergency_contact_name: emergencyContactName,
     emergency_contact_number: emergencyContactNumber,

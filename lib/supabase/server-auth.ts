@@ -50,7 +50,7 @@ export async function serverSignUpUser(
   university: string,
   course: string,
   semester: string,
-  address: string,
+
   documentId: string,
   departmentStream: string,
   batch: string,
@@ -119,7 +119,7 @@ export async function serverSignUpUser(
         department_stream: departmentStream,
         roll_number: rollNumber,
         registration_number: registrationNumber,
-        full_address: address,
+
         document_id: documentId,
         emergency_contact_name: emergencyContactName,
         emergency_contact_number: emergencyContactNumber,

@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 /* ============================================================
-   REGISTER PAGE CSS — Fixed z-index & stacking context issues
-   Pattern: matches login page's working z-index strategy
+   REGISTER PAGE CSS
+   FIX: Removed .register-card::before pseudo-element that
+   caused click-blocking on iOS Safari (pointer-events:none
+   ignored on inset:0 pseudo-elements inside stacking contexts)
    ============================================================ */
 
 :root {
@@ -41,7 +43,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ---- Content area (flex-grows to push footer down) ---- */
+/* ---- Content area ---- */
 .register-content-wrapper {
     flex: 1;
     display: flex;
@@ -93,15 +95,15 @@ body {
     pointer-events: none;
 }
 
-/* ---- Card wrapper (MATCHES login page z-index strategy) ---- */
+/* ---- Form wrapper ---- */
 .register-form-wrapper {
     width: 100%;
     max-width: 700px;
     display: flex;
     flex-direction: column;
-    /* NO position:relative + z-index here — let children stack naturally */
 }
 
+/* ---- Card (NO ::before pseudo-element) ---- */
 .register-card {
     background: #ffffff;
     border: 1px solid #e4e4e7;
@@ -117,24 +119,17 @@ body {
     z-index: 2;
 }
 
-.register-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 24px;
-    pointer-events: none;
-    background: linear-gradient(135deg, rgba(255, 255, 255, .15), transparent 30%, rgba(255, 255, 255, .10));
-}
-
-/* ---- Interactive elements INSIDE the card ---- */
+/* ---- Form & interactive elements — explicit pointer-events:auto ---- */
 .register-card form {
     position: relative;
     z-index: 3;
+    pointer-events: auto;
 }
 
 .register-card .step-content {
     position: relative;
     z-index: 3;
+    pointer-events: auto;
 }
 
 .register-card button[type="button"],
@@ -146,11 +141,13 @@ body {
 .register-card label {
     position: relative;
     z-index: 5;
+    pointer-events: auto;
 }
 
 .register-card .motion-alert-wrapper {
     position: relative;
     z-index: 4;
+    pointer-events: auto;
 }
 
 @media (min-width: 640px) {
@@ -165,7 +162,7 @@ body {
     }
 }
 
-/* ---- Social/Login link divider ---- */
+/* ---- Divider ---- */
 .register-divider {
     display: flex;
     align-items: center;
@@ -209,6 +206,7 @@ body {
     text-decoration: none;
     position: relative;
     z-index: 10;
+    pointer-events: auto;
 }
 
 .signin-link-btn:hover {

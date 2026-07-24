@@ -3,12 +3,25 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
 
+/* ------------------------------------------------------------------ */
+/*  1. Interfaces (Must be at the top level)                         */
+/* ------------------------------------------------------------------ */
+
 interface YearComboboxProps {
   value: string;
   onChange: (val: string) => void;
   years: number[];
   placeholder: string;
 }
+
+interface DateOfBirthSelectorProps {
+  value: string;
+  onChange: (val: string) => void;
+}
+
+/* ------------------------------------------------------------------ */
+/*  2. YearCombobox Component                                         */
+/* ------------------------------------------------------------------ */
 
 function YearCombobox({ value, onChange, years, placeholder }: YearComboboxProps) {
   const [searchTerm, setSearchTerm] = useState(value || "");
@@ -100,7 +113,7 @@ function YearCombobox({ value, onChange, years, placeholder }: YearComboboxProps
   }, [value]);
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative z-0 w-full">
       <div className="relative">
         <input
           type="text"
@@ -144,13 +157,12 @@ function YearCombobox({ value, onChange, years, placeholder }: YearComboboxProps
                     setSearchTerm(year.toString());
                     setIsOpen(false);
                   }}
-                  className={`px-4 py-2.5 text-sm font-semibold cursor-pointer transition-colors ${
-                    isSelected
+                  className={`px-4 py-2.5 text-sm font-semibold cursor-pointer transition-colors ${isSelected
                       ? "bg-[#7C3AED] text-white"
                       : isActive
-                      ? "bg-[#7C3AED]/10 text-[#7C3AED]"
-                      : "text-zinc-700 hover:bg-slate-50"
-                  }`}
+                        ? "bg-[#7C3AED]/10 text-[#7C3AED]"
+                        : "text-zinc-700 hover:bg-slate-50"
+                    }`}
                   role="option"
                   aria-selected={isSelected}
                   id={`year-option-${idx}`}
@@ -166,10 +178,9 @@ function YearCombobox({ value, onChange, years, placeholder }: YearComboboxProps
   );
 }
 
-interface DateOfBirthSelectorProps {
-  value: string;
-  onChange: (val: string) => void;
-}
+/* ------------------------------------------------------------------ */
+/*  3. DateOfBirthSelector Component (Exported)                       */
+/* ------------------------------------------------------------------ */
 
 export default function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProps) {
   // Parse the initial value formatted as YYYY-MM-DD

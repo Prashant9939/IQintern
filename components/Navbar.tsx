@@ -62,8 +62,8 @@ export default function Navbar() {
   };
 
   const navLinks = [
+    { name: "Home", href: "/" },
     { name: "Programs", href: "/internships" },
-    { name: "Learning Journey", href: "/#journey" },
     { name: "Certification", href: "/verify" },
     { name: "About", href: "/about" },
     { name: "FAQ", href: "/#faqs" },

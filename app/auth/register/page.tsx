@@ -1,23 +1,217 @@
 "use client";
-import "./register.css";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { signUpUser, loginUser } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { getUniversities, University } from "@/lib/supabase/db";
-
-import {
-  User, Phone, Mail, Lock, ArrowRight, ArrowLeft, AlertCircle,
-  CheckCircle, Eye, EyeOff, Building2, BookOpen, GraduationCap,
-  MapPin, PhoneCall, ShieldCheck, CheckSquare, ChevronDown, Globe, Check, Calendar
-} from "lucide-react";
+import { getUniversities, type University } from "@/lib/supabase/db";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import dynamic from "next/dynamic";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
-const DateOfBirthSelector = dynamic(() => import("@/components/DateOfBirthSelector"), { ssr: false });
-const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
+/* ------------------------------------------------------------------ */
+/*  Types & Constants                                                  */
+/* ------------------------------------------------------------------ */
+
+interface FormData {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  password: string;
+  dateOfBirth: string;
+  gender: string;
+  university: string;
+  college: string;
+  course: string;
+  departmentStream: string;
+  semester: string;
+  batch: string;
+  rollNumber: string;
+  registrationNumber: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  emergencyContactRelation: string;
+  documentId: string;
+  agreedTerms: boolean;
+  agreedUpdates: boolean;
+}
+
+const INITIAL_FORM: FormData = {
+  fullName: "",
+  phoneNumber: "",
+  email: "",
+  password: "",
+  dateOfBirth: "",
+  gender: "",
+  university: "",
+  college: "",
+  course: "",
+  departmentStream: "",
+  semester: "",
+  batch: "",
+  rollNumber: "",
+  registrationNumber: "",
+  address: "",
+  emergencyContactName: "",
+  emergencyContactNumber: "",
+  emergencyContactRelation: "",
+  documentId: "",
+  agreedTerms: false,
+  agreedUpdates: false,
+};
+
+// 4-step form configuration
+const STEP_META = [
+  { id: 1, label: "Account", title: "Register Your Profile", subtitle: "Step 1 of 4", icon: "user" },
+  { id: 2, label: "Academic", title: "Register Your Profile", subtitle: "Step 2 of 4", icon: "book" },
+  { id: 3, label: "Contact", title: "Register Your Profile", subtitle: "Step 3 of 4", icon: "phone" },
+  { id: 4, label: "Security", title: "Register Your Profile", subtitle: "Step 4 of 4", icon: "lock" },
+];
+
+const BATCH_OPTIONS = ["2022-26", "2023-27", "2024-28", "2025-29", "Other"];
+const SEMESTER_OPTIONS = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
+const RELATION_OPTIONS = ["Father", "Mother", "Brother", "Sister", "Guardian", "Other"];
+const BRANCH_OPTIONS = [
+  "Computer Science", "Information Technology", "Electronics & Communication",
+  "Electrical Engineering", "Mechanical Engineering", "Civil Engineering", "Other",
+];
+const COURSE_OPTIONS = [
+  { value: "B.Tech/BE", label: "B.Tech/BE" },
+  { value: "BCA", label: "BCA" },
+  { value: "BSC", label: "B.Sc Computer Science" },
+  { value: "BBA", label: "BBA" },
+  { value: "BCOM", label: "B.Com" },
+  { value: "BA", label: "BA" },
+  { value: "MBA", label: "MBA" },
+  { value: "MCA", label: "MCA" },
+];
+const GENDER_OPTIONS = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function getPasswordStrength(pass: string) {
+  if (!pass) return {
+    label: "",
+    dots: [false, false, false, false],
+    color: "text-zinc-300",
+    colorClass: "bg-transparent border-zinc-300",
+    checks: { length: false, upper: false, number: false, special: false }
+  };
+
+  const checks = {
+    length: pass.length >= 7,
+    upper: /[A-Z]/.test(pass),
+    number: /[0-9]/.test(pass),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(pass),
+  };
+
+  const score = Object.values(checks).filter(Boolean).length;
+
+  if (score <= 1) return { label: "Weak", dots: [true, false, false, false], color: "text-red-500", colorClass: "bg-red-500 border-red-500", checks };
+  if (score <= 3) return { label: "Medium", dots: [true, true, false, false], color: "text-amber-500", colorClass: "bg-amber-500 border-amber-500", checks };
+  return { label: "Strong", dots: [true, true, true, true], color: "text-emerald-500", colorClass: "bg-emerald-500 border-emerald-500", checks };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Small Reusable Components with Hover Effects                       */
+/* ------------------------------------------------------------------ */
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.label
+      className="block text-[11px] font-extrabold text-slate-800 tracking-wider uppercase"
+      whileHover={{ color: "#f59e0b" }}
+      transition={{ duration: 0.2 }}
+    >
+      {children} *
+    </motion.label>
+  );
+}
+
+function SelectField({
+  value, onChange, options, placeholder, disabled = false, icon: Icon,
+}: {
+  value: string; onChange: (v: string) => void;
+  options: { value: string; label: string }[]; placeholder: string;
+  disabled?: boolean; icon?: React.ElementType;
+}) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.01, boxShadow: "0 4px 14px rgba(0,0,0,0.08)" }}
+      transition={{ duration: 0.2 }}
+      className="relative"
+    >
+      {Icon && (
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none transition-all duration-300 group-hover:text-blue-500">
+          <Icon className="w-[18px] h-[18px]" />
+        </span>
+      )}
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className={`w-full ${Icon ? "pl-11" : "px-4"} pr-10 py-3.5 text-sm bg-slate-50 border border-slate-300 focus:border-amber-500 focus:ring-[4px] focus:ring-amber-500/15 rounded-2xl outline-none text-slate-800 transition-all duration-300 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed custom-select hover:border-blue-400 hover:bg-white hover:shadow-lg`}
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`, backgroundPosition: "right 0.75rem center", backgroundRepeat: "no-repeat", backgroundSize: "1.25rem" }}
+      >
+        <option value="" disabled>{placeholder}</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </motion.div>
+  );
+}
+
+function Checkbox({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: React.ReactNode }) {
+  return (
+    <motion.label
+      className="flex items-start gap-2.5 cursor-pointer group"
+      whileHover={{ x: 4, backgroundColor: "rgba(245, 158, 11, 0.05)" }}
+      transition={{ type: "spring", stiffness: 400 }}
+      style={{ borderRadius: "12px", padding: "8px 12px" }}
+    >
+      <div className="relative flex items-center justify-center shrink-0 mt-0.5">
+        <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+        <motion.div
+          role="checkbox"
+          aria-checked={checked}
+          className={`h-5 w-5 rounded-md border-2 transition-all ${checked ? "bg-amber-500 border-amber-500 shadow-lg shadow-amber-500/30" : "border-slate-300 bg-white group-hover:border-amber-400 group-hover:shadow-md"
+            }`}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          {checked && (
+            <motion.svg
+              className="w-3 h-3 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={4}
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 500, delay: 0.1 }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </motion.svg>
+          )}
+        </motion.div>
+      </div>
+      <span className="text-xs text-slate-600 font-medium leading-normal group-hover:text-slate-800 transition-colors">{children}</span>
+    </motion.label>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main Component                                                     */
+/* ------------------------------------------------------------------ */
+
 export default function Register() {
   const [step, setStep] = useState(1);
   const [universities, setUniversities] = useState<University[]>([]);
@@ -25,361 +219,1519 @@ export default function Register() {
   const [isMockMode, setIsMockMode] = useState(false);
   const [customUniversity, setCustomUniversity] = useState("");
   const [customCollege, setCustomCollege] = useState("");
-
-  useEffect(() => {
-    setIsMockMode(!isSupabaseConfigured());
-  }, []);
-
-  const handleClearMockData = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("mock_profiles");
-      localStorage.removeItem("iqintern_session");
-      sessionStorage.removeItem("iqintern_session");
-      document.cookie = "iqintern_session=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-      alert("Local mock database cleared successfully! Reloading page...");
-      window.location.reload();
-    }
-  };
-
-  const [formData, setFormData] = useState({
-    fullName: "", phoneNumber: "", email: "", password: "", dateOfBirth: "",
-    university: "", college: "", course: "", departmentStream: "",
-    semester: "", batch: "", rollNumber: "", registrationNumber: "",
-    address: "", emergencyContactName: "", emergencyContactNumber: "",
-    emergencyContactRelation: "", documentId: "", agreedTerms: false, agreedUpdates: false
-  });
-
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const getProgressPercentage = () => {
-    let filledCount = 0;
-    const totalFields = 18;
-    if (formData.fullName.trim()) filledCount++;
-    if (formData.phoneNumber.trim()) filledCount++;
-    if (formData.email.trim()) filledCount++;
-    if (formData.password.trim()) filledCount++;
-    if (formData.dateOfBirth.trim()) filledCount++;
-    if (formData.university) {
-      if (formData.university === "Other") { if (customUniversity.trim()) filledCount++; } else { filledCount++; }
-    }
-    if (formData.college) {
-      if (formData.college === "Other") { if (customCollege.trim()) filledCount++; } else { filledCount++; }
-    }
-    if (formData.course.trim()) filledCount++;
-    if (formData.departmentStream.trim()) filledCount++;
-    if (formData.semester.trim()) filledCount++;
-    if (formData.batch.trim()) filledCount++;
-    if (formData.rollNumber.trim()) filledCount++;
-    if (formData.registrationNumber.trim()) filledCount++;
-    if (formData.address.trim()) filledCount++;
-    if (formData.emergencyContactName.trim()) filledCount++;
-    if (formData.emergencyContactNumber.trim()) filledCount++;
-    if (formData.emergencyContactRelation.trim()) filledCount++;
-    if (formData.agreedTerms) filledCount++;
-    return Math.round((filledCount / totalFields) * 100);
-  };
+  // DOB state for separate selects
+  const [dobDay, setDobDay] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobYear, setDobYear] = useState("");
 
-  const progressPercentage = getProgressPercentage();
+  // Track hovered field for icon animations
+  const [hoveredField, setHoveredField] = useState<string | null>(null);
 
+  /* ---- derived ---- */
+  const passwordStrength = useMemo(() => getPasswordStrength(formData.password), [formData.password]);
+
+  const progressPercentage = useMemo(() => {
+    let filled = 0;
+    const total = 17; // Updated total (removed address)
+
+    if (formData.fullName.trim()) filled++;
+    if (formData.phoneNumber.trim()) filled++;
+    if (formData.email.trim()) filled++;
+    if (formData.password.trim()) filled++;
+    if (formData.dateOfBirth.trim()) filled++;
+    if (formData.university) { if (formData.university === "Other" ? customUniversity.trim() : true) filled++; }
+    if (formData.college) { if (formData.college === "Other" ? customCollege.trim() : true) filled++; }
+    if (formData.course.trim()) filled++;
+    if (formData.departmentStream.trim()) filled++;
+    if (formData.semester.trim()) filled++;
+    if (formData.batch.trim()) filled++;
+    if (formData.rollNumber.trim()) filled++;
+    if (formData.registrationNumber.trim()) filled++;
+    if (formData.emergencyContactName.trim()) filled++;
+    if (formData.emergencyContactNumber.trim()) filled++;
+    if (formData.emergencyContactRelation.trim()) filled++;
+    if (formData.agreedTerms) filled++;
+
+    return Math.round((filled / total) * 100);
+  }, [formData, customUniversity, customCollege]);
+
+  /* ---- effects ---- */
   useEffect(() => {
-    async function loadData() {
-      try { const univs = await getUniversities(); setUniversities(univs); } catch (err) { console.error("Failed to load universities:", err); }
-    }
-    loadData();
+    setIsMockMode(!isSupabaseConfigured());
   }, []);
 
   useEffect(() => {
-    if (formData.university) {
-      if (formData.university === "Other") { setColleges([]); setFormData(prev => ({ ...prev, college: "Other" })); }
-      else {
-        const selectedUniv = universities.find(u => u.name === formData.university);
-        if (selectedUniv) { setColleges(selectedUniv.colleges); } else { setColleges([]); }
-        setFormData(prev => ({ ...prev, college: "" }));
+    async function loadUniversities() {
+      try {
+        setUniversities(await getUniversities());
+      } catch (err) {
+        console.error("Failed to load universities:", err);
       }
-    } else { setColleges([]); }
+    }
+    loadUniversities();
+  }, []);
+
+  useEffect(() => {
+    if (!formData.university) {
+      setColleges([]);
+      return;
+    }
+    if (formData.university === "Other") {
+      setColleges([]);
+      setFormData((p) => ({ ...p, college: "Other" }));
+    } else {
+      const found = universities.find((u) => u.name === formData.university);
+      setColleges(found ? found.colleges : []);
+      setFormData((p) => ({ ...p, college: "" }));
+    }
   }, [formData.university, universities]);
 
-  const validateStep1 = () => {
-    if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.password || !formData.dateOfBirth) { setError("Please fill in all account details including Date of Birth."); return false; }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) { setError("Please enter a valid email address."); return false; }
-    if (formData.password.length < 7) { setError("Password must be at least 7 characters long."); return false; }
-    const birthDate = new Date(formData.dateOfBirth);
-    if (isNaN(birthDate.getTime())) { setError("Please select a valid Date of Birth."); return false; }
-    const today = new Date();
-    if (birthDate > today) { setError("Date of Birth cannot be in the future."); return false; }
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) { age--; }
-    if (age < 16) { setError("Minimum age requirement is 16 years."); return false; }
-    if (age > 80) { setError("Maximum age limit is 80 years."); return false; }
-    setError(""); return true;
+  /* ---- helpers ---- */
+  const updateForm = useCallback(<K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError("");
+  }, []);
+
+  // Handle DOB change from separate selects
+  const handleDOBChange = useCallback((type: 'day' | 'month' | 'year', value: string) => {
+    let newDay = dobDay;
+    let newMonth = dobMonth;
+    let newYear = dobYear;
+
+    if (type === 'day') newDay = value;
+    if (type === 'month') newMonth = value;
+    if (type === 'year') newYear = value;
+
+    // Update local state
+    if (type === 'day') setDobDay(value);
+    if (type === 'month') setDobMonth(value);
+    if (type === 'year') setDobYear(value);
+
+    // Combine when all three are selected
+    if (newDay && newMonth && newYear) {
+      updateForm('dateOfBirth', `${newYear}-${newMonth.padStart(2, '0')}-${newDay.padStart(2, '0')}`);
+    }
+  }, [dobDay, dobMonth, dobYear, updateForm]);
+
+
+
+  /* ---- validation ---- */
+  const validateStep1 = (): boolean => {
+    const { fullName, email, phoneNumber, dateOfBirth } = formData;
+
+    if (!fullName || !email || !phoneNumber || !dateOfBirth) {
+      setError("Please fill in all account details.");
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+
+    const birth = new Date(dateOfBirth);
+    if (isNaN(birth.getTime())) {
+      setError("Please select a valid Date of Birth.");
+      return false;
+    }
+
+    const now = new Date();
+    if (birth > now) {
+      setError("Date of Birth cannot be in the future.");
+      return false;
+    }
+
+    let age = now.getFullYear() - birth.getFullYear();
+    const mDiff = now.getMonth() - birth.getMonth();
+    if (mDiff < 0 || (mDiff === 0 && now.getDate() < birth.getDate())) age--;
+
+    if (age < 16) {
+      setError("Minimum age requirement is 16 years.");
+      return false;
+    }
+
+    if (age > 80) {
+      setError("Maximum age limit is 80 years.");
+      return false;
+    }
+
+    setError("");
+    return true;
   };
 
-  const validateStep2 = () => {
-    if (!formData.university || !formData.college || !formData.course || !formData.departmentStream || !formData.semester || !formData.batch || !formData.rollNumber || !formData.registrationNumber) { setError("Please fill in all academic details."); return false; }
-    if (formData.university === "Other" && !customUniversity.trim()) { setError("Please write your University name."); return false; }
-    if (formData.college === "Other" && !customCollege.trim()) { setError("Please write your College name."); return false; }
-    setError(""); return true;
+  const validateStep2 = (): boolean => {
+    const { university, college, course, departmentStream, semester, batch, rollNumber, registrationNumber } = formData;
+
+    if (!university || !college || !course || !departmentStream || !semester || !batch || !rollNumber || !registrationNumber) {
+      setError("Please fill in all academic details.");
+      return false;
+    }
+
+    if (university === "Other" && !customUniversity.trim()) {
+      setError("Please write your University name.");
+      return false;
+    }
+
+    if (college === "Other" && !customCollege.trim()) {
+      setError("Please write your College name.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const validateStep3 = (): boolean => {
+    const { emergencyContactName, emergencyContactNumber, emergencyContactRelation } = formData;
+
+    if (!emergencyContactName || !emergencyContactNumber || !emergencyContactRelation) {
+      setError("Please fill in all emergency contact details.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const validateStep4 = (): boolean => {
+    const { password, agreedTerms } = formData;
+
+    if (!password) {
+      setError("Please enter your password.");
+      return false;
+    }
+
+    if (password.length < 7) {
+      setError("Password must be at least 7 characters long.");
+      return false;
+    }
+
+    if (!confirmPassword) {
+      setError("Please confirm your password.");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+
+    if (!agreedTerms) {
+      setError("You must agree to the Terms and Conditions.");
+      return false;
+    }
+
+    setError("");
+    return true;
   };
 
   const handleNextStep = () => {
     if (step === 1 && validateStep1()) setStep(2);
     else if (step === 2 && validateStep2()) setStep(3);
+    else if (step === 3 && validateStep3()) setStep(4);
   };
 
+  /* ---- submit ---- */
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault(); if (step !== 3) return;
-    setError(""); setSuccess("");
-    if (!formData.address || !formData.emergencyContactName || !formData.emergencyContactNumber || !formData.emergencyContactRelation) { setError("Please fill in all mandatory contact details."); return; }
-    if (!formData.agreedTerms) { setError("You must agree to the Terms and Conditions."); return; }
+    e.preventDefault();
+    if (step !== 4) return;
+
+    setError("");
+    setSuccess("");
+
+    if (!validateStep4()) return;
+
     setLoading(true);
+
     try {
-      await signUpUser(formData.email, formData.password, formData.fullName, formData.phoneNumber, formData.college === "Other" ? customCollege : formData.college, formData.university === "Other" ? customUniversity : formData.university, formData.course, formData.semester, formData.address, formData.documentId || "N/A", formData.departmentStream, formData.batch, formData.rollNumber, formData.registrationNumber, formData.emergencyContactName, formData.emergencyContactNumber, formData.emergencyContactRelation, formData.agreedTerms, formData.agreedUpdates, formData.dateOfBirth);
-      setSuccess("Your account has been created successfully! Setting up your student dashboard...");
+      await signUpUser(
+        formData.email,
+        formData.password,
+        formData.fullName,
+        formData.phoneNumber,
+        formData.college === "Other" ? customCollege : formData.college,
+        formData.university === "Other" ? customUniversity : formData.university,
+        formData.course,
+        formData.semester,
+        "", // No address
+        formData.documentId || "N/A",
+        formData.departmentStream,
+        formData.batch,
+        formData.rollNumber,
+        formData.registrationNumber,
+        formData.emergencyContactName,
+        formData.emergencyContactNumber,
+        formData.emergencyContactRelation,
+        formData.agreedTerms,
+        formData.agreedUpdates,
+        formData.dateOfBirth,
+      );
+
+      setSuccess("Account created! Logging you in...");
+
       await loginUser(formData.email, formData.password);
-      setSuccess("Registration completed successfully! Redirecting to the payment portal...");
+
+      setSuccess("Redirecting to payment portal...");
+
       setTimeout(() => {
-        if (typeof window !== "undefined") { sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true"); }
+        sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
         window.location.href = "/student/payment";
       }, 1500);
-    } catch (err: any) { const errMsg = err.message || "Failed to complete registration."; setError(errMsg); alert(errMsg); } finally { setLoading(false); }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Registration failed.";
+      setError(msg);
+      alert(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateForm = (field: string, value: any) => { setFormData(prev => ({ ...prev, [field]: value })); };
-
-  const getPasswordStrength = (pass: string) => {
-    if (!pass) return { label: "", dots: [false, false, false, false], color: "text-zinc-300", colorClass: "bg-transparent border-zinc-300" };
-    const hasMinLength = pass.length >= 7; const hasUppercase = /[A-Z]/.test(pass); const hasNumber = /[0-9]/.test(pass); const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
-    const score = [hasMinLength, hasUppercase, hasNumber, hasSpecial].filter(Boolean).length;
-    if (score <= 1) return { label: "Weak", dots: [true, false, false, false], color: "text-red-500", colorClass: "bg-red-500 border-red-500" };
-    else if (score <= 3) return { label: "Medium", dots: [true, true, false, false], color: "text-amber-500", colorClass: "bg-amber-500 border-amber-500" };
-    else return { label: "Strong", dots: [true, true, true, true], color: "text-emerald-500", colorClass: "bg-emerald-500 border-emerald-500" };
+  /* ---- Render helpers ---- */
+  const generateDays = () => Array.from({ length: 31 }, (_, i) => i + 1);
+  const generateYears = () => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 50 }, (_, i) => currentYear - 16 - i);
   };
 
-  const slideVariants = {
-    hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.25, ease: "easeOut" as const } }, exit: { opacity: 0, x: -20, transition: { duration: 0.15, ease: "easeIn" as const } }
-  };
-
-  const passwordStrength = getPasswordStrength(formData.password);
-
+  /* ================================================================ */
+  /*  RENDER                                                           */
+  /* ================================================================ */
   return (
+    <div
+      className="min-h-screen flex flex-col justify-between py-10 px-4"
+      style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        background: "radial-gradient(circle at top right, #f1f5f9, #e2e8f0)",
+      }}
+    >
+      {/* Google Fonts & FontAwesome */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+          
+          .form-input-custom {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .form-input-custom:hover {
+            background-color: #ffffff;
+            border-color: #94a3b8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 20px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+          }
+          .form-input-custom:focus {
+            background-color: #ffffff;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1), 0 0 20px rgba(245, 158, 11, 0.2), 0 4px 12px rgba(245, 158, 11, 0.15);
+            outline: none;
+            transform: translateY(-1px);
+          }
+          select.custom-select {
+            appearance: none;
+          }
+          .active-glow-node {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.65), 0 0 32px rgba(245, 158, 11, 0.3);
+            border-color: #f59e0b;
+          }
+          @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+          }
+          .shimmer-border {
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+          }
+          .glow-effect {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.2);
+          }
+          .input-icon {
+            transition: all 0.3s ease;
+          }
+          .input-wrapper:hover .input-icon {
+            color: #3b82f6;
+            transform: scale(1.15);
+          }
+          @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3); }
+          }
+          .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+          }
+          .float-animation {
+            animation: float 3s ease-in-out infinite;
+          }
+        `
+      }} />
 
-
-    // Added min-h-screen to ensure footer stays at the bottom
-    <div className="register-page-container">
+      {/* Brand Header */}
       <Navbar />
 
+      {/* Main Card */}
+      <main className="mt-20 mb-12 w-full max-w-lg mx-auto bg-[#152746] rounded-[32px] shadow-2xl overflow-hidden flex flex-col relative">
+        {/* Animated background glow */}
+        <motion.div
+          className="absolute inset-0 opacity-30 pointer-events-none "
+          animate={{
+            background: [
+              "radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)",
+              "radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)",
+            ]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
 
+        {/* Step Controller Container - Dark Blue Header */}
+        <div
+          className="p-6 md:p-8 pb-12 relative z-0"
+          style={{ background: "linear-gradient(180deg, #223a60 0%, #152746 100%)" }}
+        >
+          {/* Title & Progress Badge */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xs font-bold tracking-widest text-slate-300 uppercase">Register Your Profile</h2>
+              <h3 className="text-sm font-semibold text-white mt-1 uppercase opacity-90">
+                Step {step} of {STEP_META.length}
+              </h3>
+            </div>
+            <motion.span
+              className="px-3 py-1 text-amber-400 rounded-full text-xs font-bold font-mono tracking-wider"
+              style={{
+                backgroundColor: "rgba(245, 158, 11, 0.1)",
+                borderColor: "rgba(245, 158, 11, 0.3)",
+                borderWidth: "1px",
+              }}
+              animate={progressPercentage > 50 ? {
+                boxShadow: [
+                  "0 0 10px rgba(245, 158, 11, 0.3)",
+                  "0 0 25px rgba(245, 158, 11, 0.6)",
+                  "0 0 10px rgba(245, 158, 11, 0.3)"
+                ],
+                scale: [1, 1.05, 1]
+              } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+              whileHover={{ scale: 1.1 }}
+            >
+              {progressPercentage}% COMPLETE
+            </motion.span>
+          </div>
 
-      <main className="register-content-wrapper">
-        <div className="w-full max-w-[700px] flex flex-col relative z-0">
-          <div className="bg-white border border-zinc-200 shadow-xl shadow-black/5 rounded-[24px] p-5 sm:p-7 flex flex-col w-full relative z-0">
-            <form onSubmit={handleRegister} className="flex flex-col">
+          {/* Stepper Progress Bar */}
+          <div className="relative flex items-center justify-between px-2">
+            {/* Background Line */}
+            <div className="absolute top-[21px] left-0 right-0 h-0.5 bg-slate-700/60 -z-10"></div>
 
-              {/* Step Indicator */}
-              <div className="pb-4 border-b border-zinc-100 mb-4 shrink-0">
-                <div className="flex justify-between items-baseline mb-3">
-                  <div>
-                    <h2 className="text-lg font-extrabold text-zinc-900 tracking-tight">
-                      {step === 1 ? "Account Information" : step === 2 ? "Academic Details" : "Contact Details"}
-                    </h2>
-                    <p className="text-[11px] text-zinc-500 font-medium mt-0.5">
-                      {step === 1 ? "Create your credentials" : step === 2 ? "Provide academic background" : "Verify contact information"}
-                    </p>
-                  </div>
-                  <span className="text-[10px] font-extrabold text-[#FF7A00] bg-[#FFF3EB] px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    {progressPercentage}% Complete
-                  </span>
+            {/* Active Progress Line */}
+            <motion.div
+              className="absolute top-[21px] left-0 h-0.5 -z-10 shimmer-border"
+              style={{
+                width: `${((step - 1) / (STEP_META.length - 1)) * 100}%`,
+              }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            />
+
+            {/* Step Nodes */}
+            {STEP_META.map((node) => {
+              const completed = step > node.id;
+              const active = step === node.id;
+
+              return (
+                <div key={node.id} className="flex flex-col items-center flex-1">
+                  <motion.div
+                    whileHover={{ scale: active ? 1.2 : 1.1 }}
+                    animate={{
+                      scale: active ? 1.15 : 1,
+                      rotate: active ? [0, 5, -5, 0] : 0
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 20,
+                      rotate: { duration: 1.5, repeat: Infinity }
+                    }}
+                    className={`w-11 h-11 rounded-full border-2 flex items-center justify-center font-bold text-sm transition-all duration-300 ${active
+                      ? "border-amber-500 active-glow-node text-white glow-effect"
+                      : completed
+                        ? "border-amber-500 bg-amber-500 text-white"
+                        : "border-slate-600 text-slate-400 bg-[#152746]"
+                      }`}
+                  >
+                    {completed ? (
+                      <motion.svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </motion.svg>
+                    ) : node.icon === "book" ? (
+                      <i className="fa-solid fa-book-open text-xs"></i>
+                    ) : node.icon === "phone" ? (
+                      <i className="fa-solid fa-mobile-screen-button text-xs"></i>
+                    ) : node.icon === "lock" ? (
+                      <i className="fa-solid fa-lock text-xs"></i>
+                    ) : node.icon === "user" ? (
+                      <i className="fa-solid fa-user text-xs"></i>
+                    ) : (
+                      node.id
+                    )}
+                  </motion.div>
+                  <motion.span
+                    className={`text-[11px] font-bold mt-2 tracking-wide uppercase ${active ? "text-amber-500" : completed ? "text-amber-500" : "text-slate-400"
+                      }`}
+                    animate={active ? {
+                      scale: [1, 1.05, 1],
+                    } : {}}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    {node.label}
+                  </motion.span>
                 </div>
-                <div className="relative flex items-center justify-between w-full px-6 mt-1 overflow-visible">
-                  <div className="absolute left-[36px] right-[36px] top-1/2 -translate-y-1/2 h-1.5 bg-zinc-200/60 shadow-inner rounded-full z-0">
-                    <motion.div className="h-full rounded-full bg-[#F9B300]" initial={{ width: "0%" }} animate={{ width: `${progressPercentage}%` }} transition={{ duration: 0.3, ease: "easeInOut" }} />
-                  </div>
-                  {[{ id: 1, label: "Account" }, { id: 2, label: "Academic" }, { id: 3, label: "Contact" }].map((node) => {
-                    const isCompleted = step > node.id; const isActive = step === node.id;
-                    return (
-                      <div key={node.id} className="relative z-10 flex flex-col items-center">
-                        <motion.div className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${isCompleted ? "bg-[#F9B300] border-transparent text-white shadow-md shadow-indigo-500/10" : isActive ? "bg-white border-[#F9B300] ring-4 ring-amber-500/15" : "bg-white border-zinc-200 text-zinc-400"}`} animate={{ scale: isActive ? 1.15 : 1, }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-                          {isCompleted ? (<Check className="w-3.5 h-3.5 text-white stroke-[3]" />) : (<div className={`w-2 h-2 rounded-full ${isActive ? 'bg-[#F9B300]' : 'bg-zinc-300'}`} />)}
-                        </motion.div>
-                        <span className={`text-[9px] font-bold mt-1.5 transition-colors duration-300 uppercase tracking-wider ${isActive ? "text-[#F9B300]" : isCompleted ? "text-zinc-700" : "text-zinc-400"}`}>{node.label}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {isMockMode && (
-                <div className="mb-4 flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 text-xs text-amber-800 font-medium shrink-0">
-                  <div className="flex items-start gap-2.5">
-                    <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
-                    <div>
-                      <strong className="font-bold block text-amber-900">Developer Mock Mode Active</strong>
-                      <span className="text-[11px] text-amber-700 leading-relaxed block mt-0.5">The client is running in Mock Mode because Supabase credentials are not loaded. Restart your local Next.js dev server after adding `.env.local`.</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2 mt-1">
-                    <button type="button" onClick={handleClearMockData} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm shadow-amber-600/10 active:scale-95 transition-all cursor-pointer">Clear Mock DB</button>
-                  </div>
-                </div>
-              )}
-
-              <motion.div layout>
-                {error && (<motion.div key="error-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="mb-4 flex items-start gap-2.5 rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-xs text-red-600 font-semibold shrink-0"><AlertCircle className="h-4 w-4 shrink-0 text-red-500" /><span>{error}</span></motion.div>)}
-                {success && (<motion.div key="success-message" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="mb-4 flex items-start gap-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3 text-xs text-emerald-600 font-semibold shrink-0"><CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" /><span>{success}</span></motion.div>)}
-              </motion.div>
-
-              <div className="py-1">
-                <motion.div>
-                  {/* STEP 1 */}
-                  {step === 1 && (
-                    <motion.div key="step1" variants={slideVariants} initial="hidden" animate="visible" exit="exit" className="space-y-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Full Name *</label>
-                        <div className="relative"><User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" /><input type="text" required value={formData.fullName} onChange={e => updateForm('fullName', e.target.value)} className="w-full pl-11 pr-4 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="John Doe" /></div>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Email Address *</label>
-                        <div className="relative"><Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" /><input type="email" required value={formData.email} onChange={e => updateForm('email', e.target.value)} className="w-full pl-11 pr-4 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="john@example.com" /></div>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Phone Number *</label>
-                          <div className="relative"><Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" /><input type="tel" required value={formData.phoneNumber} onChange={e => updateForm('phoneNumber', e.target.value)} className="w-full pl-11 pr-4 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="+91 98765 43210" /></div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Date of Birth *</label>
-                          <DateOfBirthSelector value={formData.dateOfBirth} onChange={(val) => updateForm('dateOfBirth', val)} />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Password *</label>
-                        <div className="relative">
-                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" />
-                          <input type={showPassword ? "text" : "password"} required value={formData.password} onChange={e => updateForm('password', e.target.value)} className="w-full pl-11 pr-11 h-[48px] sm:h-[50px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[12px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="At least 7 characters" />
-                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
-                        </div>
-                        {formData.password && (
-                          <div className="space-y-1.5 mt-1.5 px-1">
-                            <div className="flex items-center gap-2 text-[10px] font-bold">
-                              <span className="text-zinc-500 font-medium">Strength:</span>
-                              <span className={`${passwordStrength.color} uppercase tracking-wider`}>{passwordStrength.label}</span>
-                              <div className="flex gap-1">{passwordStrength.dots.map((filled, i) => (<div key={i} className={`w-1.5 h-1.5 rounded-full border transition-all duration-300 ${filled ? passwordStrength.colorClass : "border-zinc-300 bg-transparent"}`} />))}</div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-1 text-[9px] font-semibold text-zinc-500 pt-1 border-t border-zinc-100">
-                              <div className="flex items-center gap-1"><div className={`w-1 h-1 rounded-full transition-colors duration-300 ${formData.password.length >= 7 ? 'bg-emerald-500' : 'bg-zinc-300'}`} /><span className={formData.password.length >= 7 ? 'text-zinc-800 font-bold' : ''}>Min 7 characters</span></div>
-                              <div className="flex items-center gap-1"><div className={`w-1 h-1 rounded-full transition-colors duration-300 ${/[A-Z]/.test(formData.password) ? 'bg-emerald-500' : 'bg-zinc-300'}`} /><span className={/[A-Z]/.test(formData.password) ? 'text-zinc-800 font-bold' : ''}>One uppercase letter</span></div>
-                              <div className="flex items-center gap-1"><div className={`w-1 h-1 rounded-full transition-colors duration-300 ${/[0-9]/.test(formData.password) ? 'bg-emerald-500' : 'bg-zinc-300'}`} /><span className={/[0-9]/.test(formData.password) ? 'text-zinc-800 font-bold' : ''}>One number</span></div>
-                              <div className="flex items-center gap-1"><div className={`w-1 h-1 rounded-full transition-colors duration-300 ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? 'bg-emerald-500' : 'bg-zinc-300'}`} /><span className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? 'text-zinc-800 font-bold' : ''}>One special character</span></div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <motion.button type="button" onClick={handleNextStep} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="w-full mt-4 h-[54px] flex items-center justify-center gap-2 rounded-[14px] bg-[#F9B300] text-base font-semibold text-white shadow-lg shadow-indigo-500/20 cursor-pointer transition-all duration-200">Continue to Academic Details <ArrowRight className="h-5 w-5" /></motion.button>
-                    </motion.div>
-                  )}
-
-                  {/* STEP 2 */}
-                  {step === 2 && (
-                    <motion.div key="step2" variants={slideVariants} initial="hidden" animate="visible" exit="exit" className="space-y-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">University Name *</label>
-                        <div className="relative"><Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" /><select required value={formData.university} onChange={e => updateForm('university', e.target.value)} className="w-full pl-11 pr-10 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer"><option value="" disabled>Select your University</option>{universities.map(u => (<option key={u.name} value={u.name}>{u.name}</option>))}<option value="Other">Other / Not Listed</option></select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div>
-                      </div>
-                      {formData.university === "Other" && (<div className="flex flex-col gap-1 mt-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Write your University Name *</label><div className="relative"><Building2 className="absolute left-3.5 top-3 h-[18px] w-[18px] text-zinc-400" /><textarea required value={customUniversity} onChange={e => setCustomUniversity(e.target.value)} className="w-full pl-11 pr-4 py-2.5 min-h-[72px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 resize-none" placeholder="Enter your full university name..." /></div></div>)}
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">College Name *</label>
-                        <div className="relative"><BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-zinc-400" /><select required value={formData.college} onChange={e => updateForm('college', e.target.value)} disabled={!formData.university} className="w-full pl-11 pr-10 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"><option value="" disabled>Select your College</option>{colleges.map(c => (<option key={c} value={c}>{c}</option>))}<option value="Other">Other / Not Listed</option></select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div>
-                      </div>
-                      {formData.college === "Other" && (<div className="flex flex-col gap-1 mt-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Write your College Name *</label><div className="relative"><BookOpen className="absolute left-3.5 top-3 h-[18px] w-[18px] text-zinc-400" /><textarea required value={customCollege} onChange={e => setCustomCollege(e.target.value)} className="w-full pl-11 pr-4 py-2.5 min-h-[72px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400 resize-none" placeholder="Enter your full college or university name..." /></div></div>)}
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Course/Degree *</label><div className="relative"><select required value={formData.course} onChange={e => updateForm('course', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer pr-10"><option value="" disabled>Select</option><option value="UG">UG (Undergraduate)</option><option value="PG">PG (Postgraduate)</option></select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div></div>
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Branch *</label><div className="relative"><select required value={formData.departmentStream} onChange={e => updateForm('departmentStream', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer pr-10"><option value="" disabled>Select</option><option value="B.Tech/BE">B.Tech/BE</option><option value="BCA">BCA</option><option value="BSC">B.Sc</option><option value="BBA">BBA</option><option value="BCOM">B.Com</option><option value="BA">BA</option><option value="MBA">MBA</option><option value="MCA">MCA</option></select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div></div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Semester *</label><div className="relative"><select required value={formData.semester} onChange={e => updateForm('semester', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer pr-10"><option value="" disabled>Select</option>{["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"].map(sem => <option key={sem} value={sem}>{sem}</option>)}</select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div></div>
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Batch *</label><div className="relative"><select required value={formData.batch} onChange={e => updateForm('batch', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 appearance-none cursor-pointer pr-10"><option value="" disabled>Select</option>{["2022-26", "2023-27", "2024-28", "2025-29", "Other"].map(b => <option key={b} value={b}>{b}</option>)}</select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div></div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Univ Reg No. *</label><input type="text" required value={formData.registrationNumber} onChange={e => updateForm('registrationNumber', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="Reg Number" /></div>
-                        <div className="flex flex-col gap-1"><label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Roll Number *</label><input type="text" required value={formData.rollNumber} onChange={e => updateForm('rollNumber', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="Roll Number" /></div>
-                      </div>
-
-                      <div className="flex gap-4 pt-2">
-                        <motion.button type="button" onClick={() => setStep(1)} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="w-1/3 h-[54px] flex items-center justify-center gap-2 rounded-[14px] bg-white border border-zinc-300 hover:bg-zinc-50 text-sm font-semibold text-zinc-700 cursor-pointer transition-all duration-200"><ArrowLeft className="h-4 w-4" />Back</motion.button>
-                        <motion.button type="button" onClick={handleNextStep} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="w-2/3 h-[54px] flex items-center justify-center gap-2 rounded-[14px] bg-[#F9B300] text-base font-semibold text-white shadow-lg shadow-indigo-500/20 cursor-pointer transition-all duration-200">Continue<ArrowRight className="h-5 w-5" /></motion.button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* STEP 3 */}
-                  {step === 3 && (
-                    <motion.div key="step3" variants={slideVariants} initial="hidden" animate="visible" exit="exit" className="space-y-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Full Address *</label>
-                        <div className="relative"><MapPin className="absolute left-3.5 top-3 h-[18px] w-[18px] text-zinc-400" /><textarea required value={formData.address} onChange={e => updateForm('address', e.target.value)} rows={2} className="w-full pl-11 pr-4 py-2.5 text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 resize-none placeholder:text-zinc-400 min-h-[64px]" placeholder="House No, Street, City, State, Pincode" /></div>
-                      </div>
-
-                      <div className="p-3.5 rounded-[16px] border border-amber-200 bg-amber-50/20 space-y-2.5">
-                        <h3 className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wider flex items-center gap-1.5"><PhoneCall className="h-3.5 w-3.5 text-amber-700" /> Emergency Contact</h3>
-                        <div className="flex flex-col gap-1"><input type="text" required value={formData.emergencyContactName} onChange={e => updateForm('emergencyContactName', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-white border border-amber-200/60 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="Contact Person Name *" /></div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="relative"><input type="tel" required value={formData.emergencyContactNumber} onChange={e => updateForm('emergencyContactNumber', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-white border border-amber-200/60 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="Phone Number *" /></div>
-                          <div className="relative"><select required value={formData.emergencyContactRelation} onChange={e => updateForm('emergencyContactRelation', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-white border border-amber-200/60 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all appearance-none cursor-pointer pr-10"><option value="" disabled>Relationship *</option>{["Father", "Mother", "Brother", "Sister", "Guardian", "Other"].map(r => <option key={r} value={r}>{r}</option>)}</select><ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" /></div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider ml-1">Govt ID Number (Optional)</label>
-                        <input type="text" value={formData.documentId} onChange={e => updateForm('documentId', e.target.value)} className="w-full px-4 h-[56px] text-sm bg-zinc-50 border border-zinc-300 focus:border-[#F9B300] focus:ring-[4px] focus:ring-[#F9B300]/15 rounded-[14px] outline-none text-zinc-800 transition-all duration-200 placeholder:text-zinc-400" placeholder="Aadhar / PAN" />
-                      </div>
-
-                      <div className="flex flex-col gap-2 mb-2 select-none">
-                        <label className="flex items-start gap-2.5 cursor-pointer group">
-                          <div className="relative flex items-center justify-center shrink-0 mt-0.5"><input type="checkbox" className="peer sr-only" checked={formData.agreedTerms} onChange={e => updateForm('agreedTerms', e.target.checked)} /><div className="h-4 w-4 rounded border border-zinc-300 peer-checked:bg-[#F9B300] peer-checked:border-[#F9B300] transition-all group-hover:border-[#F9B300]/70"></div><Check className="absolute h-2.5 w-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity stroke-[3]" /></div>
-                          <span className="text-[10px] text-zinc-600 font-medium leading-normal">I agree to the <Link href="/terms-and-conditions" className="text-indigo-600 font-bold hover:underline">Terms and Conditions</Link> and Privacy Policy. *</span>
-                        </label>
-                        <label className="flex items-start gap-2.5 cursor-pointer group">
-                          <div className="relative flex items-center justify-center shrink-0 mt-0.5"><input type="checkbox" className="peer sr-only" checked={formData.agreedUpdates} onChange={e => updateForm('agreedUpdates', e.target.checked)} /><div className="h-4 w-4 rounded border border-zinc-300 peer-checked:bg-[#F9B300] peer-checked:border-[#F9B300] transition-all group-hover:border-[#F9B300]/70"></div><Check className="absolute h-2.5 w-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity stroke-[3]" /></div>
-                          <span className="text-[10px] text-zinc-600 font-medium leading-normal">I agree to receive updates, assessment alerts, and promotions via Email and SMS.</span>
-                        </label>
-                      </div>
-
-                      <div className="flex gap-4 pt-2">
-                        <motion.button type="button" onClick={() => setStep(2)} disabled={loading} whileHover={loading ? {} : { y: -2 }} whileTap={loading ? {} : { scale: 0.98 }} className="w-1/3 h-[54px] flex items-center justify-center gap-2 rounded-[14px] bg-white border border-zinc-300 hover:bg-zinc-50 text-sm font-semibold text-zinc-700 cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"><ArrowLeft className="h-4 w-4" />Back</motion.button>
-                        <motion.button type="submit" disabled={loading} whileHover={loading ? {} : { y: -2 }} whileTap={loading ? {} : { scale: 0.98 }} className="w-2/3 h-[54px] flex items-center justify-center gap-2 rounded-[14px] bg-[#F9B300] text-base font-semibold text-white shadow-lg shadow-indigo-500/20 cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                          {loading ? (<><div className="h-4 w-4 border-2 border-zinc-800 border-t-transparent rounded-full animate-spin"></div>Creating Account.</>) : (<>Register Now<CheckCircle className="h-4.5 w-4.5" /></>)}
-                        </motion.button>
-                      </div>
-                    </motion.div>
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Center-Aligned Trust Elements (Restored from cutoff) */}
-              {(!formData.password || step !== 1) && (
-                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4 pt-3.5 border-t border-zinc-100 text-[10px] text-zinc-500 font-semibold select-none shrink-0">
-                  <div className="flex items-center gap-1"><span className="text-emerald-600 font-bold text-xs">✓</span><span>UGC Compliant</span></div>
-                  <div className="flex items-center gap-1"><span className="text-emerald-600 font-bold text-xs">✓</span><span>Secure Registration</span></div>
-                  <div className="flex items-center gap-1"><span className="text-emerald-600 font-bold text-xs">✓</span><span>AICTE Guidelines</span></div>
-                </div>
-              )}
-
-            </form>
+              );
+            })}
           </div>
         </div>
+
+        {/* Form Container - White Section */}
+        <div className="bg-white rounded-t-[32px] p-6 md:p-8 -mt-5 relative z-10 flex-grow shadow-[0_-8px_30px_rgba(0,0,0,0.15)]">
+          <form onSubmit={handleRegister} className="space-y-5">
+
+            {/* Mock Mode Banner */}
+            {isMockMode && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3"
+                whileHover={{ boxShadow: "0 4px 20px rgba(245, 158, 11, 0.2)" }}
+              >
+                <motion.svg
+                  className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </motion.svg>
+                <div className="flex-1">
+                  <strong className="text-sm text-amber-800">Developer Mock Mode Active</strong>
+                  <p className="text-xs text-amber-600 mt-1">
+                    Supabase credentials not loaded. Add <code className="bg-amber-100 px-1 rounded">.env.local</code> and restart.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Error / Success Messages */}
+            <AnimatePresence mode="wait">
+              {error && (
+                <motion.div
+                  key="err"
+                  initial={{ opacity: 0, scale: 0.95, x: -20 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3"
+                >
+                  <motion.svg
+                    className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    animate={{ x: [0, -3, 3, 0] }}
+                    transition={{ duration: 0.3, repeat: 2 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </motion.svg>
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
+                </motion.div>
+              )}
+              {success && (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-3"
+                >
+                  <motion.svg
+                    className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, delay: 0.1 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </motion.svg>
+                  <p className="text-sm text-emerald-700 font-medium">{success}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* STEP CONTENTS */}
+            <div>
+              <AnimatePresence mode="wait">
+
+                {/* ==================== STEP 1: ACCOUNT INFO ==================== */}
+                {step === 1 && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-5"
+                  >
+                    {/* Section Header */}
+                    <motion.div
+                      className="mb-6"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <motion.h3
+                        className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-1"
+                        whileHover={{ x: 4 }}
+                      >
+                        <motion.div
+                          className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30"
+                          whileHover={{ rotate: 15, scale: 1.1, boxShadow: "0 8px 25px rgba(59, 130, 246, 0.4)" }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </motion.div>
+                        Personal Information
+                      </motion.h3>
+                      <p className="text-xs text-slate-500 ml-10">Enter your basic profile details</p>
+                    </motion.div>
+
+                    {/* Full Name Field */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('fullName')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Full Name</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'fullName' ? 'text-blue-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'fullName' ? { scale: 1.15, rotate: [0, -10, 10, 0] } : {}}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type="text"
+                          placeholder="John Doe"
+                          value={formData.fullName}
+                          onChange={(e) => updateForm("fullName", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Email Field */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('email')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Email Address</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'email' ? 'text-blue-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'email' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type="email"
+                          placeholder="john@example.com"
+                          value={formData.email}
+                          onChange={(e) => updateForm("email", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Phone Number Field */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('phone')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Phone Number</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'phone' ? 'text-blue-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'phone' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type="tel"
+                          placeholder="+91 98765 43210"
+                          value={formData.phoneNumber}
+                          onChange={(e) => updateForm("phoneNumber", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Gender Selection */}
+                    <motion.div
+                      className="space-y-1"
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Gender</FieldLabel>
+                      <div className="grid grid-cols-3 gap-2">
+                        {GENDER_OPTIONS.map((option) => (
+                          <motion.button
+                            key={option.value}
+                            type="button"
+                            onClick={() => updateForm("gender", option.value)}
+                            className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all ${formData.gender === option.value
+                              ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              }`}
+                            whileHover={{ scale: 1.03, y: -2 }}
+                            whileTap={{ scale: 0.97 }}
+                            animate={formData.gender === option.value ? {
+                              boxShadow: ["0 4px 15px rgba(59, 130, 246, 0.3)", "0 8px 25px rgba(59, 130, 246, 0.4)", "0 4px 15px rgba(59, 130, 246, 0.3)"]
+                            } : {}}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            {option.label}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    {/* Date of Birth - Three Selects */}
+                    <motion.div
+                      className="space-y-1"
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Date of Birth</FieldLabel>
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* Day Select */}
+                        <motion.select
+                          value={dobDay}
+                          onChange={(e) => handleDOBChange('day', e.target.value)}
+                          className="form-input-custom px-3 py-3 text-sm rounded-xl outline-none cursor-pointer"
+                          whileHover={{ scale: 1.02 }}
+                          whileFocus={{ boxShadow: "0 0 0 3px rgba(245, 158, 11, 0.2)" }}
+                        >
+                          <option value="" disabled>Day</option>
+                          {generateDays().map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                        </motion.select>
+
+                        {/* Month Select */}
+                        <motion.select
+                          value={dobMonth}
+                          onChange={(e) => handleDOBChange('month', e.target.value)}
+                          className="form-input-custom px-3 py-3 text-sm rounded-xl outline-none cursor-pointer"
+                          whileHover={{ scale: 1.02 }}
+                          whileFocus={{ boxShadow: "0 0 0 3px rgba(245, 158, 11, 0.2)" }}
+                        >
+                          <option value="" disabled>Month</option>
+                          {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m, i) => (
+                            <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
+                          ))}
+                        </motion.select>
+
+                        {/* Year Select */}
+                        <motion.select
+                          value={dobYear}
+                          onChange={(e) => handleDOBChange('year', e.target.value)}
+                          className="form-input-custom px-3 py-3 text-sm rounded-xl outline-none cursor-pointer"
+                          whileHover={{ scale: 1.02 }}
+                          whileFocus={{ boxShadow: "0 0 0 3px rgba(245, 158, 11, 0.2)" }}
+                        >
+                          <option value="" disabled>Year</option>
+                          {generateYears().map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </motion.select>
+                      </div>
+                    </motion.div>
+
+                    {/* Next Button */}
+                    <motion.div className="pt-4">
+                      <motion.button
+                        type="button"
+                        onClick={handleNextStep}
+                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
+                        whileHover={{
+                          scale: 1.02,
+                          boxShadow: "0 8px 30px rgba(37, 99, 235, 0.4)",
+                          background: "linear-gradient(to right, #2563eb, #1d4ed8)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        Continue to Academic Details
+                        <motion.svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </motion.svg>
+                      </motion.button>
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* ==================== STEP 2: ACADEMIC DETAILS ==================== */}
+                {step === 2 && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-5"
+                  >
+                    {/* Section Header */}
+                    <motion.div className="mb-6">
+                      <motion.h3
+                        className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-1"
+                        whileHover={{ x: 4 }}
+                      >
+                        <motion.div
+                          className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30"
+                          whileHover={{ rotate: 15, scale: 1.1, boxShadow: "0 8px 25px rgba(147, 51, 234, 0.4)" }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.828 4.902 9.15 4 7.375 4S3.922 4.902 3.375 6.253m15 13C18.172 19.098 16.45 20 14.675 20s-3.277-.902-3.825-2.247m0-13C9.078 4.098 7.35 3 5.575 3S2.078 4.098 1.525 5.753m15 13c.922.79 1.475 1.962 1.475 3.25v.001m-16.95 0v-.001c0-1.288.553-2.46 1.475-3.25M3.375 8.25C4.902 7.114 6.95 6.5 9.125 6.5s4.223.614 5.75 1.75m-11.55 0c.922.79 1.475 1.962 1.475 3.25v.001m-1.45 0v-.001c0-1.288.527-2.47 1.402-3.269" />
+                          </svg>
+                        </motion.div>
+                        Academic Information
+                      </motion.h3>
+                      <p className="text-xs text-slate-500 ml-10">Tell us about your education</p>
+                    </motion.div>
+
+                    {/* University Dropdown */}
+                    <SelectField
+                      value={formData.university}
+                      onChange={(v) => updateForm("university", v)}
+                      options={[
+                        ...universities.map((u) => ({ value: u.name, label: u.name })),
+                        { value: "Other", label: "Other (Not Listed)" },
+                      ]}
+                      placeholder="Select University"
+                    />
+
+                    {/* Custom University Input */}
+                    {formData.university === "Other" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-1"
+                      >
+                        <FieldLabel>University Name</FieldLabel>
+                        <motion.input
+                          type="text"
+                          placeholder="Enter university name"
+                          value={customUniversity}
+                          onChange={(e) => setCustomUniversity(e.target.value)}
+                          className="form-input-custom w-full px-4 py-3.5 text-sm rounded-2xl outline-none"
+                          whileFocus={{ boxShadow: "0 0 0 4px rgba(147, 51, 234, 0.15)" }}
+                        />
+                      </motion.div>
+                    )}
+
+                    {/* College Dropdown */}
+                    <SelectField
+                      value={formData.college}
+                      onChange={(v) => updateForm("college", v)}
+                      options={[
+                        ...colleges.map((c) => ({ value: c, label: c })),
+                        ...(formData.university !== "Other" ? [{ value: "Other", label: "Other (Not Listed)" }] : []),
+                      ]}
+                      placeholder="Select College"
+                      disabled={!formData.university || colleges.length === 0}
+                    />
+
+                    {/* Custom College Input */}
+                    {formData.college === "Other" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-1"
+                      >
+                        <FieldLabel>College Name</FieldLabel>
+                        <motion.input
+                          type="text"
+                          placeholder="Enter college name"
+                          value={customCollege}
+                          onChange={(e) => setCustomCollege(e.target.value)}
+                          className="form-input-custom w-full px-4 py-3.5 text-sm rounded-2xl outline-none"
+                          whileFocus={{ boxShadow: "0 0 0 4px rgba(147, 51, 234, 0.15)" }}
+                        />
+                      </motion.div>
+                    )}
+
+                    {/* Course & Branch Row */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div className="space-y-1" whileHover={{ y: -2 }}>
+                        <FieldLabel>Course</FieldLabel>
+                        <SelectField
+                          value={formData.course}
+                          onChange={(v) => updateForm("course", v)}
+                          options={COURSE_OPTIONS}
+                          placeholder="Select Course"
+                        />
+                      </motion.div>
+
+                      <motion.div className="space-y-1" whileHover={{ y: -2 }}>
+                        <FieldLabel>Branch / Stream</FieldLabel>
+                        <SelectField
+                          value={formData.departmentStream}
+                          onChange={(v) => updateForm("departmentStream", v)}
+                          options={BRANCH_OPTIONS.map((b) => ({ value: b, label: b }))}
+                          placeholder="Select Branch"
+                        />
+                      </motion.div>
+                    </div>
+
+                    {/* Semester & Batch Row */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div className="space-y-1" whileHover={{ y: -2 }}>
+                        <FieldLabel>Semester</FieldLabel>
+                        <SelectField
+                          value={formData.semester}
+                          onChange={(v) => updateForm("semester", v)}
+                          options={SEMESTER_OPTIONS.map((s) => ({ value: s, label: s }))}
+                          placeholder="Semester"
+                        />
+                      </motion.div>
+
+                      <motion.div className="space-y-1" whileHover={{ y: -2 }}>
+                        <FieldLabel>Batch</FieldLabel>
+                        <SelectField
+                          value={formData.batch}
+                          onChange={(v) => updateForm("batch", v)}
+                          options={BATCH_OPTIONS.map((b) => ({ value: b, label: b }))}
+                          placeholder="Batch Year"
+                        />
+                      </motion.div>
+                    </div>
+
+                    {/* Roll Number & Registration Number */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div
+                        className="space-y-1 input-wrapper"
+                        onHoverStart={() => setHoveredField('rollNo')}
+                        onHoverEnd={() => setHoveredField(null)}
+                        whileHover={{ y: -2 }}
+                      >
+                        <FieldLabel>Roll Number</FieldLabel>
+                        <div className="relative">
+                          <motion.span
+                            className={`absolute left-3 top-1/2 -translate-y-1/2 input-icon text-sm ${hoveredField === 'rollNo' ? 'text-purple-500' : 'text-slate-400'}`}
+                            animate={hoveredField === 'rollNo' ? { scale: 1.15 } : {}}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                            </svg>
+                          </motion.span>
+                          <input
+                            type="text"
+                            placeholder="CS123"
+                            value={formData.rollNumber}
+                            onChange={(e) => updateForm("rollNumber", e.target.value)}
+                            className="form-input-custom w-full pl-9 pr-3 py-3.5 text-sm rounded-2xl outline-none"
+                          />
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        className="space-y-1 input-wrapper"
+                        onHoverStart={() => setHoveredField('regNo')}
+                        onHoverEnd={() => setHoveredField(null)}
+                        whileHover={{ y: -2 }}
+                      >
+                        <FieldLabel>Registration No.</FieldLabel>
+                        <div className="relative">
+                          <motion.span
+                            className={`absolute left-3 top-1/2 -translate-y-1/2 input-icon text-sm ${hoveredField === 'regNo' ? 'text-purple-500' : 'text-slate-400'}`}
+                            animate={hoveredField === 'regNo' ? { scale: 1.15 } : {}}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </motion.span>
+                          <input
+                            type="text"
+                            placeholder="REG2024001"
+                            value={formData.registrationNumber}
+                            onChange={(e) => updateForm("registrationNumber", e.target.value)}
+                            className="form-input-custom w-full pl-9 pr-3 py-3.5 text-sm rounded-2xl outline-none"
+                          />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex gap-3 pt-4">
+                      <motion.button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-sm tracking-wide flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02, backgroundColor: "#e2e8f0" }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={handleNextStep}
+                        className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2"
+                        whileHover={{
+                          scale: 1.02,
+                          boxShadow: "0 8px 30px rgba(147, 51, 234, 0.4)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Continue
+                        <motion.svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </motion.svg>
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ==================== STEP 3: EMERGENCY CONTACT ==================== */}
+                {step === 3 && (
+                  <motion.div
+                    key="step3"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-5"
+                  >
+                    {/* Section Header */}
+                    <motion.div className="mb-6">
+                      <motion.h3
+                        className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-1"
+                        whileHover={{ x: 4 }}
+                      >
+                        <motion.div
+                          className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center"
+                          whileHover={{ rotate: 15, scale: 1.1 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </motion.div>
+                        Emergency Contact
+                      </motion.h3>
+                      <p className="text-xs text-slate-500 ml-10">Provide an emergency contact person</p>
+                    </motion.div>
+
+                    {/* Emergency Contact Name */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('emergencyName')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Emergency Contact Name</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'emergencyName' ? 'text-orange-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'emergencyName' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type="text"
+                          placeholder="Parent/Guardian Name"
+                          value={formData.emergencyContactName}
+                          onChange={(e) => updateForm("emergencyContactName", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Emergency Contact Phone */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('emergencyPhone')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Emergency Contact Phone</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'emergencyPhone' ? 'text-orange-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'emergencyPhone' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type="tel"
+                          placeholder="+91 98765 43210"
+                          value={formData.emergencyContactNumber}
+                          onChange={(e) => updateForm("emergencyContactNumber", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Emergency Contact Relation */}
+                    <motion.div
+                      className="space-y-1"
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Relationship</FieldLabel>
+                      <SelectField
+                        value={formData.emergencyContactRelation}
+                        onChange={(v) => updateForm("emergencyContactRelation", v)}
+                        options={RELATION_OPTIONS.map((r) => ({ value: r, label: r }))}
+                        placeholder="Select Relationship"
+                      />
+                    </motion.div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex gap-3 pt-4">
+                      <motion.button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-sm tracking-wide flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02, backgroundColor: "#e2e8f0" }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={handleNextStep}
+                        className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2"
+                        whileHover={{
+                          scale: 1.02,
+                          boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Continue to Security
+                        <motion.svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </motion.svg>
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ==================== STEP 4: PASSWORD & TERMS (NEW!) ==================== */}
+                {step === 4 && (
+                  <motion.div
+                    key="step4"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-5"
+                  >
+                    {/* Section Header */}
+                    <motion.div className="mb-6">
+                      <motion.h3
+                        className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-1"
+                        whileHover={{ x: 4 }}
+                      >
+                        <motion.div
+                          className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30 pulse-glow"
+                          whileHover={{ rotate: 15, scale: 1.1, boxShadow: "0 8px 25px rgba(16, 185, 129, 0.5)" }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        </motion.div>
+                        Security Setup
+                      </motion.h3>
+                      <p className="text-xs text-slate-500 ml-10">Create a secure password for your account</p>
+                    </motion.div>
+
+                    {/* Password Field */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('password')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Create Password</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'password' ? 'text-green-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'password' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Min 7 characters with mix of letters, numbers & symbols"
+                          value={formData.password}
+                          onChange={(e) => updateForm("password", e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-12 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                        <motion.button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-green-500 p-1"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          {showPassword ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </motion.button>
+                      </div>
+
+                      {/* Password Strength Indicator */}
+                      {formData.password && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-2 space-y-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1.5">
+                              {passwordStrength.dots.map((filled, i) => (
+                                <motion.div
+                                  key={i}
+                                  className={`h-1.5 w-8 rounded-full ${filled ? passwordStrength.colorClass : 'bg-slate-200'}`}
+                                  initial={{ scaleX: 0 }}
+                                  animate={{ scaleX: 1 }}
+                                  transition={{ delay: i * 0.1 }}
+                                />
+                              ))}
+                            </div>
+                            <motion.span
+                              className={`text-xs font-bold ${passwordStrength.color}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                            >
+                              {passwordStrength.label}
+                            </motion.span>
+                          </div>
+
+                          {/* Password Requirements Checklist */}
+                          <div className="grid grid-cols-2 gap-1 pt-1">
+                            {[
+                              { label: "7+ characters", check: passwordStrength.checks.length },
+                              { label: "Uppercase letter", check: passwordStrength.checks.upper },
+                              { label: "Number", check: passwordStrength.checks.number },
+                              { label: "Special character", check: passwordStrength.checks.special },
+                            ].map((req) => (
+                              <motion.div
+                                key={req.label}
+                                className={`flex items-center gap-1.5 text-xs ${req.check ? 'text-emerald-600' : 'text-slate-400'}`}
+                                animate={req.check ? { x: [0, 3, 0] } : {}}
+                                transition={{ duration: 0.3 }}
+                              >
+                                <motion.svg
+                                  className="w-3.5 h-3.5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={3}
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: req.check ? 1 : 0 }}
+                                  transition={{ type: "spring", stiffness: 500 }}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </motion.svg>
+                                {req.label}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.div>
+
+                    {/* Confirm Password Field */}
+                    <motion.div
+                      className="space-y-1 input-wrapper"
+                      onHoverStart={() => setHoveredField('confirmPassword')}
+                      onHoverEnd={() => setHoveredField(null)}
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FieldLabel>Confirm Password</FieldLabel>
+                      <div className="relative">
+                        <motion.span
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 input-icon ${hoveredField === 'confirmPassword' ? 'text-green-500' : 'text-slate-400'}`}
+                          animate={hoveredField === 'confirmPassword' ? { scale: 1.15 } : {}}
+                        >
+                          <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                        </motion.span>
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Re-enter your password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="form-input-custom w-full pl-11 pr-12 py-3.5 text-sm rounded-2xl outline-none"
+                        />
+                        <motion.button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-green-500 p-1"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          {showConfirmPassword ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </motion.button>
+                      </div>
+
+                      {/* Password Match Indicator */}
+                      {confirmPassword && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex items-center gap-1.5 mt-2 text-xs font-medium ${confirmPassword === formData.password
+                            ? 'text-emerald-600'
+                            : 'text-red-500'
+                            }`}
+                        >
+                          <motion.svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                            animate={{
+                              scale: confirmPassword === formData.password ? [1, 1.2, 1] : [1, 1.1, 1],
+                              rotate: confirmPassword === formData.password ? 0 : [0, -10, 10, 0]
+                            }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            {confirmPassword === formData.password ? (
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            ) : (
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            )}
+                          </motion.svg>
+                          {confirmPassword === formData.password ? 'Passwords match!' : 'Passwords do not match'}
+                        </motion.div>
+                      )}
+                    </motion.div>
+
+                    {/* Terms & Conditions Checkboxes */}
+                    <motion.div
+                      className="space-y-3 pt-2"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <Checkbox
+                        checked={formData.agreedTerms}
+                        onChange={(v) => updateForm("agreedTerms", v)}
+                      >
+                        I agree to the{" "}
+                        <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline font-semibold">
+                          Terms & Conditions
+                        </Link>{" "}
+                        and{" "}
+                        <Link href="/privacy" className="text-blue-600 hover:text-blue-700 underline font-semibold">
+                          Privacy Policy
+                        </Link>
+                      </Checkbox>
+
+                      <Checkbox
+                        checked={formData.agreedUpdates}
+                        onChange={(v) => updateForm("agreedUpdates", v)}
+                      >
+                        Send me updates about internships, workshops, and opportunities via WhatsApp & Email
+                      </Checkbox>
+                    </motion.div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex gap-3 pt-4">
+                      <motion.button
+                        type="button"
+                        onClick={() => setStep(3)}
+                        className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-sm tracking-wide flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02, backgroundColor: "#e2e8f0" }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back
+                      </motion.button>
+                      <motion.button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-green-500/25 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        whileHover={!loading ? {
+                          scale: 1.02,
+                          boxShadow: "0 8px 30px rgba(16, 185, 129, 0.4)",
+                          background: "linear-gradient(to right, #10b981, #059669)"
+                        } : {}}
+                        whileTap={!loading ? { scale: 0.98 } : {}}
+                        animate={loading ? {
+                          boxShadow: [
+                            "0 4px 14px rgba(21, 39, 70, 0.3)",
+                            "0 6px 20px rgba(21, 39, 70, 0.4)",
+                            "0 4px 14px rgba(21, 39, 70, 0.3)"
+                          ]
+                        } : {}}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                            Creating Account...
+                          </>
+                        ) : (
+                          <>
+                            <motion.span
+                              className="relative z-10"
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              Create Account
+                            </motion.span>
+                            <motion.svg
+                              className="w-3.5 h-3.5 relative z-10"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              animate={{ x: [0, 4, 0] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </motion.svg>
+                          </>
+                        )}
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+            </div>
+
+          </form>
+        </div>
+
       </main>
 
-      {/* ADDED: The Footer Component */}
+      {/* Footer */}
       <Footer />
 
+      {/* FontAwesome CDN */}
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </div>
   );
 }
