@@ -45,7 +45,7 @@
     }
 
     .header-logo {
-      height: 60px;
+      height: 800px;
       width: auto;
       object-fit: contain;
     }
@@ -84,6 +84,23 @@
       font-size: 13px;
       opacity: 0.9;
       font-weight: 400;
+    }
+
+    /* Company Address Styles */
+    .company-address {
+      font-size: 11px;
+      opacity: 0.85;
+      line-height: 1.5;
+      margin-top: 4px;
+      max-width: 280px;
+    }
+
+    .cin-number {
+      font-size: 11px;
+      opacity: 0.85;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 3px;
     }
 
     .header-meta {
@@ -359,6 +376,11 @@
         margin: 2px 0 0 !important;
       }
 
+      .header .brand .company-address,
+      .header .brand .cin-number {
+        font-size: 9px !important;
+      }
+
       .header-meta {
         font-size: 11px !important;
       }
@@ -511,13 +533,15 @@
     <div class="header">
       <div class="brand">
         <img src="/logo-full.png" alt="IQ Intern Logo" class="header-logo">
-        <p>AVADS Private Limited</p>
+        <h1>Zenithix Private Limited</h1>
+        <div class="company-address">Sector 154, Noida,<br>Uttar Pradesh, India</div>
+        <div class="cin-number">CIN: U85500BR2025PTC076013</div>
       </div>
 
       <div class="header-meta">
         <strong>Offer Letter</strong>
         Date: {{issueDate}}<br>
-        Ref: {{verificationId}}
+        CIN: U85500BR2025PTC076013
       </div>
     </div>
 
@@ -529,9 +553,11 @@
       <div class="welcome-brand-section" style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
         <img src="/logo-full.png" alt="IQ Intern Logo" style="height: 60px; object-fit: contain; margin-bottom: 8px;" />
         <div style="font-size: 24px; font-weight: 850; color: #1E3A8A; letter-spacing: -0.5px;">IQ INTERN</div>
-        <div
-          style="font-size: 11px; color: #7C3AED; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px;">
-          AVADS Private Limited</div>
+        <div style="font-size: 13px; color: #334155; font-weight: 600; margin-top: 4px;">Zenithix Private Limited</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 2px; line-height: 1.4;">Sector 154, Noida,<br>Uttar
+          Pradesh, India</div>
+        <div style="font-size: 11px; color: #7C3AED; font-weight: 700; letter-spacing: 0.5px; margin-top: 3px;">
+          CIN: U85500BR2025PTC076013</div>
       </div>
 
       <div class="letter-title">Internship Offer Letter</div>
@@ -659,8 +685,8 @@
         </div>
         <div class="sig-block">
           <div class="sig-label">Authorized Signatory</div>
-          <div style="margin: 10px 0;"><img src="/stamp.png" height="85px" width="85px"></div>
-          <div class="sig-sublabel">For AVADS Private Limited</div>
+          <div style="margin: 10px 0;"><img src="/stamp.png" height="100px" width="100px"></div>
+          <div class="sig-sublabel">For {{companyName}}</div>
           <div class="sig-sublabel">Date: {{issueDate}}</div>
         </div>
       </div>
@@ -673,7 +699,9 @@
         This document is computer-generated and does not require a physical signature. Its authenticity can be verified
         online at <a href="https://iqintern.in/verify">iqintern.in/verify</a> using the Reference ID:
         <strong>{{verificationId}}</strong>.<br />
-        © {{currentYear}} AVADS Private Limited. All rights reserved.
+        © {{currentYear}} Zenithix Private Limited. All rights reserved.<br />
+        <strong>Registered Office:</strong> Sector 154, Noida,<br>Uttar Pradesh, India<br />
+        <strong>CIN:</strong> U85500BR2025PTC076013
       </div>
     </div>
   </div>

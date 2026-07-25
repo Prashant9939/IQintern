@@ -5,9 +5,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
-
+import FaqSection from "@/components/FaqSection";
 import Navbar from "@/components/Navbar";
 import dynamic from "next/dynamic";
+
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 import {
   Award,
@@ -66,7 +67,6 @@ const floatingIcons = Array.from({ length: 20 }, (_, idx) => {
 });
 
 export default function Home() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTrackCategory, setActiveTrackCategory] = useState("Engineering");
 
@@ -155,14 +155,6 @@ export default function Home() {
       after: "Completed the Python Software Engineering track, passed all builds, and sent his scorecard directly to recruiters. Hired as a Backend Dev in 18 days.",
       tag: "Python Development"
     }
-  ];
-
-  const faqs = [
-    { q: "What is the typical program duration?", a: "Most professional training tracks require approximately 120 hours of curriculum study and project validation, typically completed in 6 to 16 weeks depending on your pace." },
-    { q: "How does the evaluation process work?", a: "Assessments consist of timed MCQ tests designed to validate core engineering, design, or business concepts. You must score 40% or higher to qualify for your verified credentials." },
-    { q: "How do recruiters verify student scorecards?", a: "Each certificate has a unique ID and QR code. Recruiters scan or search these credentials directly on our platform to view actual test score summaries instantly." },
-    { q: "What policies apply to course withdrawals?", a: "Since all downloadable training blueprints are digital materials delivered instantly upon enrollment, general terms apply. Please consult support for billing clarifications." },
-    { q: "Are these credentials recognized?", a: "Yes. IQIntern certifications detail the candidate's actual score breakdown and live build approvals, offering concrete competence proofs preferred by volume hiring partners." }
   ];
 
   const renderTrackRow = (track: any, rIdx: number) => {
@@ -578,7 +570,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-
+      <FaqSection />
       <Footer />
     </div>
   );

@@ -73,8 +73,7 @@ const BATCH_OPTIONS = ["2022-26", "2023-27", "2024-28", "2025-29", "Other"];
 const SEMESTER_OPTIONS = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 const RELATION_OPTIONS = ["Father", "Mother", "Brother", "Sister", "Guardian", "Other"];
 const BRANCH_OPTIONS = [
-  "Computer Science", "Information Technology", "Electronics & Communication",
-  "Electrical Engineering", "Mechanical Engineering", "Civil Engineering", "Other",
+  "UG", "PG", "Diploma", "PhD", "Other",
 ];
 const COURSE_OPTIONS = [
   { value: "B.Tech/BE", label: "B.Tech/BE" },
