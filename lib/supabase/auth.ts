@@ -6,6 +6,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { supabase, isSupabaseConfigured } from "./client";
+
 import {
   serverSignUpUser,
   serverLoginUser,
@@ -117,6 +118,13 @@ export function validatePhoneNumber(phone: string): boolean {
 }
 
 
+
+
+
+
+
+
+
 export async function signUpUser(
   email: string, password: string, fullName: string, phoneNumber: string, college: string, university: string, course: string, semester: string, documentId: string, departmentStream: string, batch: string, rollNumber: string, registrationNumber: string, emergencyContactName: string, emergencyContactNumber: string, emergencyContactRelation: string, emergencyContactRelationn: string, agreedTerms: boolean, agreedUpdates: boolean, dateOfBirth: string) {
   // Input Validations
@@ -140,6 +148,7 @@ export async function signUpUser(
   const hasSmall = /[a-z]/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
   const hasNumeric = /[0-9]/.test(password);
+
   if (!hasCapital || !hasSmall || !hasSymbol || !hasNumeric) {
     throw new Error("Password must contain a combination of uppercase letters, lowercase letters, numbers, and symbols.");
   }
@@ -148,7 +157,11 @@ export async function signUpUser(
     try {
       const res = await serverSignUpUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
       if (!res.success) {
+
+
+
         if (res.error?.includes("does not exist") || res.error?.includes("schema cache")) {
+
           return signUpMockUser(sanitizedEmail, password, sanitizedFullName, sanitizedPhone, college, university, course, semester, documentId, departmentStream, batch, rollNumber, registrationNumber, emergencyContactName, emergencyContactNumber, emergencyContactRelation, agreedTerms, agreedUpdates, dateOfBirth);
         }
         throw new Error(res.error || "Registration failed.");

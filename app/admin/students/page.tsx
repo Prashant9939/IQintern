@@ -153,7 +153,7 @@ export default function RegisteredStudents() {
         setResults((prev) =>
           prev.map((r) => (r.id === editingResult.id ? { ...r, ...res } : r))
         );
-        
+
         // Refresh history logs
         try {
           const hist = await getResultChangeHistory(editingResult.id);
@@ -272,7 +272,7 @@ export default function RegisteredStudents() {
   };
 
   const students = profiles.filter((p) => p.role === "student");
-  const admins   = profiles.filter((p) => p.role === "admin");
+  const admins = profiles.filter((p) => p.role === "admin");
 
   const filteredProfiles = profiles.filter(
     (p) =>
@@ -340,21 +340,19 @@ export default function RegisteredStudents() {
         <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={() => { setActiveTab("profiles"); setSearchQuery(""); }}
-            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
-              activeTab === "profiles"
+            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${activeTab === "profiles"
                 ? "bg-indigo-600 border-indigo-600 text-white font-extrabold shadow-sm shadow-indigo-600/10"
                 : "bg-slate-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900 font-bold"
-            }`}
+              }`}
           >
             All Accounts ({profiles.length})
           </button>
           <button
             onClick={() => { setActiveTab("results"); setSearchQuery(""); }}
-            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
-              activeTab === "results"
+            className={`flex-grow sm:flex-grow-0 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${activeTab === "results"
                 ? "bg-indigo-600 border-indigo-600 text-white font-extrabold shadow-sm shadow-indigo-600/10"
                 : "bg-slate-50 border-zinc-200 text-zinc-655 hover:bg-zinc-100 hover:text-zinc-900 font-bold"
-            }`}
+              }`}
           >
             Test Logs ({results.length})
           </button>
@@ -403,10 +401,10 @@ export default function RegisteredStudents() {
                   <tr key={profile.id} className="hover:bg-zinc-50/50 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5">
-                        <img 
-                          src="/ai_avatar.png" 
-                          alt={profile.full_name || "User Avatar"} 
-                          className="h-7 w-7 rounded-lg border border-zinc-205 object-cover shrink-0" 
+                        <img
+                          src="/ai_avatar.png"
+                          alt={profile.full_name || "User Avatar"}
+                          className="h-7 w-7 rounded-lg border border-zinc-205 object-cover shrink-0"
                         />
                         <span className="font-bold text-zinc-900 whitespace-nowrap">{profile.full_name}</span>
                       </div>
@@ -457,7 +455,7 @@ export default function RegisteredStudents() {
                         >
                           <Eye className="h-4 w-4" />
                         </button>
-                        
+
                         {profile.role !== "admin" && (
                           <button
                             onClick={() => { setProfileToDelete(profile); setDeleteError(""); }}
@@ -655,11 +653,10 @@ export default function RegisteredStudents() {
               </div>
 
               {adminMsg && (
-                <div className={`p-3 rounded-xl text-[11px] border font-medium ${
-                  adminMsgType === "success"
+                <div className={`p-3 rounded-xl text-[11px] border font-medium ${adminMsgType === "success"
                     ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                     : "border-red-200 bg-red-50 text-red-700"
-                }`}>
+                  }`}>
                   {adminMsg}
                 </div>
               )}
@@ -684,18 +681,17 @@ export default function RegisteredStudents() {
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-6 border-b border-zinc-150 pb-4">
               <div className="flex items-center gap-3">
-                <img 
-                  src="/ai_avatar.png" 
-                  alt={selectedProfile.full_name} 
-                  className="h-12 w-12 rounded-2xl border border-zinc-205 object-cover shrink-0" 
+                <img
+                  src="/ai_avatar.png"
+                  alt={selectedProfile.full_name}
+                  className="h-12 w-12 rounded-2xl border border-zinc-205 object-cover shrink-0"
                 />
                 <div>
                   <h2 className="text-base font-extrabold text-zinc-900">{selectedProfile.full_name}</h2>
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 mt-1 text-[10px] font-bold ${
-                    selectedProfile.role === "admin"
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 mt-1 text-[10px] font-bold ${selectedProfile.role === "admin"
                       ? "bg-violet-50 text-violet-700 border border-violet-100"
                       : "bg-indigo-50 text-indigo-650 border border-indigo-100"
-                  }`}>
+                    }`}>
                     {selectedProfile.role === "admin" ? <ShieldCheck className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
                     {selectedProfile.role === "admin" ? "Administrator" : "Student Candidate"}
                   </span>
@@ -970,11 +966,10 @@ export default function RegisteredStudents() {
                   <button
                     type="button"
                     onClick={() => setEditingResult((r) => r ? { ...r, passed: true } : null)}
-                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      editingResult.passed
+                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${editingResult.passed
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-zinc-100"
-                    }`}
+                      }`}
                   >
                     <CheckCircle className="h-3.5 w-3.5" />
                     Pass
@@ -982,11 +977,10 @@ export default function RegisteredStudents() {
                   <button
                     type="button"
                     onClick={() => setEditingResult((r) => r ? { ...r, passed: false } : null)}
-                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      !editingResult.passed
+                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${!editingResult.passed
                         ? "bg-red-50 text-red-700 border-red-200 shadow-sm"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-zinc-100"
-                    }`}
+                      }`}
                   >
                     <XCircle className="h-3.5 w-3.5" />
                     Fail

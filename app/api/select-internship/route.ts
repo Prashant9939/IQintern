@@ -66,7 +66,7 @@ export async function POST(req: Request) {
           <br>
           <p>Regards,<br>IQ Intern Team</p>
         `;
-        
+
         // This runs asynchronously in background
         sendEmail({
           to: profile.email,

@@ -471,7 +471,7 @@ function getMockStorage<T>(key: string, defaultValue: T): T {
     console.error(`Error reading key "${key}" from localStorage:`, e);
     try {
       localStorage.setItem(key, JSON.stringify(defaultValue));
-    } catch (_) {}
+    } catch (_) { }
     return defaultValue;
   }
 }
@@ -542,7 +542,7 @@ export async function getInternships(): Promise<Internship[]> {
       const list = getMockStorage<Internship[]>("mock_internships", DEFAULT_INTERNSHIPS);
       if (list.length < DEFAULT_INTERNSHIPS.length) {
         console.log("Fewer mock internships found in local storage. Auto-synchronizing mock database...");
-        
+
         // 1. Overwrite mock_internships
         localStorage.setItem("mock_internships", JSON.stringify(DEFAULT_INTERNSHIPS));
 
@@ -655,14 +655,14 @@ export async function saveInternship(internship: Omit<Internship, "id"> & { id?:
           .single();
         if (error) throw error;
         if (!data) throw new Error("No data returned from database insert");
-        
+
         // Auto-seed document templates for the new internship track
         try {
           await seedTemplatesForInternship(data.id);
         } catch (seedErr) {
           console.error("Auto-seeding templates failed:", seedErr);
         }
-        
+
         return data;
       }
     } catch (err) {
@@ -796,7 +796,7 @@ function getMockQuestionsFallback(internshipId: string): Question[] {
     setMockStorage("mock_questions", updatedList);
     return formatted;
   }
-  
+
   return internshipQuestions;
 }
 
@@ -882,7 +882,7 @@ export async function generateReferenceNumber(): Promise<string> {
         .select("reference_number")
         .not("reference_number", "is", null)
         .like("reference_number", `${prefix}%`);
-      
+
       if (!error && data) {
         let maxNum = 0;
         for (const row of data) {
@@ -978,7 +978,7 @@ export async function getTestResults(studentId?: string): Promise<TestResult[]> 
         setCachedData(cacheKey, fallback, CACHE_TTL.short);
         return fallback;
       }
-      
+
       const mapped = (data || []).map((r: any) => ({
         id: r.id,
         student_id: r.student_id,
@@ -1047,7 +1047,7 @@ export async function getTestResultById(id: string): Promise<TestResult | null> 
         if (found) setCachedData(cacheKey, found, CACHE_TTL.short);
         return found;
       }
-      
+
       const mapped = {
         id: data.id,
         student_id: data.student_id,
@@ -1314,7 +1314,7 @@ export async function updateStudentProfile(userId: string, data: any): Promise<{
         .eq("id", userId)
         .select()
         .single();
-      
+
       if (error) throw error;
       return { success: true, data: updatedData };
     } catch (err: any) {
@@ -1328,10 +1328,10 @@ export async function updateStudentProfile(userId: string, data: any): Promise<{
 
 function updateStudentProfileMock(userId: string, data: any): { success: boolean; data?: any } {
   if (typeof window === "undefined") return { success: false };
-  
+
   const profiles = JSON.parse(localStorage.getItem("mock_profiles") || "[]");
   const idx = profiles.findIndex((p: any) => p.id === userId);
-  
+
   if (idx !== -1) {
     const sanitizedData: any = {};
     for (const key in data) {
@@ -1377,12 +1377,12 @@ function deleteMockProfileFallback(id: string): boolean {
   const list = getMockStorage<any[]>("mock_profiles", []);
   const filtered = list.filter((p) => p.id !== id);
   setMockStorage("mock_profiles", filtered);
-  
+
   // delete related test results
   const results = getMockStorage<any[]>("mock_test_results", []);
   const filteredResults = results.filter((r) => r.student_id !== id);
   setMockStorage("mock_test_results", filteredResults);
-  
+
   return true;
 }
 
@@ -1553,14 +1553,14 @@ export async function getDocumentTemplates(): Promise<DocumentTemplate[]> {
         .from("document_templates")
         .select("*")
         .order("code", { ascending: true });
-        
+
       if (error) {
         console.warn("getDocumentTemplates failed, falling back to mock:", error);
         const res = await getMockDocumentTemplates();
         setCachedData(cacheKey, res, CACHE_TTL.long);
         return res;
       }
-      
+
       if (!data || data.length === 0) {
         // Database is empty, let's seed default templates
         const seeded = await getMockDocumentTemplates();
@@ -1587,7 +1587,7 @@ export async function getDocumentTemplates(): Promise<DocumentTemplate[]> {
         setCachedData(cacheKey, seeded, CACHE_TTL.long);
         return seeded;
       }
-      
+
       const res = data || [];
       setCachedData(cacheKey, res, CACHE_TTL.long);
       return res;
@@ -1628,7 +1628,7 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
     "feedback_form",
     "internship_report"
   ];
-  
+
   const names: Record<string, string> = {
     offer_letter: "Offer Letter",
     certificate: "Internship Certificate",
@@ -1649,7 +1649,7 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
     completion_letter: "completion_letter.html",
     assessment: "assessment.html"
   };
-  
+
   const templates = await Promise.all(
     codes.map(async (code) => {
       let html = "";
@@ -1669,7 +1669,7 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
             console.warn(`Could not read default template file ${fileName} via fs:`, fsErr);
           }
         }
-        
+
         if (!html) {
           try {
             const res = await fetch(`/templates/default/${fileName}?t=${Date.now()}`, { cache: 'no-store' });
@@ -1686,7 +1686,7 @@ async function seedDefaultTemplatesFromFiles(): Promise<DocumentTemplate[]> {
       } else {
         html = getFallbackTemplateHtml(code, names[code]);
       }
-      
+
       return {
         id: `dt-${code}`,
         code,
@@ -2012,7 +2012,7 @@ export async function saveDocumentTemplate(
       } else {
         query = query.eq("code", code).is("internship_id", null);
       }
-      
+
       const { data: existingTpl } = await query.maybeSingle();
 
       if (existingTpl) {
@@ -2056,9 +2056,9 @@ function saveDocumentTemplateMock(
   const idx = list.findIndex(
     (t) => t.code === code && (internshipId ? t.internship_id === internshipId : !t.internship_id)
   );
-  
+
   const templateName = name || (code === "offer_letter" ? "Offer Letter" : code === "certificate" ? "Internship Certificate" : code === "project_report" ? "Project Report" : code);
-  
+
   const saved: DocumentTemplate = {
     id: idx !== -1 ? list[idx].id : `dt-${code}-${internshipId || 'global'}`,
     code,
@@ -2149,7 +2149,7 @@ export async function createManualPayment(
 ): Promise<Payment | null> {
   invalidateCacheKey("student_payments_");
   invalidateCacheKey("paid_internship_ids_");
-  
+
   const paymentData = {
     student_id: userId,
     internship_id: internshipId,
@@ -2543,9 +2543,9 @@ export interface PlatformSettings {
 }
 
 export async function getPlatformSettings(bypassCache = false): Promise<PlatformSettings> {
-  const defaultValue: PlatformSettings = { 
-    assessment_fee: 150, 
-    payments_enabled: true, 
+  const defaultValue: PlatformSettings = {
+    assessment_fee: 150,
+    payments_enabled: true,
     assessment_availability_days: 30,
     attendance_generation_mode: 'start_date',
     holidays: [
@@ -2687,7 +2687,7 @@ export async function getAllPayments(): Promise<any[]> {
           student:profiles(full_name, email, phone_number)
         `)
         .order("created_at", { ascending: false });
-        
+
       if (error) {
         console.warn("getAllPayments query failed, falling back to mock data:", error);
         return getAllPaymentsMock();

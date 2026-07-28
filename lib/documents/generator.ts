@@ -90,7 +90,7 @@ function saveLocalMockMetadataUpsert(meta: DocumentMetadata): DocumentMetadata {
       doc.internship_id === meta.internship_id &&
       doc.document_type === cleanType
   );
-  
+
   const updated = {
     ...meta,
     document_type: cleanType,
@@ -98,7 +98,7 @@ function saveLocalMockMetadataUpsert(meta: DocumentMetadata): DocumentMetadata {
     id: idx >= 0 ? list[idx].id : `doc-${Math.random().toString(36).substr(2, 9)}`,
     generated_at: meta.generated_at || new Date().toISOString(),
   };
-  
+
   if (idx >= 0) {
     list[idx] = updated;
   } else {
@@ -113,7 +113,7 @@ let cachedTableName: 'student_documents' | 'documents' | null = null;
 export async function getDocumentsTableName(client: any): Promise<'student_documents' | 'documents'> {
   if (cachedTableName) return cachedTableName;
   if (!client) return 'student_documents';
-  
+
   try {
     const { error } = await client.from('student_documents').select('id').limit(1);
     if (error && (error.code === 'PGRST205' || error.message?.includes('student_documents'))) {
@@ -136,7 +136,7 @@ export async function getDocumentMetadata(
 ): Promise<DocumentMetadata | null> {
   const cleanType = documentType.trim().toLowerCase();
   const client = supabaseAdmin || supabase;
-  
+
   if (isSupabaseConfigured() && client) {
     try {
       const tableName = await getDocumentsTableName(client);
@@ -147,7 +147,7 @@ export async function getDocumentMetadata(
         .eq('internship_id', internshipId)
         .eq('document_type', cleanType)
         .maybeSingle();
-        
+
       if (error) {
         if (error.code === 'PGRST205' || error.message?.includes(tableName)) {
           console.warn(`${tableName} table missing in Supabase. Falling back to local file metadata.`);
@@ -225,7 +225,7 @@ export async function getDocumentRegistryEntry(
 ): Promise<DocumentRegistryEntry | null> {
   const cleanType = documentType.trim().toLowerCase();
   const client = supabaseAdmin || supabase;
-  
+
   if (isSupabaseConfigured() && client) {
     try {
       const { data, error } = await client
@@ -235,7 +235,7 @@ export async function getDocumentRegistryEntry(
         .eq('internship_id', internshipId)
         .eq('document_type', cleanType)
         .maybeSingle();
-        
+
       if (error) {
         if (error.code === 'PGRST200' || error.code === 'PGRST205' || error.message?.includes('document_registry')) {
           return getLocalRegistryMatch(studentId, internshipId, cleanType);
@@ -283,7 +283,7 @@ export async function getStudentExistingIds(studentId: string): Promise<{ certif
           if (row.reference_id && !reference_id) reference_id = row.reference_id;
         }
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // Fallback check in local registry
@@ -304,16 +304,16 @@ export async function saveDocumentRegistryEntry(
 ): Promise<DocumentRegistryEntry> {
   const client = supabaseAdmin || supabase;
   const cleanType = entry.document_type.trim().toLowerCase();
-  
+
   const upsertData = {
     ...entry,
     document_type: cleanType,
   };
-  
+
   if (isSupabaseConfigured() && client) {
     try {
       const existing = await getDocumentRegistryEntry(entry.student_id, entry.internship_id || '', cleanType);
-      
+
       let result;
       if (existing && existing.id) {
         const { data, error } = await client
@@ -322,7 +322,7 @@ export async function saveDocumentRegistryEntry(
           .eq('id', existing.id)
           .select()
           .single();
-          
+
         if (error) throw error;
         result = data;
       } else {
@@ -331,7 +331,7 @@ export async function saveDocumentRegistryEntry(
           .insert(upsertData)
           .select()
           .single();
-          
+
         if (error) throw error;
         result = data;
       }
@@ -354,14 +354,14 @@ function saveLocalRegistryUpsert(entry: DocumentRegistryEntry): DocumentRegistry
       doc.internship_id === entry.internship_id &&
       doc.document_type === cleanType
   );
-  
+
   const updated = {
     ...entry,
     document_type: cleanType,
     id: idx >= 0 ? list[idx].id : `reg-${Math.random().toString(36).substr(2, 9)}`,
     generation_date: entry.generation_date || new Date().toISOString(),
   };
-  
+
   if (idx >= 0) {
     list[idx] = updated;
   } else {
@@ -377,28 +377,28 @@ export async function generateNextSequentialId(documentType: string): Promise<st
   const isCert = cleanType === 'certificate' || cleanType === 'internship_certificate';
   const prefix = isCert ? 'IQ-2026-' : 'IQ-REF-';
   const client = supabaseAdmin || supabase;
-  
+
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let attempts = 0;
-  
+
   while (attempts < 100) {
     let rand = '';
     for (let i = 0; i < 7; i++) {
       rand += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     const candidateId = `${prefix}${rand}`;
-    
+
     // Check local registry first
     const localList = getLocalRegistry();
     const isLocalDuplicate = localList.some(
       (doc) => doc.certificate_number === candidateId || doc.reference_id === candidateId
     );
-    
+
     if (isLocalDuplicate) {
       attempts++;
       continue;
     }
-    
+
     // Check Supabase database
     if (isSupabaseConfigured() && client) {
       try {
@@ -406,7 +406,7 @@ export async function generateNextSequentialId(documentType: string): Promise<st
           .from('document_registry')
           .select('*', { count: 'exact', head: true })
           .or(`certificate_number.eq.${candidateId},reference_id.eq.${candidateId}`);
-          
+
         if (!error && (count === null || count === 0)) {
           return candidateId;
         }
@@ -419,7 +419,7 @@ export async function generateNextSequentialId(documentType: string): Promise<st
     }
     attempts++;
   }
-  
+
   // Safe fallback if loop hits limit
   const fallbackRand = Array.from({ length: 7 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   return `${prefix}${fallbackRand}`;
@@ -434,7 +434,7 @@ export async function generateUniqueVerificationId(documentType: string): Promis
 export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<DocumentMetadata> {
   const client = supabaseAdmin || supabase;
   const cleanType = meta.document_type.trim().toLowerCase();
-  
+
   if (!meta.verification_id) {
     meta.verification_id = await generateUniqueVerificationId(cleanType);
   }
@@ -449,7 +449,7 @@ export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<Docu
     try {
       const tableName = await getDocumentsTableName(client);
       const existing = await getDocumentMetadata(meta.student_id, meta.internship_id, cleanType);
-      
+
       let result;
       if (existing && existing.id && !existing.id.startsWith('doc-')) {
         if (existing.verification_id) {
@@ -463,7 +463,7 @@ export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<Docu
             .eq('id', existing.id)
             .select()
             .single();
-            
+
           if (error) throw error;
           result = data;
         } catch (err: any) {
@@ -488,7 +488,7 @@ export async function saveDocumentMetadata(meta: DocumentMetadata): Promise<Docu
             .insert(upsertData)
             .select()
             .single();
-            
+
           if (error) throw error;
           result = data;
         } catch (err: any) {
@@ -525,7 +525,7 @@ export async function generateDocument(
   origin: string = ''
 ): Promise<{ success: boolean; metadata: DocumentMetadata; fromCache: boolean; error?: string }> {
   const cleanType = documentType.trim().toLowerCase();
-  
+
   try {
     // 1. Fetch Student, Internship, Test Result, and Payments data
     let profile: any = null;
@@ -541,18 +541,18 @@ export async function generateDocument(
 
       const [profileRes, internshipRes, testResultRes, paymentsRes] = await Promise.all([
         dbClient.from('profiles').select('*').eq('id', studentId).single(),
-        isUuid 
+        isUuid
           ? dbClient.from('internships').select('*').eq('id', internshipId).single()
           : Promise.resolve({ data: null }),
         isUuid
           ? dbClient
-              .from('test_results')
-              .select('*')
-              .eq('student_id', studentId)
-              .eq('internship_id', internshipId)
-              .order('completed_at', { ascending: false })
-              .limit(1)
-              .maybeSingle()
+            .from('test_results')
+            .select('*')
+            .eq('student_id', studentId)
+            .eq('internship_id', internshipId)
+            .order('completed_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
           : Promise.resolve({ data: null }),
         dbClient
           .from('payments')
@@ -630,13 +630,13 @@ export async function generateDocument(
 
     // Fetch cache metadata first to retrieve or generate the unique verification ID
     const cacheMeta = await getDocumentMetadata(studentId, internshipId, cleanType);
-    
+
     // Fetch or create registry entry first
     const internshipTitle = internship.title || 'Internship';
     let registryEntry = await getDocumentRegistryEntry(studentId, internshipId, cleanType);
     if (!registryEntry) {
       const isCert = cleanType === 'certificate' || cleanType === 'internship_certificate';
-      
+
       // Look up if user already has a certificate_number or reference_id assigned
       const existingIds = await getStudentExistingIds(studentId);
       let newId;
@@ -646,11 +646,11 @@ export async function generateDocument(
         newId = existingIds.reference_id || await generateNextSequentialId(cleanType);
       }
 
-      const verificationUrl = isCert 
-        ? `https://iqintern.in/verify?certificate=${newId}` 
+      const verificationUrl = isCert
+        ? `https://iqintern.in/verify?certificate=${newId}`
         : `https://iqintern.in/verify?reference=${newId}`;
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verificationUrl)}`;
-      
+
       registryEntry = {
         student_id: studentId,
         student_name: profile.full_name,
@@ -667,13 +667,13 @@ export async function generateDocument(
       };
       registryEntry = await saveDocumentRegistryEntry(registryEntry);
     }
-    
+
     const verificationId = registryEntry.certificate_number || registryEntry.reference_id || '';
     const qrCodeUrl = registryEntry.qr_code_url;
 
     // 3. Format Data variables for templates
     const pct = testResult?.percentage || (testResult?.score && testResult?.total_questions ? Math.round((testResult.score / testResult.total_questions) * 100) : 0) || 0;
-    
+
     let grade = 'F';
     if (pct >= 90) grade = 'A+';
     else if (pct >= 80) grade = 'A';
@@ -860,7 +860,7 @@ export async function generateDocument(
       const page: any = await browser.newPage();
       await page.setContent(finalHtml, { waitUntil: 'load' });
       await page.evaluate(() => document.fonts.ready);
-      
+
       const generated = await page.pdf({
         format: 'A4',
         printBackground: true,
@@ -887,7 +887,7 @@ export async function generateDocument(
 
     if (isSupabaseConfigured() && supabaseAdmin) {
       const storagePath = `${studentId}/${fileName}`;
-      
+
       let uploadSuccess = false;
       try {
         // Upload to student-documents bucket
@@ -927,7 +927,7 @@ export async function generateDocument(
       // Mock Storage: Write to local folder pdf_cache/
       const cacheDir = getCacheDir();
       const localFilePath = path.join(cacheDir, `${cleanType}_${studentId}_${internshipId}.pdf`);
-      
+
       try {
         if (!fs.existsSync(cacheDir)) {
           fs.mkdirSync(cacheDir, { recursive: true });

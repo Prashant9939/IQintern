@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { signUpUser, loginUser } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { getUniversities, type University } from "@/lib/supabase/db";
+import { logRegistrationToSheet } from "@/lib/google-sheets";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -451,6 +452,7 @@ export default function Register() {
     setLoading(true);
 
     try {
+      // ========== EXISTING SUPABASE SIGNUP (UNCHANGED) ==========
       await signUpUser(
         formData.email,
         formData.password,
@@ -474,6 +476,30 @@ export default function Register() {
         formData.dateOfBirth,
       );
 
+      // ========== NEW: LOG TO GOOGLE SHEETS (FIRE & FORGET) ==========
+      // Only runs if signUpUser succeeded (didn't throw an error)
+      logRegistrationToSheet({
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phoneNumber,
+        dob: formData.dateOfBirth,
+        gender: formData.gender,
+        university: formData.university === "Other" ? customUniversity : formData.university,
+        college: formData.college === "Other" ? customCollege : formData.college,
+        course: formData.course,
+        department: formData.departmentStream,
+        semester: formData.semester,
+        batch: formData.batch,
+        rollNumber: formData.rollNumber,
+        regNumber: formData.registrationNumber,
+        emergName: formData.emergencyContactName,
+        emergPhone: formData.emergencyContactNumber,
+        emergRelation: formData.emergencyContactRelation,
+        termsAgreed: formData.agreedTerms,
+        updatesAgreed: formData.agreedUpdates,
+      }); // No await — fire and forget, doesn't block
+
+      // ========== EXISTING LOGIN & REDIRECT (UNCHANGED) ==========
       setSuccess("Account created! Logging you in...");
 
       await loginUser(formData.email, formData.password);
@@ -484,6 +510,8 @@ export default function Register() {
         sessionStorage.setItem("iqintern_show_whatsapp_popup_force", "true");
         window.location.href = "/student/payment";
       }, 1500);
+
+
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Registration failed.";
       setError(msg);
