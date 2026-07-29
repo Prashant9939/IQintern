@@ -126,7 +126,7 @@ export function validatePhoneNumber(phone: string): boolean {
 
 
 export async function signUpUser(
-  email: string, password: string, fullName: string, phoneNumber: string, college: string, university: string, course: string, semester: string, documentId: string, departmentStream: string, batch: string, rollNumber: string, registrationNumber: string, emergencyContactName: string, emergencyContactNumber: string, emergencyContactRelation: string, emergencyContactRelationn: string, agreedTerms: boolean, agreedUpdates: boolean, dateOfBirth: string) {
+  email: string, password: string, fullName: string, phoneNumber: string, college: string, university: string, course: string, semester: string, documentId: string, departmentStream: string, batch: string, rollNumber: string, registrationNumber: string, emergencyContactName: string, emergencyContactNumber: string, emergencyContactRelation: string, agreedTerms: boolean, agreedUpdates: boolean, dateOfBirth: string) {
   // Input Validations
   if (!email || !password || !fullName || !phoneNumber || !college || !university || !course || !semester || !departmentStream || !batch || !rollNumber || !registrationNumber || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation || !dateOfBirth) {
     throw new Error("All fields are required.");

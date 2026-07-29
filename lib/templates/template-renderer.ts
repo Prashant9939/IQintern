@@ -13,7 +13,7 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
   // 1. Load shared elements from disk
   const rootDir = process.cwd();
   const sharedDir = path.join(rootDir, 'public', 'templates', 'shared');
-  
+
   let styles = '';
   let header = '';
   let footer = '';
@@ -197,19 +197,19 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
   }
 
   // Inject branding and certificate details mapping for premium certificate.html
-  const companyName = "AVADS Private Limited";
+  const companyName = "Zenithix Private Limited";
   const companyTagline = "Empowering Students, Building Careers";
   const domain = "iqintern.in";
   const websiteUrl = "https://iqintern.in";
   const address = "Sector 154, Noida, Uttar Pradesh, India";
 
   const track = templateData.internshipTitle || templateData.internshipName || "Vocational Internship";
-  
+
   // Track-specific mentors and departments
   let mentorName = "Dr. Anand K. Verma";
   let mentorSig = "Anand K. Verma";
   let department = "Technology & Engineering";
-  
+
   const trackLower = track.toLowerCase();
   if (trackLower.includes("data science") || trackLower.includes("datasci")) {
     mentorName = "Dr. Amit Verma";
@@ -282,18 +282,18 @@ export function renderTemplate(htmlContent: string, data: Record<string, any>): 
 
   // 5. Inject descriptive <title> so Save/Print dialog shows "{Name} - {Doc} | AVADS"
   const DOC_TITLE_LABELS: Record<string, string> = {
-    certificate:              'Certificate',
-    internship_certificate:   'Certificate',
+    certificate: 'Certificate',
+    internship_certificate: 'Certificate',
     appreciation_certificate: 'Appreciation Certificate',
-    offer_letter:             'Offer Letter',
-    marksheet:                'Marksheet',
-    assessment_marksheet:     'Marksheet',
-    attendance_sheet:         'Attendance Sheet',
-    attendance_record:        'Attendance Sheet',
-    project_report:           'Project Report',
-    internship_report:        'Internship Report',
-    receipt:                  'Payment Receipt',
-    payment_receipt:          'Payment Receipt',
+    offer_letter: 'Offer Letter',
+    marksheet: 'Marksheet',
+    assessment_marksheet: 'Marksheet',
+    attendance_sheet: 'Attendance Sheet',
+    attendance_record: 'Attendance Sheet',
+    project_report: 'Project Report',
+    internship_report: 'Internship Report',
+    receipt: 'Payment Receipt',
+    payment_receipt: 'Payment Receipt',
   };
   const templateTypeKey = (templateData.templateType || templateData.cleanType || '').toLowerCase();
   const docTitleLabel = DOC_TITLE_LABELS[templateTypeKey] || 'Document';

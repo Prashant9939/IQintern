@@ -278,7 +278,7 @@ export async function GET(req: Request) {
       college_name: profile.college_name || 'N/A',
       universityName: profile.university_name || 'N/A',
       university_name: profile.university_name || 'N/A',
-      course: profile.department_stream || profile.degree || 'N/A',
+      course: profile.degree || profile.department_stream || 'N/A',
       department_stream: profile.department_stream || 'N/A',
       degree: profile.degree || 'N/A',
       semester: profile.semester || 'N/A',

@@ -79,7 +79,7 @@ const BRANCH_OPTIONS = [
 const COURSE_OPTIONS = [
   { value: "B.Tech/BE", label: "B.Tech/BE" },
   { value: "BCA", label: "BCA" },
-  { value: "BSC", label: "B.Sc Computer Science" },
+  { value: "BSC", label: "B.Sc" },
   { value: "BBA", label: "BBA" },
   { value: "BCOM", label: "B.Com" },
   { value: "BA", label: "BA" },
@@ -462,7 +462,6 @@ export default function Register() {
         formData.university === "Other" ? customUniversity : formData.university,
         formData.course,
         formData.semester,
-        "", // No address
         formData.documentId || "N/A",
         formData.departmentStream,
         formData.batch,
